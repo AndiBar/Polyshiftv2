@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
@@ -63,6 +64,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     public void run() {
                                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                                         nameValuePairs.add(new BasicNameValuePair("opponent_id", data.get(position).get("ID")));
+                                        GameSync.SendChangeNotification(data.get(position).get("ID"),"Sie wurden herausgefordert!");
                                         response = PHPConnector.doRequest(nameValuePairs, "add_game.php");
                                     }
                                 });
