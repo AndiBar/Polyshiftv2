@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/action_attending_contacts"
+        android:actionLayout="@layout/actionbar_badge_layout"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_bell"
+        android:title="Notification" />
+
+</menu>

@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/action_addopponent"
+          android:icon="@drawable/ic_action_forward"
+          android:orderInCategory="100"
+          android:title="@string/forward"
+          android:showAsAction="always" />
+
+</menu>

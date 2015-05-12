@@ -1,0 +1,62 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="hamburg.haw.polyshift">
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.example.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="21" />
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".Game.GameActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".Menu.WelcomeActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Menu.SignupActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+        <activity
+            android:name=".Game.PolyshiftActivity"
+            android:label="@string/title_poly_shift" >
+        </activity>
+        <activity android:name=".Menu.MainMenuActivity" />
+        <activity android:name=".Menu.ChooseOpponentActivity" />
+        <activity android:name=".Menu.NewOpponentActivity" />
+        <activity android:name=".Menu.OpponentsAttendingActivity" />
+        <activity android:name=".Menu.MyGamesActivity" />
+        <activity android:name=".Menu.GamesAttendingActivity" />
+
+        <receiver
+            android:name=".Menu.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".Menu.GcmIntentService" />
+
+    </application>
+
+</manifest>
