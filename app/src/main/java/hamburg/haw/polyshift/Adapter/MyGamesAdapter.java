@@ -59,22 +59,34 @@ public class MyGamesAdapter extends SimpleAdapter {
                 @Override
                 public void onClick(View v) {
                     if(data.get(position).get("game_accepted").equals("1")) {
-                        new Thread(
-                                new Runnable() {
-                                    public void run() {
-                                        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                                        nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
-                                        PHPConnector.doRequest(nameValuePairs, "update_game.php");
-                                    }
-                                }
+                        class Update_Game_Thread extends Thread {
+                            public void run() {
 
-                        ).start();
+                                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                                nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
+                                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                            }
+                        }
+                        Thread update_game_thread = new Update_Game_Thread();
+                        update_game_thread.start();
+                        try {
+                            long waitMillis = 10000;
+                            while (update_game_thread.isAlive()) {
+                                update_game_thread.join(waitMillis);
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         final Intent intent = new Intent(context, PolyshiftActivity.class);
                         context.startActivity(intent);
                     }
                 }
             });
+
+            
+            
         }
 	    return convertView; 
     }
+    
 }
