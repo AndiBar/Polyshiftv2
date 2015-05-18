@@ -349,7 +349,6 @@ public class Simulation implements Serializable{
 
     public void movePlayer(int x, int y, String direction){
         if(lastMovedObject != objects[x][y]) {
-            Log.d("test","x:"+x+"y:"+y);
             objects[x][y].start_position = new Vector(x, y, 0);
         }
         Player player = (Player) objects[x][y];
@@ -398,7 +397,6 @@ public class Simulation implements Serializable{
                     }
                 }
                 if(objects[i][j] instanceof Player) {
-                    Log.d("String","i:"+i+"j:"+j+"x:"+objects[i][j].start_position.x+"y:"+objects[i][j].start_position.y);
                     if (!objects[i][j].isLocked && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))) {
                         if (objects[i][j].isPlayerOne) {
                             player.isLockedIn = true;

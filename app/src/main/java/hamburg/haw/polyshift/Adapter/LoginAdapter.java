@@ -95,7 +95,7 @@ public class LoginAdapter{
                 activity.finish();
             }
         }
-        else if(response.equalsIgnoreCase(username + " already logged in.")){
+        else if(response.equalsIgnoreCase(username + " ist bereits eingeloggt.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(activity,response, Toast.LENGTH_SHORT).show();
