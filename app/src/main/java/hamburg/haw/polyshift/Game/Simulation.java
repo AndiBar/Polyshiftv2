@@ -348,7 +348,6 @@ public class Simulation implements Serializable{
     public void movePlayer(int x, int y, String direction){
         if(lastMovedObject != objects[x][y]) {
             objects[x][y].start_position = new Vector(x, y, 0);
-            Log.d("bla","x:" +x+"y:" + y);
         }
         objects[x][y].block_position = new Vector(x,y,0);
         while(!predictCollision(x, y, direction)){
@@ -418,16 +417,24 @@ public class Simulation implements Serializable{
                         }
                         else if((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT))){
                             if(i+1 < objects.length && objects[i+1][j] instanceof Player){
-                                movePlayer(i+1,j,RIGHT);
+                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                    movePlayer(i + 1, j, RIGHT);
+                                }
                             }
                             else if(i-1 >= 0 && objects[i-1][j] instanceof Player){
-                                movePlayer(i-1,j,LEFT);
+                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                    movePlayer(i - 1, j, LEFT);
+                                }
                             }
                             else if(!predictCollision(i, j, UP) && predictCollision(i, j, DOWN)){
-                                movePlayer(i, j, UP);
+                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                    movePlayer(i, j, UP);
+                                }
                             }
                             else if(predictCollision(i, j, UP) && !predictCollision(i, j, DOWN)){
-                                movePlayer(i, j, DOWN);
+                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                    movePlayer(i, j, DOWN);
+                                }
                             }
                         }
                     }
