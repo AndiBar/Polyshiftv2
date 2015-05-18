@@ -7,12 +7,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import hamburg.haw.polyshift.Adapter.AcceptOpponentAdapter;
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,12 +35,18 @@ public class OpponentsAttendingActivity extends ListActivity {
     public static AcceptOpponentAdapter mAdapter;
     public static ProgressDialog dialog = null;
     public String response = "";
+    private Context context;
+    private LoginAdapter loginAdapter;
 
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
+   	    super.onCreate(savedInstanceState);
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,OpponentsAttendingActivity.this);
+        loginAdapter.handleSessionExpiration();
+
         setContentView(R.layout.activity_opponents_attending);
         setTitle(R.string.opponents_attending_title);
 
@@ -176,6 +185,7 @@ public class OpponentsAttendingActivity extends ListActivity {
                 Log.d("user",user);
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("opponent", user));
+                GameSync.SendChangeNotification(user,"Sie wurden hinzugefügt, fordern?");
                 response = PHPConnector.doRequest(nameValuePairs, "accept_opponent.php");
             }
         }

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -35,6 +36,8 @@ public class MyGamesActivity extends ListActivity {
     public static MyGamesAdapter mAdapter;
     private int bell_number = 0;
     public static Activity activity;
+    private Context context;
+    private LoginAdapter loginAdapter;
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
@@ -42,6 +45,10 @@ public class MyGamesActivity extends ListActivity {
     }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,MyGamesActivity.this);
+        loginAdapter.handleSessionExpiration();
+
 
         setTitle("Meine Spiele");
         setContentView(R.layout.activity_my_games);

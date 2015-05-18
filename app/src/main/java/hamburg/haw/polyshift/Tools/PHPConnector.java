@@ -15,7 +15,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+
+import hamburg.haw.polyshift.Menu.HandleSharedPreferences;
+import hamburg.haw.polyshift.Menu.MainMenuActivity;
+import hamburg.haw.polyshift.Menu.WelcomeActivity;
 
 public class PHPConnector {
 	
@@ -31,6 +39,7 @@ public class PHPConnector {
 	public static HttpResponse httpResponse;
 	public static String response;
 	private final static String tag="Response von ";
+    private static Context context;
 	
 	public static String doRequest(ArrayList<NameValuePair> args, String url){
 		httppost = new HttpPost(server + url);
@@ -66,5 +75,6 @@ public class PHPConnector {
         }
 		return "error";
 	}
+
 
 }

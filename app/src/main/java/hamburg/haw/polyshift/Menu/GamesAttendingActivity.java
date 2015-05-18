@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import hamburg.haw.polyshift.Adapter.AcceptGameAdapter;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -15,6 +16,7 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,12 +35,18 @@ public class GamesAttendingActivity extends ListActivity {
     public static AcceptGameAdapter mAdapter;
     public static ProgressDialog dialog = null;
     public String response = "";
-
+    private static Context context;
+    private LoginAdapter loginAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	   super.onCreate(savedInstanceState);
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,GamesAttendingActivity.this);
+        loginAdapter.handleSessionExpiration();
+
+
        setContentView(R.layout.activity_opponents_attending);
        setTitle(getString(R.string.new_game));
 

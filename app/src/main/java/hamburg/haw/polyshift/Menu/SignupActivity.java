@@ -7,7 +7,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PasswordHash;
@@ -32,6 +35,9 @@ public class SignupActivity extends Activity {
     StringBuffer buffer;
     HttpResponse response;
     HttpClient httpclient;
+    Context context;
+
+
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
@@ -40,7 +46,8 @@ public class SignupActivity extends Activity {
 		
 		setTheme(android.R.style.Theme_Holo_NoActionBar);
 		setContentView(R.layout.activity_signup);
-		
+		context= getApplicationContext();
+
 		signupButton = (Button)findViewById(R.id.SignupButton);
         editUsername = (EditText)findViewById(R.id.EditUsername);
         editEmail = (EditText)findViewById(R.id.EditEmail);
@@ -96,7 +103,9 @@ public class SignupActivity extends Activity {
                         Toast.makeText(SignupActivity.this,"Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
                     }
                 });
-                WelcomeActivity.userLogin(editUsername.getText().toString().trim(),editPassword.getText().toString().trim(), this);
+                final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
+                final String newGCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
+                LoginAdapter.newUserLogin(editUsername.getText().toString().trim(), editPassword.getText().toString().trim(), this,newGCMregId);
                 this.finish();
             }else if(response.equalsIgnoreCase("Error: Username already exists.")){
                 AlertDialogs.showAlert(this, "Fehler", "Der Benutzername ist bereits vergeben.");

@@ -75,7 +75,7 @@ public class GcmIntentService extends IntentService {
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 
-                new Intent(this, WelcomeActivity.class), 0);
+                new Intent(this, MyGamesActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

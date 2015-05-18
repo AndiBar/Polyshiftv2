@@ -13,12 +13,14 @@ import android.util.Log;
 public class HandleSharedPreferences {
 
     public static final String PROPERTY_REG_ID = "registration_id";
+    public static final String PROPERTY_USER_NAME = "user_name";
+    public static final String PROPERTY_PASSWORD = "password";
     static final String PROPERTY_APP_VERSION = "appVersion";
 
     public static void setUserCredentials(Context context, String username, String password){
         Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.putString("username", username);
-        editor.putString("password", password);
+        editor.putString(PROPERTY_USER_NAME, username);
+        editor.putString(PROPERTY_PASSWORD, password);
         editor.commit();
     }
 

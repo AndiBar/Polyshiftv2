@@ -35,6 +35,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PasswordHash;
@@ -54,6 +55,7 @@ public class WelcomeActivity extends Activity {
     List<NameValuePair> nameValuePairs;
     protected static ProgressDialog dialog = null;
     private static Context context;
+    private LoginAdapter loginAdapter;
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -84,41 +86,56 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		context=getApplicationContext();
-		
+        this.loginAdapter = new LoginAdapter(context,WelcomeActivity.this);
 		setTheme(android.R.style.Theme_Holo_NoActionBar);
 		setContentView(R.layout.activity_welcome);
 
+
+        // Check for auto login credentials
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
         if (checkPlayServices()) {
+            loginButton = (Button)findViewById(R.id.LoginButton);
+            editUsername = (EditText)findViewById(R.id.EditUsername);
+            editPassword= (EditText)findViewById(R.id.EditPassword);
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
-
-
             if (regid.isEmpty()) {
-
                 registerInBackground();
-
             }
+            final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
+            final String password = HandleSharedPreferences.getUserCredentials(context,"password");
+            if(!(username.equals("")) && (!(password.equals("")))){
+                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft mit gespeicherten Credentials...", true);
+                Log.i("Autologin", "Login läuft mit gespeicherten Credentials..."+ username +" "+password);
+                new Thread(
+                        new Runnable(){
+                            public void run(){
+                                loginAdapter.userLoginStoredCredentials();
+                            }
+                        }
+                ).start();
+            }
+
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
-        loginButton = (Button)findViewById(R.id.LoginButton);
-        editUsername = (EditText)findViewById(R.id.EditUsername);
-        editPassword= (EditText)findViewById(R.id.EditPassword);
 
         loginButton.setOnClickListener(
     		new OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
 	                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft", true);
-	                new Thread(
+                    final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
+                    final String newGCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
+                    HandleSharedPreferences.setUserCredentials(context, editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()));	//	username und pw werden gespeichert, damit beim nächsten Mal kein Login notwendig ist
+                    new Thread(
 	                		new Runnable(){
 	                			public void run(){
-	                				userLogin(editUsername.getText().toString(),editPassword.getText().toString(),WelcomeActivity.this);
+	                				loginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), WelcomeActivity.this, newGCMregId);
 	                			}
 	                		}
 	                ).start();
@@ -127,44 +144,7 @@ public class WelcomeActivity extends Activity {
     	);
 	}
 
-    static void userLogin(final String username, String password, final Activity activity){
-	   		 
-   		 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-         nameValuePairs.add(new BasicNameValuePair("username",username.toString().trim()));
-         nameValuePairs.add(new BasicNameValuePair("password",PasswordHash.toHash(password.toString().trim())));
-         nameValuePairs.add(new BasicNameValuePair("regid",regid));
-   		 
-         final String response = PHPConnector.doRequest(nameValuePairs, "login_user.php");
-         if(response.equalsIgnoreCase(username + " has logged in successfully.")){
-        	 activity.runOnUiThread(new Runnable() {
-                 public void run() {
-                     Toast.makeText(activity,username + " wurde erfolgreich angemeldet.", Toast.LENGTH_SHORT).show();
-                 }
-             });
-        	 
-        	 //HandleSharedPreferences.setUserCredentials(context, username, password);	//	username und pw werden gespeichert, damit beim nächsten Mal kein Login notwendig ist
-        	 
-             Intent intent = new Intent(activity, MainMenuActivity.class);
-             activity.startActivity(intent);
-             activity.finish();
-         }
-         else if(response.equalsIgnoreCase(username + " already logged in.")){
-        	 activity.runOnUiThread(new Runnable() {
-                 public void run() {
-                     Toast.makeText(activity,response, Toast.LENGTH_SHORT).show();
-                 }
-             });
-             Intent intent = new Intent(activity, MainMenuActivity.class);
-             activity.startActivity(intent);
-             activity.finish();
-         }else if(response.equalsIgnoreCase("No Such User Found")){
-        	 dialog.dismiss();
-             AlertDialogs.showAlert(activity, "Login Error", "User not found or password incorrect.");
-         }else{
-            dialog.dismiss();
-            AlertDialogs.showAlert(activity, "Login Error", "Connection Error.");
-         }
-    }
+
     public void userSignup(View view){
         Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
@@ -180,6 +160,8 @@ public class WelcomeActivity extends Activity {
                 }
         ).start();
     }
+
+
 
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);

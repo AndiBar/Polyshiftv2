@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:hint="@string/username"
-            android:text="Test"
             android:textColorHint="#000000"
             android:textColor="#000000" />
 
@@ -43,7 +42,6 @@
             android:layout_gravity="center"
             android:layout_below="@id/EditUsername"
             android:hint="@string/password"
-            android:text="123"
             android:inputType="textPassword"
             android:textColorHint="#000000"
             android:textColor="#000000" />

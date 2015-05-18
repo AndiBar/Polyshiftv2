@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import hamburg.haw.polyshift.Adapter.ChooseOpponentAdapter;
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -33,6 +34,8 @@ public class ChooseOpponentActivity extends ListActivity {
     public static ChooseOpponentAdapter mAdapter;
     private int bell_number = 0;
     public static Activity activity;
+    private static Context context;
+    private LoginAdapter loginAdapter;
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -40,7 +43,9 @@ public class ChooseOpponentActivity extends ListActivity {
     }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,ChooseOpponentActivity.this);
+        loginAdapter.handleSessionExpiration();
         setTitle("Meine Gegner");
         setContentView(R.layout.activity_choose_opponent);
 

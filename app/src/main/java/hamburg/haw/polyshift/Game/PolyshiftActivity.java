@@ -3,6 +3,7 @@ package hamburg.haw.polyshift.Game;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.Window;
 import android.view.WindowManager;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
 import org.apache.http.NameValuePair;
@@ -47,11 +49,15 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private Thread game_status_thread = new GameStatusThread();
     private String notificationReceiver = "";
     private String notificationMessage = "";
+    private Context context;
+    private LoginAdapter loginAdapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
+        loginAdapter.handleSessionExpiration();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);

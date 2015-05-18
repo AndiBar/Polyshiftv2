@@ -6,6 +6,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,17 +16,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
 public class NewOpponentActivity extends Activity {
 	
 	private String username;
-	
+    private Context context;
+    private LoginAdapter loginAdapter;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+        context = getApplicationContext();
+        loginAdapter = new LoginAdapter(context,NewOpponentActivity.this);
+        loginAdapter.handleSessionExpiration();
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);
         
