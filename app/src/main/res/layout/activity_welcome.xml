@@ -4,6 +4,17 @@
     android:layout_height="match_parent"
     android:background="#F7F3DE">
 
+    <RelativeLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.15">
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.7">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -11,15 +22,15 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_vertical"
         android:background="#F7F3DE"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
 
         <ImageView
             android:contentDescription="@string/logo"
             android:id="@+id/background_kogo"
-            android:layout_width="236dp"
-            android:layout_height="189dp"
-            android:layout_gravity="center"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:src="@drawable/background_logo" />
 
         <Space
@@ -28,7 +39,7 @@
 
         <EditText
             android:id="@+id/EditUsername"
-            android:layout_width="246dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:hint="@string/username"
@@ -37,7 +48,7 @@
 
         <EditText
             android:id="@+id/EditPassword"
-            android:layout_width="246dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_below="@id/EditUsername"
@@ -48,7 +59,7 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="#F7F3DE"
@@ -58,14 +69,16 @@
 
             <Button
                 android:id="@+id/LoginButton"
-                android:layout_width="125dp"
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/EditPassword"
                 android:text="@string/login" />
 
             <Button
                 android:id="@+id/SignupButton"
-                android:layout_width="125dp"
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/LoginButton"
                 android:layout_below="@id/EditPassword"
@@ -74,9 +87,19 @@
                 android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
+
         <Space
             android:layout_width="20px"
-            android:layout_height="50px" />
+            android:layout_height="300px" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.15">
+        </RelativeLayout>
+
 </LinearLayout>

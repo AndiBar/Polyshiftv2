@@ -23,6 +23,14 @@
                 android:layout_gravity="center_vertical"
                 android:layout_centerInParent="true">
 
+                <ImageView
+                    android:contentDescription="@string/logo"
+                    android:id="@+id/background_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:src="@drawable/background_logo" />
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,6 +58,10 @@
                     android:text="Beenden"
                     android:id="@+id/quit_game_button"
                     android:layout_gravity="center_horizontal" />
+
+                <Space
+                    android:layout_width="20px"
+                    android:layout_height="180px" />
 
                 </LinearLayout>
 
