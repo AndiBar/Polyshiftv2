@@ -141,11 +141,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
     @Override
     public void mainLoopIteration(GameActivity activity, GL10 gl) {
-        if(!startScreen.isDone){
-            startScreen.update(activity);
-            startScreen.render(gl, activity);
-        }
-        else{
+
             renderer.setPerspective(activity, gl);
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
@@ -204,7 +200,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 }*/
             }
 
-        }
+
 
         frames++;
     }

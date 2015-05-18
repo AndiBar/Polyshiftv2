@@ -1,6 +1,7 @@
 package hamburg.haw.polyshift.Menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -8,6 +9,7 @@ import org.apache.http.message.BasicNameValuePair;
 import hamburg.haw.polyshift.Adapter.AcceptGameAdapter;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -36,6 +38,8 @@ public class GamesAttendingActivity extends ListActivity {
     public static ProgressDialog dialog = null;
     public String response = "";
     private static Context context;
+    private static String opponentId  = "";
+    private static String opponentName = "";
     private LoginAdapter loginAdapter;
 
 	/** Called when the activity is first created. */
@@ -65,7 +69,6 @@ public class GamesAttendingActivity extends ListActivity {
 	       listView.setOnItemClickListener(new OnItemClickListener() {
 	            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	            	SaveValue.setSelectedFriendName(MyGamesActivity.games_attending_list.get(position).get("opponent_name"));
-
 	            	Intent intent = new Intent(GamesAttendingActivity.this, MyGamesActivity.class);
 		            startActivity(intent);
                     GamesAttendingActivity.this.finish();
@@ -155,7 +158,15 @@ public class GamesAttendingActivity extends ListActivity {
                 Log.d("game",game_id);
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("game", game_id));
+                for(HashMap<String,String> map : MyGamesActivity.games_attending_list){
+                    if(map.get("game_id").equals(game_id)){
+                        opponentName = map.get("my_user_name");
+                        opponentId = map.get("opponent_id");
+                        break;
+                    }
+                }
                 response = PHPConnector.doRequest(nameValuePairs, "accept_game.php");
+               GameSync.SendChangeNotification(opponentId,opponentName + " hat deine Herausforderung angenommen");
             }
         }
     }
