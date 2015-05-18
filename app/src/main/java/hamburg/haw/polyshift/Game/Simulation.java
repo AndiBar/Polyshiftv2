@@ -54,8 +54,10 @@ public class Simulation implements Serializable{
         this.objects = new GameObject[PLAYGROUND_MAX_X+1][PLAYGROUND_MAX_Y+1];
 
         player = new Player(true);
-        setGameObject(player, PLAYGROUND_MIN_X, PLAYGROUND_MAX_Y/2);
+        player.start_position = new Vector(PLAYGROUND_MIN_X,PLAYGROUND_MAX_Y/2,0);
+        setGameObject(player, PLAYGROUND_MIN_X, PLAYGROUND_MAX_Y / 2);
         player2 = new Player(false);
+        player2.start_position = new Vector(PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2,0);
         setGameObject(player2, PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2);
 
         int a = 0;
@@ -347,22 +349,40 @@ public class Simulation implements Serializable{
 
     public void movePlayer(int x, int y, String direction){
         if(lastMovedObject != objects[x][y]) {
+            Log.d("test","x:"+x+"y:"+y);
             objects[x][y].start_position = new Vector(x, y, 0);
         }
+        Player player = (Player) objects[x][y];
         objects[x][y].block_position = new Vector(x,y,0);
         while(!predictCollision(x, y, direction)){
             moveObject(x, y, direction);
             if(direction.equals(RIGHT)){
-                x++;
+                if(x+1 == player.start_position.x && y == player.start_position.y) {
+                    break;
+                }else{
+                    x++;
+                }
             }
             else if(direction.equals(LEFT)){
-                x--;
+                if(x-1 == player.start_position.x && y == player.start_position.y){
+                    break;
+                }else{
+                    x--;
+                }
             }
             else if(direction.equals(UP)){
-                y++;
+                if(y+1 == player.start_position.y && x == player.start_position.x){
+                    break;
+                }else {
+                    y++;
+                }
             }
             else if(direction.equals(DOWN)){
-                y--;
+                if(y-1 == player.start_position.y && x == player.start_position.x){
+                    break;
+                }else {
+                    y--;
+                }
             }
         }
     }
@@ -377,62 +397,38 @@ public class Simulation implements Serializable{
                         polynomino.allLocked = true;
                     }
                 }
-                if(objects[i][j] instanceof Player && !objects[i][j].isLocked && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))){
-                    if(objects[i][j].isPlayerOne) {
-                        player.isLockedIn = true;
-                    }
-                    else if(!objects[i][j].isPlayerOne){
-                        player2.isLockedIn = true;
-                    }
-                }
-                else if(lastMovedObject != null && objects[i][j] == lastMovedObject && objects[i][j] instanceof Player){
-                    if(!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown){
-                        if(objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X){
-                            setWinner((Player) objects[i][j]);
+                if(objects[i][j] instanceof Player) {
+                    Log.d("String","i:"+i+"j:"+j+"x:"+objects[i][j].start_position.x+"y:"+objects[i][j].start_position.y);
+                    if (!objects[i][j].isLocked && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))) {
+                        if (objects[i][j].isPlayerOne) {
+                            player.isLockedIn = true;
+                        } else if (!objects[i][j].isPlayerOne) {
+                            player2.isLockedIn = true;
                         }
-                        else if(!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X){
-                            setWinner((Player) objects[i][j]);
-                        }
-                        else if((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN))){
-                            if(j+1 < objects[0].length && objects[i][j+1] instanceof Player){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y){
+                    } else if (lastMovedObject != null && objects[i][j] == lastMovedObject) {
+                        if (!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown) {
+                            if (objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X) {
+                                setWinner((Player) objects[i][j]);
+                            } else if (!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X) {
+                                setWinner((Player) objects[i][j]);
+                            } else if ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN))) {
+                                if (j + 1 < objects[0].length && objects[i][j + 1] instanceof Player) {
                                     movePlayer(i, j + 1, UP);
-                                }
-                            }
-                            else if(j-1 >= 0 && objects[i][j-1] instanceof Player){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (j - 1 >= 0 && objects[i][j - 1] instanceof Player) {
                                     movePlayer(i, j - 1, DOWN);
-                                }
-                            }
-                            else if(!predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT)){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (!predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT)) {
                                     movePlayer(i, j, RIGHT);
-                                }
-                            }
-                            else if(predictCollision(i, j, RIGHT) && !predictCollision(i, j, LEFT)){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (predictCollision(i, j, RIGHT) && !predictCollision(i, j, LEFT)) {
                                     movePlayer(i, j, LEFT);
                                 }
-                            }
-                        }
-                        else if((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT))){
-                            if(i+1 < objects.length && objects[i+1][j] instanceof Player){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                            } else if ((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT))) {
+                                if (i + 1 < objects.length && objects[i + 1][j] instanceof Player) {
                                     movePlayer(i + 1, j, RIGHT);
-                                }
-                            }
-                            else if(i-1 >= 0 && objects[i-1][j] instanceof Player){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (i - 1 >= 0 && objects[i - 1][j] instanceof Player) {
                                     movePlayer(i - 1, j, LEFT);
-                                }
-                            }
-                            else if(!predictCollision(i, j, UP) && predictCollision(i, j, DOWN)){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (!predictCollision(i, j, UP) && predictCollision(i, j, DOWN)) {
                                     movePlayer(i, j, UP);
-                                }
-                            }
-                            else if(predictCollision(i, j, UP) && !predictCollision(i, j, DOWN)){
-                                if(i != objects[i][j].start_position.x || j != objects[i][j].start_position.y) {
+                                } else if (predictCollision(i, j, UP) && !predictCollision(i, j, DOWN)) {
                                     movePlayer(i, j, DOWN);
                                 }
                             }
