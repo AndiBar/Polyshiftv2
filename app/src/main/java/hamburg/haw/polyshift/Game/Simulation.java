@@ -1,5 +1,7 @@
 package hamburg.haw.polyshift.Game;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -372,7 +374,17 @@ public class Simulation implements Serializable{
                         polynomino.allLocked = true;
                     }
                 }
-                if(lastMovedObject != null && objects[i][j] == lastMovedObject && objects[i][j] instanceof Player){
+                if(objects[i][j] instanceof Player && !objects[i][j].isLocked && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))){
+                    if(objects[i][j].isPlayerOne) {
+                        player.isLockedIn = true;
+                    }
+                    else if(!objects[i][j].isPlayerOne){
+                        player2.isLockedIn = true;
+                    }
+                    Log.d("plyer","player: " + player.isLockedIn);
+                    Log.d("plyer","player2: " + player2.isLockedIn);
+                }
+                else if(lastMovedObject != null && objects[i][j] == lastMovedObject && objects[i][j] instanceof Player){
                     if(!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown){
                         if(objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X){
                             setWinner((Player) objects[i][j]);
