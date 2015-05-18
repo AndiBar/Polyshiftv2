@@ -38,7 +38,7 @@ public class GameLoop{
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
                 RoundFinished = false;
             }
-            if(!RoundFinished){
+            if(!RoundFinished || simulation.player2.isLockedIn){
                 if(!simulation.player.isMovingRight && !simulation.player.isMovingLeft && !simulation.player.isMovingUp && !simulation.player.isMovingDown){
                     RoundFinished = true;
                     PlayerOnesTurn = false;
@@ -46,6 +46,7 @@ public class GameLoop{
                     if(!PlayerOnesGame) {
                         simulation.player2.isLocked = false;
                     }
+                    simulation.player.isLockedIn = false;
                     updateGameStatus();
                     GameSync.uploadSimulation(simulation);
                     Log.i("GCM", opponentID);
@@ -60,7 +61,7 @@ public class GameLoop{
             if(simulation.player2.isMovingRight || simulation.player2.isMovingLeft || simulation.player2.isMovingUp || simulation.player2.isMovingDown){
                 RoundFinished = false;
             }
-            if(!RoundFinished){
+            if(!RoundFinished || simulation.player2.isLockedIn){
                 if(!simulation.player2.isMovingRight && !simulation.player2.isMovingLeft && !simulation.player2.isMovingUp && !simulation.player2.isMovingDown){
                     RoundFinished = true;
                     PlayerOnesTurn = true;
@@ -68,6 +69,7 @@ public class GameLoop{
                     if(PlayerOnesGame) {
                         simulation.player.isLocked = false;
                     }
+                    simulation.player2.isLockedIn = false;
                     updateGameStatus();
                     GameSync.uploadSimulation(simulation);
                     Log.i("GCM", "aufruf sendnotification round finished player two");

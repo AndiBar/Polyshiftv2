@@ -5,39 +5,60 @@
     android:layout_height="match_parent"
     android:background="#F7F3DE">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.15">
+        </RelativeLayout>
 
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Neues Spiel"
-            android:id="@+id/new_game_button"
-            android:layout_gravity="center_horizontal" />
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.7">
 
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Meine Spiele"
-            android:id="@+id/my_games_button"
-            android:layout_gravity="center_horizontal" />
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_centerInParent="true">
 
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Abmelden"
-            android:id="@+id/logout_button"
-            android:layout_gravity="center_horizontal" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Neues Spiel"
+                    android:id="@+id/new_game_button"
+                    android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Beenden"
-            android:id="@+id/quit_game_button"
-            android:layout_gravity="center_horizontal" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Meine Spiele"
+                    android:id="@+id/my_games_button"
+                    android:layout_gravity="center_horizontal" />
 
-    </LinearLayout>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Abmelden"
+                    android:id="@+id/logout_button"
+                    android:layout_gravity="center_horizontal" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Beenden"
+                    android:id="@+id/quit_game_button"
+                    android:layout_gravity="center_horizontal" />
+
+                </LinearLayout>
+
+        </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.15">
+    </RelativeLayout>
+
 </LinearLayout>
