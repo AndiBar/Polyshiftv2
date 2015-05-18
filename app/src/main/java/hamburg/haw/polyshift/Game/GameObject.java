@@ -14,7 +14,7 @@ public class GameObject{
 	public float movingVelocity = 0.15f;
     public Vector block_position;
     public Vector pixel_position;
-    public Vector start_position;
+    public Vector start_position = new Vector(0,0,0);
 	public  float []colors = new float[4];
 	boolean isPlayerOne;
     private Mesh mesh;
