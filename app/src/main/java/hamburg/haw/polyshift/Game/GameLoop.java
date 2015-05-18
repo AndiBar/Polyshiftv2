@@ -38,7 +38,7 @@ public class GameLoop{
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
                 RoundFinished = false;
             }
-            if(!RoundFinished || simulation.player2.isLockedIn){
+            if(!RoundFinished || simulation.player.isLockedIn){
                 if(!simulation.player.isMovingRight && !simulation.player.isMovingLeft && !simulation.player.isMovingUp && !simulation.player.isMovingDown){
                     RoundFinished = true;
                     PlayerOnesTurn = false;

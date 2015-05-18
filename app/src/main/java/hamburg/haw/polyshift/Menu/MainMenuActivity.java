@@ -76,7 +76,7 @@ public class MainMenuActivity extends Activity {
         quitGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainMenuActivity.this.finish();
+                android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
     }
