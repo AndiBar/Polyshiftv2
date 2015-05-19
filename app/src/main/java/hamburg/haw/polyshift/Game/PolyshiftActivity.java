@@ -51,6 +51,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private String notificationMessage = "";
     private Context context;
     private LoginAdapter loginAdapter;
+    private boolean onBackPressed = false;
 
 
     @Override
@@ -102,6 +103,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         return true;
     }
     public void onBackPressed() {
+        onBackPressed = true;
         final Intent intent = new Intent(this, MyGamesActivity.class);
         startActivity(intent);
         this.finish();
@@ -148,7 +150,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             simulation.update(activity);
             gameLoop.update(simulation,notificationReceiver,notificationMessage);
 
-            if(gameLoop.RoundFinished && simulation.winner == null) {
+            if(gameLoop.RoundFinished && simulation.winner == null && !onBackPressed) {
                 if (System.nanoTime() - start > 1000000000){
                     game_status = getGameStatus();
                     updateGame(activity, gl);
@@ -227,8 +229,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             MainMenuActivity.setCrashed();
             final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
             startActivity(intent);
-
-            android.os.Process.killProcess(android.os.Process.myPid());
         }
         else {
             String[] game = response.split(":");

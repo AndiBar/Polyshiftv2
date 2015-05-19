@@ -1,5 +1,6 @@
 package hamburg.haw.polyshift.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
+import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -79,6 +81,8 @@ public class MyGamesAdapter extends SimpleAdapter {
                         }
                         final Intent intent = new Intent(context, PolyshiftActivity.class);
                         context.startActivity(intent);
+                        Activity activity = (Activity) context;
+                        activity.finish();
                     }
                 }
             });

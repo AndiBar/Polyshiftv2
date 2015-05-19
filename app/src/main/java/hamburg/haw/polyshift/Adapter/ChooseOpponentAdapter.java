@@ -1,5 +1,6 @@
 package hamburg.haw.polyshift.Adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -89,6 +90,8 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                                     dialog.cancel();
                                                     Intent intent = new Intent(context, MyGamesActivity.class);
                                                     context.startActivity(intent);
+                                                    Activity activity = (Activity) context;
+                                                    activity.finish();
                                                 }
                                             });
                                     builder.show();

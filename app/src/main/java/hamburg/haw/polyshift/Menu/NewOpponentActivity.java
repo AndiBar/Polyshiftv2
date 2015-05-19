@@ -25,6 +25,7 @@ public class NewOpponentActivity extends Activity {
 	private String username;
     private Context context;
     private LoginAdapter loginAdapter;
+    private String response;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -75,9 +76,9 @@ public class NewOpponentActivity extends Activity {
 						public void run() {
 				        	ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 							nameValuePairs.add(new BasicNameValuePair("opponent",username));
-							PHPConnector.doRequest(nameValuePairs, "add_opponent.php");
+							response = PHPConnector.doRequest(nameValuePairs, "add_opponent.php");
 						}
-	        		});
+	                      		});
 	        		thread.start();
 			try {
 				thread.join();
@@ -86,20 +87,28 @@ public class NewOpponentActivity extends Activity {
 				e.printStackTrace();
 			}
 
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+
+            if(response.equals("kein Gegner gefunden")) {
+                builder.setMessage("Der Benutzer wurde nicht gefunden.");
+            }else if(response.equals("gleiche Person")){
+                builder.setMessage("Du kannst dich nicht selbst als Gegner hinzufügen.");
+            }else if(response.equals("bereits verschickt")){
+                builder.setMessage("Du hast bereits eine Anfrage an " + username + " gesendet.");
+            }else{
                 builder.setMessage("Es wurde eine Anfrage an " + username + " gesendet. Sobald die Anfrage bestätgt wurde, wird " + username + " unter deinen Gegnern aufgeführt.");
-                builder.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
-                                startActivity(intent);
-                                NewOpponentActivity.this.finish();
-                                dialog.cancel();
-                            }
-                        });
-                builder.show();
-	            
-	            return true;
+            }
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
+                            startActivity(intent);
+                            NewOpponentActivity.this.finish();
+                            dialog.cancel();
+                        }
+                    });
+            builder.show();
+            return true;
 
 	        default:
 	            return super.onOptionsItemSelected(item);

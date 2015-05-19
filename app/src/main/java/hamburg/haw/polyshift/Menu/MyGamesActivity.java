@@ -1,8 +1,10 @@
 package hamburg.haw.polyshift.Menu;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -172,34 +174,58 @@ public class MyGamesActivity extends ListActivity {
             String[] data_unformatted = stringResponse.split(",");
             games_list = new ArrayList<HashMap<String,String>>();
             if(!stringResponse.equals("no games found")) {
-                for (String item : data_unformatted) {
-                    HashMap<String, String> data_map = new HashMap<String, String>();
-                    String[] data_array = item.split(":");
-                    data_map.put("game_id", data_array[0]);
-                    data_map.put("opponent_id", data_array[1].split("=")[1]);
-                    data_map.put("opponent_name", data_array[2].split("=")[1]);
-                    data_map.put("game_accepted", data_array[3].split("=")[1]);
-                    data_map.put("opponents_turn", data_array[4].split("=")[1]);
-                    data_map.put("my_game", data_array[5].split("=")[1]);
-                    Log.d("Map", data_map.toString());
-                    games_list.add(data_map);
+                if(!(stringResponse.split(":").length == 1)) {
+                    for (String item : data_unformatted) {
+                        HashMap<String, String> data_map = new HashMap<String, String>();
+                        String[] data_array = item.split(":");
+                        data_map.put("game_id", data_array[0]);
+                        data_map.put("opponent_id", data_array[1].split("=")[1]);
+                        data_map.put("opponent_name", data_array[2].split("=")[1]);
+                        data_map.put("game_accepted", data_array[3].split("=")[1]);
+                        data_map.put("opponents_turn", data_array[4].split("=")[1]);
+                        data_map.put("my_game", data_array[5].split("=")[1]);
+                        Log.d("Map", data_map.toString());
+                        games_list.add(data_map);
+                    }
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    builder.show();
                 }
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");
             data_unformatted = stringResponse.split(",");
             games_attending_list = new ArrayList<HashMap<String,String>>();
             if(!stringResponse.equals("no games found")){
-                for(String item : data_unformatted){
-                    HashMap<String, String> data_map = new HashMap<String, String>();
-                    String[] data_array = item.split(":");
-                    data_map.put("game_id", data_array[0]);
-                    data_map.put("opponent_id", data_array[1].split("=")[1]);
-                    data_map.put("opponent_name", data_array[2].split("=")[1]);
-                    data_map.put("game_accepted", data_array[3].split("=")[1]);
-                    data_map.put("opponents_turn", data_array[4].split("=")[1]);
-                    data_map.put("my_game", data_array[5].split("=")[1]);
-                    data_map.put("my_user_name", data_array[6].split("=")[1]);
-                    games_attending_list.add(data_map);
+                if(!(stringResponse.split(":").length == 1)) {
+                    for(String item : data_unformatted){
+                        HashMap<String, String> data_map = new HashMap<String, String>();
+                        String[] data_array = item.split(":");
+                        data_map.put("game_id", data_array[0]);
+                        data_map.put("opponent_id", data_array[1].split("=")[1]);
+                        data_map.put("opponent_name", data_array[2].split("=")[1]);
+                        data_map.put("game_accepted", data_array[3].split("=")[1]);
+                        data_map.put("opponents_turn", data_array[4].split("=")[1]);
+                        data_map.put("my_game", data_array[5].split("=")[1]);
+                        data_map.put("my_user_name", data_array[6].split("=")[1]);
+                        games_attending_list.add(data_map);
+                    }
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    builder.show();
                 }
             }
         }
