@@ -108,8 +108,8 @@ public class WelcomeActivity extends Activity {
             final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
             final String password = HandleSharedPreferences.getUserCredentials(context,"password");
             if(!(username.equals("")) && (!(password.equals("")))){
-                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft mit gespeicherten Credentials...", true);
-                Log.i("Autologin", "Login läuft mit gespeicherten Credentials..."+ username +" "+password);
+                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft...", true);
+                Log.i("Autologin", "Login läuft..."+ username +" "+password);
                 new Thread(
                         new Runnable(){
                             public void run(){

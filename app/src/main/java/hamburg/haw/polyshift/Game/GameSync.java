@@ -79,11 +79,18 @@ public class GameSync {
                         }
                         if(simulation.objects[i][j] instanceof Polynomino) {
                             simulation.objects[i][j].colors = recreateColor();
+                            Polynomino polynomino = (Polynomino) simulation.objects[i][j];
+                            polynomino.border_pixel_position = new Vector(0,0,0);
+                            polynomino.isRendered = true;
+                            simulation.objects[i][j] = polynomino;
                         }
                     }
                 }
                 for(int k = 0; k < simulation.lastMovedPolynomino.blocks.size(); k++) {
                     simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y].isLocked = true;
+                    Polynomino polynomino = (Polynomino) simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y];
+                    polynomino.isRendered = true;
+                    simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y] = polynomino;
                 }
             } catch (Exception e) {
                 System.out.println(e);

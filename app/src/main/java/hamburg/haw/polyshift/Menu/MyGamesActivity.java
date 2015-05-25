@@ -188,15 +188,20 @@ public class MyGamesActivity extends ListActivity {
                         games_list.add(data_map);
                     }
                 }else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                    builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
-                    builder.setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    builder.show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
+                        }
+                    });
                 }
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");

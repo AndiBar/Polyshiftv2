@@ -78,6 +78,7 @@ public class Renderer3D extends Renderer {
 						border_mesh.color( 0f, 0f, 0f, 1 );
 						border_mesh.vertex( block_width * (i+1), block_height * (j+1) , line_depth );
                         polynomio.setBorder(border_mesh);
+                        polynomio.isRendered = true;
 					}
 					if(i-1 >= 0 && objects[i-1][j] != objects[i][j]){
 						Mesh border_mesh = new Mesh(gl, 2, true, false, false);
@@ -86,6 +87,7 @@ public class Renderer3D extends Renderer {
 						border_mesh.color( 0f, 0f, 0f, 1 );
 						border_mesh.vertex( block_width * i, block_height * (j+1) , line_depth );
                         polynomio.setBorder(border_mesh);
+                        polynomio.isRendered = true;
 
 					}
 					if(j+1 < objects[0].length && objects[i][j+1] != objects[i][j]){
@@ -95,6 +97,7 @@ public class Renderer3D extends Renderer {
 						border_mesh.color( 0f, 0f, 0f, 1 );
 						border_mesh.vertex( block_width * (i+1), block_height * (j+1) , line_depth );
                         polynomio.setBorder(border_mesh);
+                        polynomio.isRendered = true;
 					}
 					if(j-1 >= 0 && objects[i][j-1] != objects[i][j]){
 						Mesh border_mesh = new Mesh(gl, 2, true, false, false);
@@ -103,6 +106,7 @@ public class Renderer3D extends Renderer {
 						border_mesh.color( 0.4f, 0.4f, 0.4f, 1 );
 						border_mesh.vertex( block_width * (i+1), block_height * j , line_depth );
                         polynomio.setBorder(border_mesh);
+                        polynomio.isRendered = true;
 					}
 				}
 			}
@@ -219,52 +223,61 @@ public class Renderer3D extends Renderer {
 					gl.glColor4f(1, 1, 1, 1);
 				}
 				if(objects[i][j] instanceof Polynomino) {
-                    Polynomino polynomio = (Polynomino) objects[i][j];
-                    if (polynomio.isMovingRight) {
-                        polynomio.pixel_position.x += (i - polynomio.blocks.get(polynomio.blocks.size() - 1).block_position.x) * block_width;
-                        polynomio.border_pixel_position.x += (i - polynomio.blocks.get(polynomio.blocks.size() - 1).block_position.x) * block_width;
-                        polynomio.isMovingRight = false;
-                    } else if (polynomio.isMovingLeft) {
-                        polynomio.pixel_position.x += (i - polynomio.blocks.get(0).block_position.x) * block_width;
-                        polynomio.border_pixel_position.x += (i - polynomio.blocks.get(0).block_position.x) * block_width;
-                        polynomio.isMovingLeft = false;
-                    } else if (polynomio.isMovingUp) {
-                        polynomio.pixel_position.y += (j - polynomio.blocks.get(polynomio.blocks.size() - 1).block_position.y) * block_height;
-                        polynomio.border_pixel_position.y += (j - polynomio.blocks.get(polynomio.blocks.size() - 1).block_position.y) * block_height;
-                        polynomio.isMovingUp = false;
-                    } else if (polynomio.isMovingDown) {
-                        polynomio.pixel_position.y += (j - polynomio.blocks.get(0).block_position.y) * block_height;
-                        polynomio.border_pixel_position.y += (j - polynomio.blocks.get(0).block_position.y) * block_height;
-                        polynomio.isMovingDown = false;
+                    Polynomino polynomino = (Polynomino) objects[i][j];
+                    if (polynomino.isMovingRight) {
+                        polynomino.pixel_position.x += (i - polynomino.blocks.get(polynomino.blocks.size() - 1).block_position.x) * block_width;
+                        if (!polynomino.isRendered) {
+                            polynomino.border_pixel_position.x += (i - polynomino.blocks.get(polynomino.blocks.size() - 1).block_position.x) * block_width;
+                        }
+                        polynomino.isMovingRight = false;
+                    } else if (polynomino.isMovingLeft) {
+                        polynomino.pixel_position.x += (i - polynomino.blocks.get(0).block_position.x) * block_width;
+                        if (!polynomino.isRendered) {
+                            polynomino.border_pixel_position.x += (i - polynomino.blocks.get(0).block_position.x) * block_width;
+                        }
+                        polynomino.isMovingLeft = false;
+                    } else if (polynomino.isMovingUp) {
+                        polynomino.pixel_position.y += (j - polynomino.blocks.get(polynomino.blocks.size() - 1).block_position.y) * block_height;
+                        if (!polynomino.isRendered) {
+                            polynomino.border_pixel_position.y += (j - polynomino.blocks.get(polynomino.blocks.size() - 1).block_position.y) * block_height;
+                        }
+                        polynomino.isMovingUp = false;
+                    } else if (polynomino.isMovingDown) {
+                        polynomino.pixel_position.y += (j - polynomino.blocks.get(0).block_position.y) * block_height;
+                        if (!polynomino.isRendered) {
+                            polynomino.border_pixel_position.y += (j - polynomino.blocks.get(0).block_position.y) * block_height;
+                        }
+                        polynomino.isMovingDown = false;
                     } else {
-                        polynomio.pixel_position.x = i * block_width;
-                        polynomio.pixel_position.y = j * block_height;
+                        polynomino.pixel_position.x = i * block_width;
+                        polynomino.pixel_position.y = j * block_height;
                     }
-                    if (polynomio.isLocked || polynomio.allLocked) {
+                    if (polynomino.isLocked || polynomino.allLocked) {
                         gl.glColor4f(objects[i][j].colors[0] / 2.5f, objects[i][j].colors[1] / 2.5f, objects[i][j].colors[2] / 2.5f, 0.5f);
-                        blockRenderer(gl, polynomio, polynomio.pixel_position.x, polynomio.pixel_position.y, polynomio.pixel_position.z);
+                        blockRenderer(gl, polynomino, polynomino.pixel_position.x, polynomino.pixel_position.y, polynomino.pixel_position.z);
                         gl.glColor4f(1, 1, 1, 1);
-                        if (!polynomio.isRendered) {
-                            for (Mesh mesh : polynomio.border_list) {
+                        if(!polynomino.isRendered) {
+                            for (Mesh mesh : polynomino.border_list) {
+                                Log.d("test",polynomino.border_pixel_position.x + "," + polynomino.border_pixel_position.y);
                                 gl.glPushMatrix();
-                                gl.glTranslatef(polynomio.border_pixel_position.x, polynomio.border_pixel_position.y, 0);
+                                gl.glTranslatef(polynomino.border_pixel_position.x, polynomino.border_pixel_position.y, 0);
                                 mesh.render(PrimitiveType.Lines);
                                 gl.glPopMatrix();
                             }
-                            polynomio.isRendered = true;
+                            polynomino.isRendered = true;
                         }
                     } else {
                         gl.glColor4f(objects[i][j].colors[0], objects[i][j].colors[1], objects[i][j].colors[2], 0.5f);
-                        blockRenderer(gl, polynomio, polynomio.pixel_position.x, polynomio.pixel_position.y, polynomio.pixel_position.z);
+                        blockRenderer(gl, polynomino, polynomino.pixel_position.x, polynomino.pixel_position.y, polynomino.pixel_position.z);
                         gl.glColor4f(1, 1, 1, 1);
-                        if (!polynomio.isRendered) {
-                            for (Mesh mesh : polynomio.border_list) {
+                        if (!polynomino.isRendered) {
+                            for (Mesh mesh : polynomino.border_list) {
                                 gl.glPushMatrix();
-                                gl.glTranslatef(polynomio.border_pixel_position.x, polynomio.border_pixel_position.y, 0);
+                                gl.glTranslatef(polynomino.border_pixel_position.x, polynomino.border_pixel_position.y, 0);
                                 mesh.render(PrimitiveType.Lines);
                                 gl.glPopMatrix();
                             }
-                            polynomio.isRendered = true;
+                            polynomino.isRendered = true;
                         }
                     }
                 }
