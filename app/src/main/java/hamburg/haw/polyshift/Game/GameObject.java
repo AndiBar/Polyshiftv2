@@ -19,6 +19,7 @@ public class GameObject{
 	boolean isPlayerOne;
     private Mesh mesh;
     public ArrayList<Mesh> border_list = new ArrayList<Mesh>();
+    public ArrayList<Vector> border_pixel_list = new ArrayList<Vector>();
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;
@@ -30,6 +31,10 @@ public class GameObject{
 
     public void setBorder(Mesh mesh){
         this.border_list.add(mesh);
+    }
+
+    public void setBorderPixel(Vector vector){
+        this.border_pixel_list.add(vector);
     }
 
 }

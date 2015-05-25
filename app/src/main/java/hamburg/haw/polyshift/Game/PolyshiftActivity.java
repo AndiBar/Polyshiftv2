@@ -3,6 +3,7 @@ package hamburg.haw.polyshift.Game;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -224,7 +225,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(response.equals("error")){
+        if(response.equals("error") || response.split(":").length == 1){
             Log.d("crashed","crashed");
             MainMenuActivity.setCrashed();
             final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);

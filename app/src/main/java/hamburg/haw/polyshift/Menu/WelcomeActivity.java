@@ -53,7 +53,7 @@ public class WelcomeActivity extends Activity {
     HttpResponse response;
     HttpClient httpclient;
     List<NameValuePair> nameValuePairs;
-    protected static ProgressDialog dialog = null;
+    public static ProgressDialog dialog = null;
     private static Context context;
     private LoginAdapter loginAdapter;
 

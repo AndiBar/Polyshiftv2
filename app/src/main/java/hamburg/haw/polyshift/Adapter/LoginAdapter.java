@@ -1,6 +1,7 @@
 package hamburg.haw.polyshift.Adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +25,6 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
  * Created by Nicolas on 16.05.2015.
  */
 public class LoginAdapter{
-    protected static ProgressDialog dialog = null;
 
     static private String encryptedPassword;
     static private String username;
@@ -107,10 +107,10 @@ public class LoginAdapter{
                 activity.finish();
             }
         }else if(response.equalsIgnoreCase("No Such User Found")){
-            dialog.dismiss();
+            if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(activity, "Login Error", "User not found or password incorrect.");
         }else{
-            dialog.dismiss();
+            if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(activity, "Login Error", "Connection Error.");
         }
     }
@@ -144,10 +144,10 @@ public class LoginAdapter{
             newActivity.startActivity(intent);
             newActivity.finish();
         }else if(response.equalsIgnoreCase("No Such User Found")){
-            dialog.dismiss();
+            if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(newActivity, "Login Error", "User not found or password incorrect.");
         }else{
-            dialog.dismiss();
+            if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(newActivity, "Login Error", "Connection Error.");
         }
 
