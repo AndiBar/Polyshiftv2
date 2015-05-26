@@ -166,7 +166,7 @@ public class GamesAttendingActivity extends ListActivity {
                     }
                 }
                 response = PHPConnector.doRequest(nameValuePairs, "accept_game.php");
-               GameSync.SendChangeNotification(opponentId,opponentName + " hat deine Herausforderung angenommen");
+               GameSync.SendChangeNotification(opponentId,opponentName + " hat deine Herausforderung angenommen","");
             }
         }
     }

@@ -114,17 +114,19 @@ public class GameSync {
         return colors.get(randomColor);
     }
 
-    public static void SendChangeNotification(final String receiverUserId,final String msg) {
+    public static void SendChangeNotification(final String receiverUserId,final String msg,final String notificationGameID) {
         class ChangeNotificationThread extends Thread {
             public void run() {
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
                 nameValuePairs.add(new BasicNameValuePair("userid",receiverUserId));
                 nameValuePairs.add(new BasicNameValuePair("msg",msg));
+                nameValuePairs.add(new BasicNameValuePair("game_id",notificationGameID));
                 PHPConnector.doRequest(nameValuePairs,"gcmpush.php");
             }
         }
         Log.i("GCM", "...gesendet an " + receiverUserId);
         Log.i("GCM", "Nachricht: " + msg);
+        Log.i("GCM", "Game_ID: " + notificationGameID);
         Thread send_change_notification = new ChangeNotificationThread();
         send_change_notification.start();
         try {

@@ -50,6 +50,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private Thread game_status_thread = new GameStatusThread();
     private String notificationReceiver = "";
     private String notificationMessage = "";
+    private String notificationGameID =  "";
     private Context context;
     private LoginAdapter loginAdapter;
     private boolean onBackPressed = false;
@@ -149,7 +150,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
             simulation.update(activity);
-            gameLoop.update(simulation,notificationReceiver,notificationMessage);
+            gameLoop.update(simulation,notificationReceiver,notificationMessage,notificationGameID);
 
             if(gameLoop.RoundFinished && simulation.winner == null && !onBackPressed) {
                 if (System.nanoTime() - start > 1000000000){
@@ -245,6 +246,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             game_status.put("user_id", game[8].split("=")[1]);
             game_status.put("my_user_name", game[9].split("=")[1]);
         }
+        notificationGameID = game_status.get("game_id");
         return game_status;
     }
     public void updateGame(final GameActivity game_activity, final GL10 game_gl){
