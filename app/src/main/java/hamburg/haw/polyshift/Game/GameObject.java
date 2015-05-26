@@ -20,6 +20,7 @@ public class GameObject{
     private Mesh mesh;
     public ArrayList<Mesh> border_list = new ArrayList<Mesh>();
     public ArrayList<Vector> border_pixel_list = new ArrayList<Vector>();
+    public int loop_count = 0;
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;

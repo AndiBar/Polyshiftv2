@@ -184,11 +184,6 @@ public class ChooseOpponentActivity extends ListActivity {
                     data_map.put("title", data_array[1]);
                     friends_list.add(data_map);
                 }
-            }else{
-                HashMap<String, String>data_map = new HashMap<String, String>();
-                data_map.put("ID", "0");
-                data_map.put("title", "Du hast noch keine Gegner");
-                friends_list.add(data_map);
             }
 
             stringResponse = PHPConnector.doRequest("get_opponents_attending.php");

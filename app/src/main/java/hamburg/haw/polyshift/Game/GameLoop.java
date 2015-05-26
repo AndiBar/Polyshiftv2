@@ -51,7 +51,7 @@ public class GameLoop{
                     updateGameStatus();
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
-                    String msg = opponentName + " hat einen Zug gemacht";
+                    String msg = opponentName + " hat einen Spielzug gemacht";
                     GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
                 }
             }
@@ -75,7 +75,7 @@ public class GameLoop{
                     Log.i("GCM", "aufruf sendnotification round finished player two");
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
-                    String msg = opponentName + " hat einen Zug gemacht";
+                    String msg = opponentName + " hat einen Spielzug gemacht";
                     GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
                 }
             }

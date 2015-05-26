@@ -105,7 +105,7 @@ public class SignupActivity extends Activity {
                 });
                 final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
                 final String newGCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
-                LoginAdapter.newUserLogin(editUsername.getText().toString().trim(), editPassword.getText().toString().trim(), this,newGCMregId);
+                LoginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), this,newGCMregId);
                 this.finish();
             }else if(response.equalsIgnoreCase("Error: Username already exists.")){
                 AlertDialogs.showAlert(this, "Fehler", "Der Benutzername ist bereits vergeben.");

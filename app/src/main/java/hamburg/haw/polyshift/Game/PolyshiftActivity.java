@@ -169,26 +169,54 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
                         if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                            startActivity(intent);
+                                            PolyshiftActivity.this.finish();
+                                            dialog.cancel();
+                                        }
+                                    });
                         }
                         else if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
                             builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                            startActivity(intent);
+                                            PolyshiftActivity.this.finish();
+                                            dialog.cancel();
+                                            deleteGame();
+                                        }
+                                    });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                            startActivity(intent);
+                                            PolyshiftActivity.this.finish();
+                                            dialog.cancel();
+                                        }
+                                    });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
                             builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                            startActivity(intent);
+                                            PolyshiftActivity.this.finish();
+                                            dialog.cancel();
+                                            deleteGame();
+                                        }
+                                    });
                         }
-                        builder.setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
-                                        startActivity(intent);
-                                        PolyshiftActivity.this.finish();
-                                        dialog.cancel();
-                                        deleteGame();
-                                    }
-                                });
                         builder.show();
                     }
                 });
