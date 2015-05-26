@@ -84,7 +84,7 @@ public class Renderer3D extends Renderer {
 						border_mesh.color( 0f, 0f, 0f, 1 );
                         border_mesh.vertex( 0, block_height , line_depth );
                         polynomio.setBorder(border_mesh);
-                        polynomio.setBorderPixel(new Vector(block_width * (i+1), block_height * j, line_depth));
+                        polynomio.setBorderPixel(new Vector(block_width * (i + 1), block_height * j, line_depth));
                         polynomio.isRendered = true;
 					}
 					if(i-1 >= 0 && objects[i-1][j] != objects[i][j]){

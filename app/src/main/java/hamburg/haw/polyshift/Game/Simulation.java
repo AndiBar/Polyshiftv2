@@ -400,8 +400,10 @@ public class Simulation implements Serializable{
                     if (!objects[i][j].isLocked  && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))) {
                         if (objects[i][j].isPlayerOne) {
                             player.isLockedIn = true;
+                            lastMovedObject = player;
                         } else if (!objects[i][j].isPlayerOne) {
                             player2.isLockedIn = true;
+                            lastMovedObject = player2;
                         }
                     } else if (lastMovedObject != null && objects[i][j] == lastMovedObject) {
                         if (!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown) {

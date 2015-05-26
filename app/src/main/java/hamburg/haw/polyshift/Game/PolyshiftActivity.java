@@ -153,9 +153,9 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
             if(gameLoop.RoundFinished && simulation.winner == null && !onBackPressed) {
                 if (System.nanoTime() - start > 1000000000){
-                    game_status = getGameStatus();
                     updateGame(activity, gl);
                     statusDownloaded = true;
+                    game_status = getGameStatus();
                     start = System.nanoTime();
                 }
             }
@@ -225,11 +225,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(response.equals("error") || response.split(":").length == 1){
+        if(response.equals("error") || response.split(":").length == 1 || response == null){
             Log.d("crashed","crashed");
             MainMenuActivity.setCrashed();
             final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
             startActivity(intent);
+            PolyshiftActivity.this.finish();
         }
         else {
             String[] game = response.split(":");

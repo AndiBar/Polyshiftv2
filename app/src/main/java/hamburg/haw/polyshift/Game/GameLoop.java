@@ -47,8 +47,8 @@ public class GameLoop{
                         simulation.player2.isLocked = false;
                     }
                     simulation.player.isLockedIn = false;
-                    updateGameStatus();
                     GameSync.uploadSimulation(simulation);
+                    updateGameStatus();
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
                     String msg = opponentName + " hat einen Zug gemacht";
@@ -70,8 +70,8 @@ public class GameLoop{
                         simulation.player.isLocked = false;
                     }
                     simulation.player2.isLockedIn = false;
-                    updateGameStatus();
                     GameSync.uploadSimulation(simulation);
+                    updateGameStatus();
                     Log.i("GCM", "aufruf sendnotification round finished player two");
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
