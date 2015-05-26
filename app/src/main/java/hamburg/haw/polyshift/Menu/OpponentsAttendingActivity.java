@@ -185,7 +185,7 @@ public class OpponentsAttendingActivity extends ListActivity {
                 Log.d("user",user);
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("opponent", user));
-                GameSync.SendChangeNotification(user,"Sie wurden hinzugefügt, fordern?");
+                GameSync.SendChangeNotification(user,"Sie wurden hinzugefügt, fordern?","");
                 response = PHPConnector.doRequest(nameValuePairs, "accept_opponent.php");
             }
         }

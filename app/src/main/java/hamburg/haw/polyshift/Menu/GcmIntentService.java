@@ -39,6 +39,7 @@ public class GcmIntentService extends IntentService {
         Bundle extras = intent.getExtras();
         String message = extras.getString("message");
         String title = extras.getString("title");
+        String gameID = extras.getString("game_id");
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
@@ -60,6 +61,7 @@ public class GcmIntentService extends IntentService {
                 sendNotification(message, title);
                 Log.i(TAG, "Received: " + message);
                 Log.i(TAG, "title: " + message);
+                Log.i(TAG, "Game_ID" + gameID);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.

@@ -32,7 +32,7 @@ public class GameLoop{
         updateGameStatus();
     }
 
-    public void update(Simulation simulation, final String opponentID,final String opponentName){
+    public void update(Simulation simulation, final String opponentID,final String opponentName,final String notificationGameID){
         if(PlayerOnesTurn){
             simulation.player2.isLocked = true;
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
@@ -52,7 +52,7 @@ public class GameLoop{
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
                     String msg = opponentName + " hat einen Zug gemacht";
-                    GameSync.SendChangeNotification(opponentID,msg);
+                    GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
                 }
             }
         }
@@ -76,7 +76,7 @@ public class GameLoop{
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
                     String msg = opponentName + " hat einen Zug gemacht";
-                    GameSync.SendChangeNotification(opponentID,msg);
+                    GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
                 }
             }
         }

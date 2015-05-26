@@ -65,7 +65,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     public void run() {
                                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                                         nameValuePairs.add(new BasicNameValuePair("opponent_id", data.get(position).get("ID")));
-                                        GameSync.SendChangeNotification(data.get(position).get("ID"),"Sie wurden herausgefordert!");
+                                        GameSync.SendChangeNotification(data.get(position).get("ID"),"Sie wurden herausgefordert!","");
                                         response = PHPConnector.doRequest(nameValuePairs, "add_game.php");
                                     }
                                 });
