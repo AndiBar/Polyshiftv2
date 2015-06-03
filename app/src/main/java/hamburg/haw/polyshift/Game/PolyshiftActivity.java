@@ -3,7 +3,6 @@ package hamburg.haw.polyshift.Game;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,14 +15,12 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
-import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Menu.MyGamesActivity;
-import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
 import java.util.ArrayList;
@@ -168,6 +165,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
                         if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
+                            updateScores(game_status.get("user_id"), true);
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -180,6 +178,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
+                            updateScores(game_status.get("opponent_id"), false);
                             builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -193,6 +192,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
+                            updateScores(game_status.get("opponent_id"), true);
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -205,6 +205,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
+                            updateScores(game_status.get("user_id"), false);
                             builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -360,6 +361,19 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    public void updateScores(final String user_id, final boolean isWinner){
+        class UpdateScoresThread extends Thread{
+            public void run(){
+                String winnerString = isWinner ? "true" : "false";
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                nameValuePairs.add(new BasicNameValuePair("user_id",user_id));
+                nameValuePairs.add(new BasicNameValuePair("winnerString",winnerString));
+                PHPConnector.doRequest(nameValuePairs,"update_scores.php");
+            }
+        }
+        Thread update_scores_thread = new UpdateScoresThread();
+        update_scores_thread.start();
     }
 
 
