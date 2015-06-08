@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F7F3DE">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="55sp">
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="55sp"
+            android:text="Spieler"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:gravity="center_vertical|left"
+            android:layout_weight="0.4"
+            android:paddingLeft="10sp"
+            android:textStyle="bold"
+            android:id="@+id/username_text" />
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="55sp"
+            android:text="Siege"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:gravity="center_vertical|left"
+            android:layout_weight="0.2"
+            android:textStyle="bold"
+            android:id="@+id/win_text" />
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="55sp"
+            android:text="Niederl."
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:gravity="center_vertical|left"
+            android:layout_weight="0.2"
+            android:textStyle="bold"
+            android:id="@+id/loss_text" />
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="55sp"
+            android:text="Punkte"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:gravity="center_vertical|left"
+            android:layout_weight="0.2"
+            android:paddingRight="10sp"
+            android:textStyle="bold"
+            android:id="@+id/status_text" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <ListView
+        android:id="@id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:background="#F7F3DE"
+        android:drawSelectorOnTop="false" >
+
+    </ListView>
+
+</LinearLayout>
+

@@ -165,7 +165,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
                         if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
-                            updateScores(game_status.get("user_id"), true);
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -178,11 +177,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
-                            updateScores(game_status.get("opponent_id"), false);
                             builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
+                                            updateScores(game_status.get("opponent_id"), false);
+                                            updateScores(game_status.get("user_id"), true);
                                             final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
@@ -192,7 +192,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
-                            updateScores(game_status.get("opponent_id"), true);
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -205,11 +204,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                     });
                         }
                         else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
-                            updateScores(game_status.get("user_id"), false);
                             builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
+                                            updateScores(game_status.get("user_id"), false);
+                                            updateScores(game_status.get("opponent_id"), true);
                                             final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();

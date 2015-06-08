@@ -21,6 +21,7 @@ public class MainMenuActivity extends Activity {
 
     Button newGameButton;
     Button myGamesButton;
+    Button scoresButton;
     Button logoutButton;
     Button quitGameButton;
     private static boolean crashed = false;
@@ -44,6 +45,7 @@ public class MainMenuActivity extends Activity {
 
         newGameButton = (Button)findViewById(R.id.new_game_button);
         myGamesButton = (Button)findViewById(R.id.my_games_button);
+        scoresButton = (Button)findViewById(R.id.scores_button);
         logoutButton = (Button)findViewById(R.id.logout_button);
         quitGameButton = (Button)findViewById(R.id.quit_game_button);
 
@@ -60,6 +62,15 @@ public class MainMenuActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MyGamesActivity.class);
+                startActivity(intent);
+                MainMenuActivity.this.finish();
+            }
+        });
+
+        scoresButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ScoresActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
             }

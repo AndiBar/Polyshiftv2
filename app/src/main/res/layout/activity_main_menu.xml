@@ -66,6 +66,13 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="Bestenliste"
+                    android:id="@+id/scores_button"
+                    android:layout_gravity="center_horizontal" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="Abmelden"
                     android:id="@+id/logout_button"
                     android:layout_gravity="center_horizontal" />

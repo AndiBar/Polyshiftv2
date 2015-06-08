@@ -58,12 +58,12 @@ public class MyGamesActivity extends ListActivity {
 
         Toast.makeText(activity,"Zum Starten auf ein Spiel klicken.", Toast.LENGTH_SHORT).show();
 
-        Thread friends_thread = new GamesThread();
-        friends_thread.start();
+        Thread scores_thread = new GamesThread();
+        scores_thread.start();
         try {
             long waitMillis = 10000;
-            while (friends_thread.isAlive()) {
-                friends_thread.join(waitMillis);
+            while (scores_thread.isAlive()) {
+                scores_thread.join(waitMillis);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -80,16 +80,6 @@ public class MyGamesActivity extends ListActivity {
         //listView.setClickable(true);
         listView.setFocusableInTouchMode(false);
         listView.setFocusable(false);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*SaveValue.setSelectedFriendName(friends_list.get(position).get("title"));
-                Log.i("ContactsFragment", "Friend: " + friends_list.get(position).get("title"));
-                Fragment fragment = new ContactsDetailFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();*/
-            }
-        });
     }
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
