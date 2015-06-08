@@ -46,8 +46,12 @@ public class ScoresAdapter extends SimpleAdapter {
         }
         if(!data.isEmpty()) {
 
+            final TextView position_view = (TextView) convertView.findViewById(R.id.position);
+            position_view.setText(position + 1 + ". ");
+
             final TextView username_view = (TextView) convertView.findViewById(R.id.username);
-            username_view.setText(position + 1 + ". " + data.get(position).get("username"));
+            username_view.setText(
+                    data.get(position).get("username"));
 
             final TextView win_view = (TextView) convertView.findViewById(R.id.win);
             win_view.setText(data.get(position).get("win"));
