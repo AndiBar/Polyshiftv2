@@ -290,8 +290,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                             item.setTitle("Bewege einen Spielstein.");
                         }else if (simulation.lastMovedObject instanceof Polynomino) {
                             item.setTitle("Bewege deinen Spieler.");
-                        }else{
-                            item.setTitle("");
                         }
                     }
                     setTitle("Du bist dran!");
@@ -346,8 +344,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                             item.setTitle("Bewege einen Spielstein.");
                         }else if (simulation.lastMovedObject instanceof Polynomino) {
                             item.setTitle("Bewege deinen Spieler.");
-                        }else{
-                            item.setTitle("");
                         }
                     }
                     setTitle("Du bist dran!");
