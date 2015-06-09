@@ -412,9 +412,9 @@ public class Simulation implements Serializable{
                             } else if (!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X) {
                                 setWinner((Player) objects[i][j]);
                             } else if ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN))) {
-                                if (j + 1 < objects[0].length && objects[i][j + 1] instanceof Player) {
+                                if (j + 1 < objects[0].length && objects[i][j + 1] instanceof Player && !predictCollision(i, j + 1, UP)) {
                                     movePlayer(i, j + 1, UP);
-                                } else if (j - 1 >= 0 && objects[i][j - 1] instanceof Player) {
+                                } else if (j - 1 >= 0 && objects[i][j - 1] instanceof Player && !predictCollision(i, j - 1, DOWN)) {
                                     movePlayer(i, j - 1, DOWN);
                                 } else if (!predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT)) {
                                     movePlayer(i, j, RIGHT);
@@ -422,9 +422,9 @@ public class Simulation implements Serializable{
                                     movePlayer(i, j, LEFT);
                                 }
                             } else if ((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT))) {
-                                if (i + 1 < objects.length && objects[i + 1][j] instanceof Player) {
+                                if (i + 1 < objects.length && objects[i + 1][j] instanceof Player && !predictCollision(i + 1, j, RIGHT)){
                                     movePlayer(i + 1, j, RIGHT);
-                                } else if (i - 1 >= 0 && objects[i - 1][j] instanceof Player) {
+                                } else if (i - 1 >= 0 && objects[i - 1][j] instanceof Player && !predictCollision(i - 1, j, LEFT)) {
                                     movePlayer(i - 1, j, LEFT);
                                 } else if (!predictCollision(i, j, UP) && predictCollision(i, j, DOWN)) {
                                     movePlayer(i, j, UP);

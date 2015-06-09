@@ -374,6 +374,14 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         }
         Thread update_scores_thread = new UpdateScoresThread();
         update_scores_thread.start();
+        try {
+            long waitMillis = 10000;
+            while (update_scores_thread.isAlive()) {
+                update_scores_thread.join(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
