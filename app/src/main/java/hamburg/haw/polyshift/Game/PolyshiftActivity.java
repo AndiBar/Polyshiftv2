@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -99,7 +100,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_status, menu);
         this.menu = menu;
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
         onBackPressed = true;
@@ -157,7 +158,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     start = System.nanoTime();
                 }
             }
-
 
             if(simulation.hasWinner && !winnerIsAnnounced){
                 runOnUiThread(new Runnable() {
@@ -284,6 +284,16 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if(menu != null) {
+                        MenuItem item = menu.findItem(R.id.action_game_status);
+                        if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
+                            item.setTitle("Bewege einen Spielstein.");
+                        }else if (simulation.lastMovedObject instanceof Polynomino) {
+                            item.setTitle("Bewege deinen Spieler.");
+                        }else{
+                            item.setTitle("");
+                        }
+                    }
                     setTitle("Du bist dran!");
                 }
             });
@@ -292,7 +302,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 Log.d("download", "court is being downloaded");
                 simulation = GameSync.downloadSimulation();
                 simulation.allLocked = false;
-                //simulation.player.isLocked = true;
                 renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
                 renderer.enableCoordinates(game_gl, simulation.objects);
                 downloaded = true;
@@ -301,7 +310,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             }
         } else if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no")) { // my turn & not my game
             gameLoop.PlayerOnesTurn = true;
-            //simulation = GameSync.downloadSimulation();
             simulation.allLocked = true;
             downloaded = false;
             notificationReceiver = game_status.get("user_id");
@@ -309,12 +317,13 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    MenuItem item = menu.findItem(R.id.action_game_status);
+                    item.setTitle("");
                     setTitle(game_status.get("challenger_name") + " ist dran.");
                 }
             });
         } else if (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) { //  not my turn & my game
             gameLoop.PlayerOnesTurn = false;
-            //simulation = GameSync.downloadSimulation();
             simulation.allLocked = true;
             downloaded = false;
             notificationReceiver = game_status.get("opponent_id");
@@ -322,6 +331,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    MenuItem item = menu.findItem(R.id.action_game_status);
+                    item.setTitle("");
                     setTitle(game_status.get("opponent_name") + " ist dran.");
                 }
             });
@@ -329,6 +340,16 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if(menu != null) {
+                        MenuItem item = menu.findItem(R.id.action_game_status);
+                        if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
+                            item.setTitle("Bewege einen Spielstein.");
+                        }else if (simulation.lastMovedObject instanceof Polynomino) {
+                            item.setTitle("Bewege deinen Spieler.");
+                        }else{
+                            item.setTitle("");
+                        }
+                    }
                     setTitle("Du bist dran!");
                 }
             });
