@@ -7,13 +7,19 @@ import javax.microedition.khronos.opengles.GL10;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class GameActivity extends Activity implements GLSurfaceView.Renderer, OnTouchListener {
+import com.google.android.gms.games.Game;
+
+public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 	
 	private GLSurfaceView glsv;
 	private int x;
@@ -21,14 +27,12 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer, On
 	private float deltaTime;
 	private long lastFrameStart;
 	private GameListener gameListener;
-	private int touchX;
-	private int touchY;
-	private int touchedX;
-	private int touchedY;
-	private boolean isTouched;
-	public boolean isSwiped;
+	private float touchedX;
+	private float touchedY;
+    public String swipedDirection;
 	private int width;
 	private int height;
+    private GestureDetectorCompat mDetector;
 
 	public int getX() {
 		return x;
@@ -49,10 +53,12 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer, On
 		glsv = new GLSurfaceView(this);
 		
 		glsv.setRenderer( this );
-		
-		glsv.setOnTouchListener(this);
-		
+
 		setContentView(glsv);
+
+        swipedDirection = null;
+
+        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
 	}
 
 	@Override
@@ -82,33 +88,40 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer, On
 		}
 	}
 
-	@Override
-	
-	public boolean onTouch(View v, MotionEvent event) {
-		if( event.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			touchedX = (int)event.getX();
-			touchedY = (int)event.getY();
-			isTouched = true;
-			isSwiped = false;
-		}
 
-		else if( event.getAction() == MotionEvent.ACTION_UP ){
-			touchX = (int)event.getX();
-			touchY = (int)event.getY();
-			isTouched = false;
-			isSwiped = true;
-		}
-		try
-		{
-			Thread.sleep( 30 );
-		}
-		catch( Exception ex )
-		{
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        this.mDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
 
-		}			
-		return true;
-	}
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            touchedX = e1.getX();
+            touchedY = e1.getY();
+            float sensitvity_x = 50;
+            float sensitvity_y = 50;
+            Log.d("test","x: " + e1.getX());
+            Log.d("test","x: " + e2.getX());
+
+            // TODO Auto-generated method stub
+            if ((e1.getX() - e2.getX()) > sensitvity_x) {
+                swipedDirection = Simulation.LEFT;
+            } else if ((e2.getX() - e1.getX()) > sensitvity_x) {
+                swipedDirection = Simulation.RIGHT;
+            } else if ((e1.getY() - e2.getY()) > sensitvity_y) {
+                swipedDirection = Simulation.UP;
+            } else if ((e2.getY() - e1.getY()) > sensitvity_y) {
+                swipedDirection = Simulation.DOWN;
+            } else {
+                swipedDirection = null;
+            }
+            Log.d("test","dir: " + swipedDirection);
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+    };
 
 	@Override
 	protected void onPause() {
@@ -124,32 +137,14 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer, On
 	protected void onResume() {
 		super.onResume();
 		//glsv.onResume();		
-	}		
-	
-	public int getTouchX() {
-		return touchX;
-	}
-
-	public int getTouchY() {
-		return touchY;
 	}
 	
-	public int getTouchedX() {
+	public float getTouchedX() {
 		return touchedX;
 	}
 	
-	public int getTouchedY() {
+	public float getTouchedY() {
 		return touchedY;
-	}
-	
-	public boolean isTouched( )
-	{
-		return isTouched;
-	}
-	
-	public boolean isSwiped( )
-	{
-		return isSwiped;
 	}
 	
 	public int getViewportWidth( )

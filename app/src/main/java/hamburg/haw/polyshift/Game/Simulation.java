@@ -1,6 +1,8 @@
 package hamburg.haw.polyshift.Game;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Window;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -147,7 +149,7 @@ public class Simulation implements Serializable{
     }
 
     public void getTouch(GameActivity activity){
-        if(activity.isSwiped()){
+        /*if(activity.isSwiped()){
             int x = Math.round(activity.getTouchX() / (activity.getViewportWidth() / objects.length));
             int y = Math.round(objects[0].length - (activity.getTouchY() / (activity.getViewportHeight() / objects[0].length)) - 1);
             int touchedX = Math.round(activity.getTouchedX() / (activity.getViewportWidth() / objects.length));
@@ -186,6 +188,55 @@ public class Simulation implements Serializable{
                     movePlayer(touchedX, touchedY, DOWN);
                 }
                 if(touchedY <= PLAYGROUND_MAX_Y && objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
+                    movePolynomio(touchedX, touchedY, DOWN);
+                }
+            }
+        }*/
+        if(activity.swipedDirection != null){
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            float display_x = metrics.widthPixels;
+            float display_y = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getHeight();
+
+            int touchedX = Math.round(activity.getTouchedX() / (display_x / objects.length));
+            int touchedY = Math.round(objects[0].length - ((activity.getTouchedY() / (display_y / objects[0].length)) - 1));
+
+            Log.d("test","x: " + touchedX);
+            Log.d("test","y: " + touchedY);
+
+            if(activity.swipedDirection.equals(Simulation.RIGHT)){
+                activity.swipedDirection = null;
+                if(objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
+                    movePlayer(touchedX, touchedY, RIGHT);
+                }
+                if(objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
+                    movePolynomio(touchedX, touchedY, RIGHT);
+                }
+            }
+            else if(activity.swipedDirection.equals(Simulation.LEFT)){
+                activity.swipedDirection = null;
+                if(objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
+                    movePlayer(touchedX, touchedY, LEFT);
+                }
+                if(objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
+                    movePolynomio(touchedX, touchedY, LEFT);
+                }
+            }
+            else if(activity.swipedDirection.equals(Simulation.UP)){
+                activity.swipedDirection = null;
+                if(objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
+                    movePlayer(touchedX, touchedY, UP);
+                }
+                if(objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
+                    movePolynomio(touchedX, touchedY, UP);
+                }
+            }
+            else if(activity.swipedDirection.equals(Simulation.DOWN)){
+                activity.swipedDirection = null;
+                if(objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
+                    movePlayer(touchedX, touchedY, DOWN);
+                }
+                if(objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
                     movePolynomio(touchedX, touchedY, DOWN);
                 }
             }

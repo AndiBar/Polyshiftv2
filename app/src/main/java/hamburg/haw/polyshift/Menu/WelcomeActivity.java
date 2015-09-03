@@ -55,6 +55,7 @@ public class WelcomeActivity extends Activity {
     List<NameValuePair> nameValuePairs;
     public static ProgressDialog dialog = null;
     private static Context context;
+    private static Activity activity;
     private LoginAdapter loginAdapter;
 
     public static final String EXTRA_MESSAGE = "message";
@@ -88,6 +89,7 @@ public class WelcomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		context=getApplicationContext();
+        activity=this;
         this.loginAdapter = new LoginAdapter(context,WelcomeActivity.this);
 		setTheme(android.R.style.Theme_Holo_NoActionBar);
 		setContentView(R.layout.activity_welcome);
@@ -108,7 +110,7 @@ public class WelcomeActivity extends Activity {
             final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
             final String password = HandleSharedPreferences.getUserCredentials(context,"password");
             if(!(username.equals("")) && (!(password.equals("")))){
-                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft...", true);
+                dialog = ProgressDialog.show(activity, "","Login läuft...", true);
                 Log.i("Autologin", "Login läuft..."+ username +" "+password);
                 new Thread(
                         new Runnable(){

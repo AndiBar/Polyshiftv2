@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
@@ -68,6 +69,8 @@ public class MyGamesActivity extends ListActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        Collections.sort(games_list, new GameComparator());
 
         mAdapter = new MyGamesAdapter(this,
                 games_list,
@@ -165,16 +168,17 @@ public class MyGamesActivity extends ListActivity {
             String[] data_unformatted = stringResponse.split(",");
             games_list = new ArrayList<HashMap<String,String>>();
             if(!stringResponse.equals("no games found")) {
-                if(!(stringResponse.split(":").length == 1)) {
+                if(!(stringResponse.split(";").length == 1)) {
                     for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
-                        String[] data_array = item.split(":");
+                        String[] data_array = item.split(";");
                         data_map.put("game_id", data_array[0]);
                         data_map.put("opponent_id", data_array[1].split("=")[1]);
                         data_map.put("opponent_name", data_array[2].split("=")[1]);
                         data_map.put("game_accepted", data_array[3].split("=")[1]);
                         data_map.put("opponents_turn", data_array[4].split("=")[1]);
                         data_map.put("my_game", data_array[5].split("=")[1]);
+                        data_map.put("timestamp", data_array[6].split("=")[1]);
                         Log.d("Map", data_map.toString());
                         games_list.add(data_map);
                     }

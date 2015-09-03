@@ -17,10 +17,12 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MyGamesAdapter extends SimpleAdapter {
     private LayoutInflater inflater;
@@ -55,15 +57,36 @@ public class MyGamesAdapter extends SimpleAdapter {
             } else if ((data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("yes")) || (data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("no"))) {
                 status_view.setText("Du bist dran!");
             } else {
-                status_view.setText(data.get(position).get("opponent_name") + " ist an der Reihe.");
+                status_view.setText(data.get(position).get("opponent_name") + " ist dran.");
             }
-            status_view.setOnClickListener(new View.OnClickListener() {
+
+            final TextView time_view = (TextView) convertView.findViewById(R.id.time);
+            java.util.Date date= new java.util.Date();
+            Timestamp current_time = new Timestamp(date.getTime());
+            Timestamp round_time = Timestamp.valueOf(data.get(position).get("timestamp"));
+            long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(round_time.getTime());
+            long diff_min = (TimeUnit.MILLISECONDS.toMinutes(current_time.getTime()) - TimeUnit.MILLISECONDS.toMinutes(round_time.getTime()));
+            long diff_sec = (TimeUnit.MILLISECONDS.toSeconds(current_time.getTime()) - TimeUnit.MILLISECONDS.toSeconds(round_time.getTime()));
+            if(diff_h > 24){
+                long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
+                time_view.setText(String.valueOf(diff_d) + " Tage");
+            }
+            else if(diff_min > 60){
+                time_view.setText(String.valueOf(diff_h) + " Std");
+            }
+            else if(diff_sec > 60){
+                time_view.setText(String.valueOf(diff_min) + " Min");
+            }
+            else{
+                time_view.setText(String.valueOf(diff_sec) + " Sek");
+            }
+
+            View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(data.get(position).get("game_accepted").equals("1")) {
+                    if (data.get(position).get("game_accepted").equals("1")) {
                         class Update_Game_Thread extends Thread {
                             public void run() {
-
                                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                                 nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
                                 PHPConnector.doRequest(nameValuePairs, "update_game.php");
@@ -85,10 +108,10 @@ public class MyGamesAdapter extends SimpleAdapter {
                         activity.finish();
                     }
                 }
-            });
-
-            
-            
+            };
+            status_view.setOnClickListener(onClickListener);
+            time_view.setOnClickListener(onClickListener);
+            opponent_view.setOnClickListener(onClickListener);
         }
 	    return convertView; 
     }

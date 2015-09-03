@@ -76,49 +76,49 @@ public class Renderer3D extends Renderer {
 					Polynomino polynomio = (Polynomino) objects[i][j];
 					polynomio.setMesh(blockMesh);
 
-					float line_depth =  0.04f;
-					if(i+1 < objects.length && objects[i+1][j] != objects[i][j]){
-						Mesh border_mesh = new Mesh(gl, 2, true, false, false);
-						border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( 0, 0, line_depth );
-						border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( 0, block_height , line_depth );
+                    float line_depth = 0.04f;
+                    if (i + 1 < objects.length && objects[i + 1][j] != objects[i][j]) {
+                        Mesh border_mesh = new Mesh(gl, 2, true, false, false);
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(0, 0, line_depth);
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(0, block_height, line_depth);
                         polynomio.setBorder(border_mesh);
                         polynomio.setBorderPixel(new Vector(block_width * (i + 1), block_height * j, line_depth));
                         polynomio.isRendered = true;
-					}
-					if(i-1 >= 0 && objects[i-1][j] != objects[i][j]){
+                    }
+                    if (i - 1 >= 0 && objects[i - 1][j] != objects[i][j]) {
                         Mesh border_mesh = new Mesh(gl, 2, true, false, false);
-                        border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( 0, 0, line_depth );
-                        border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( 0, block_height , line_depth );
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(0, 0, line_depth);
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(0, block_height, line_depth);
                         polynomio.setBorder(border_mesh);
                         polynomio.setBorderPixel(new Vector(block_width * i, block_height * j, line_depth));
                         polynomio.isRendered = true;
 
-					}
-					if(j+1 < objects[0].length && objects[i][j+1] != objects[i][j]){
+                    }
+                    if (j + 1 < objects[0].length && objects[i][j + 1] != objects[i][j]) {
                         Mesh border_mesh = new Mesh(gl, 2, true, false, false);
-                        border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( 0, 0, line_depth );
-                        border_mesh.color( 0f, 0f, 0f, 1 );
-                        border_mesh.vertex( block_width, 0 , line_depth );
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(0, 0, line_depth);
+                        border_mesh.color(0f, 0f, 0f, 1);
+                        border_mesh.vertex(block_width, 0, line_depth);
                         polynomio.setBorder(border_mesh);
-                        polynomio.setBorderPixel(new Vector(block_width * i, block_height * (j+1), line_depth));
+                        polynomio.setBorderPixel(new Vector(block_width * i, block_height * (j + 1), line_depth));
                         polynomio.isRendered = true;
-					}
-					if(j-1 >= 0 && objects[i][j-1] != objects[i][j]){
+                    }
+                    if (j - 1 >= 0 && objects[i][j - 1] != objects[i][j]) {
                         Mesh border_mesh = new Mesh(gl, 2, true, false, false);
-                        border_mesh.color( 0.4f, 0.4f, 0.4f, 1 );
-                        border_mesh.vertex( 0, 0, line_depth );
-                        border_mesh.color( 0.4f, 0.4f, 0.4f, 1 );
-                        border_mesh.vertex( block_width, 0 , line_depth );
+                        border_mesh.color(0.4f, 0.4f, 0.4f, 1);
+                        border_mesh.vertex(0, 0, line_depth);
+                        border_mesh.color(0.4f, 0.4f, 0.4f, 1);
+                        border_mesh.vertex(block_width, 0, line_depth);
                         polynomio.setBorder(border_mesh);
                         polynomio.setBorderPixel(new Vector(block_width * i, block_height * j, line_depth));
                         polynomio.isRendered = true;
-					}
-				}
+                    }
+                }
 			}
 		}
 	}
@@ -277,6 +277,7 @@ public class Renderer3D extends Renderer {
                     } else {
                         polynomino.pixel_position.x = i * block_width;
                         polynomino.pixel_position.y = j * block_height;
+                        polynomino.pixel_position.z = 0;
                     }
                     if (polynomino.isLocked || polynomino.allLocked) {
                         gl.glColor4f(objects[i][j].colors[0] / 2.5f, objects[i][j].colors[1] / 2.5f, objects[i][j].colors[2] / 2.5f, 0.5f);
@@ -314,7 +315,7 @@ public class Renderer3D extends Renderer {
 	
 	private void blockRenderer(GL10 gl,GameObject polynomio, float x, float y, float z){
 		gl.glPushMatrix();
-		gl.glTranslatef(x+(block_width/2),y+(block_height/2),z+object_depth/2 );
+		gl.glTranslatef(x+(block_width/2),y+(block_height/2),z+(object_depth/2) );
 		gl.glScalef(object_width*0.88f,object_height*3.4f,object_depth);
         Polynomino poly = (Polynomino) polynomio;
 		poly.getMesh().render(PrimitiveType.Triangles);
@@ -322,7 +323,7 @@ public class Renderer3D extends Renderer {
 	}
 	public void renderPlayer(GL10 gl, GameObject player, float x, float y, float z){
 		gl.glPushMatrix();
-		gl.glTranslatef(x+(block_width/2),y+(block_height/2),z+object_depth/2 );
+		gl.glTranslatef(x+(block_width/2),y+(block_height/2),z+(object_depth/2) );
 		gl.glScalef(object_width/2.2f,object_height/2.2f,object_depth/2.2f);
         Player play = (Player) player;
 		play.getMesh().render(PrimitiveType.Triangles);

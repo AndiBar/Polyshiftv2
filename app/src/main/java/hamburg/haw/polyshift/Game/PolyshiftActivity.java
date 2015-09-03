@@ -34,8 +34,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     Player player2;
     Polynomino poly;
     Renderer renderer;
-    StartScreen startScreen;
-    EndScreen endScreen;
     Simulation simulation;
     GameLoop gameLoop;
     private String response = "";
@@ -66,6 +64,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         super.onCreate(savedInstanceState);
 
         setGameListener(this);
+
+        setTitle("Polyshift");
 
         Log.d( "Polyshift", "Polyshift Spiel erstellt");
     }
@@ -113,9 +113,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public void setup(GameActivity activity, GL10 gl) {
 
         if(!(simulation instanceof Simulation)){
-            startScreen = new StartScreen(gl, activity);
-            endScreen = new EndScreen(gl, activity);
-
             game_status = getGameStatus();
 
             gameLoop = new GameLoop(game_status.get("my_game"));
@@ -223,10 +220,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 });
                 winnerIsAnnounced = true;
 
-                endScreen.setWinner(simulation.winner);
-                endScreen.render(gl, activity);
-                endScreen.update(activity);
-
                 /*if(activity.isTouched()){
                     activity.finish();
                     startActivity(activity.getIntent());
@@ -287,12 +280,11 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     if(menu != null) {
                         MenuItem item = menu.findItem(R.id.action_game_status);
                         if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
-                            item.setTitle("Bewege einen Spielstein.");
+                            item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
                         }else if (simulation.lastMovedObject instanceof Polynomino) {
                             item.setTitle("Bewege deinen Spieler.");
                         }
                     }
-                    setTitle("Du bist dran!");
                 }
             });
             gameLoop.PlayerOnesTurn = true;
@@ -316,8 +308,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 @Override
                 public void run() {
                     MenuItem item = menu.findItem(R.id.action_game_status);
-                    item.setTitle("");
-                    setTitle(game_status.get("challenger_name") + " ist dran.");
+                    item.setTitle(game_status.get("challenger_name") + " ist dran.");
                 }
             });
         } else if (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) { //  not my turn & my game
@@ -330,8 +321,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 @Override
                 public void run() {
                     MenuItem item = menu.findItem(R.id.action_game_status);
-                    item.setTitle("");
-                    setTitle(game_status.get("opponent_name") + " ist dran.");
+                    item.setTitle(game_status.get("opponent_name") + " ist dran.");
                 }
             });
         } else { //  not my turn & not my game
@@ -341,12 +331,11 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     if(menu != null) {
                         MenuItem item = menu.findItem(R.id.action_game_status);
                         if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
-                            item.setTitle("Bewege einen Spielstein.");
+                            item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
                         }else if (simulation.lastMovedObject instanceof Polynomino) {
                             item.setTitle("Bewege deinen Spieler.");
                         }
                     }
-                    setTitle("Du bist dran!");
                 }
             });
             gameLoop.PlayerOnesTurn = false;
