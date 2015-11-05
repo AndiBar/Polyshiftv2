@@ -103,8 +103,6 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
             touchedY = e1.getY();
             float sensitvity_x = 50;
             float sensitvity_y = 50;
-            Log.d("test","x: " + e1.getX());
-            Log.d("test","x: " + e2.getX());
 
             // TODO Auto-generated method stub
             if ((e1.getX() - e2.getX()) > sensitvity_x) {
@@ -118,7 +116,6 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
             } else {
                 swipedDirection = null;
             }
-            Log.d("test","dir: " + swipedDirection);
             return super.onFling(e1, e2, velocityX, velocityY);
         }
     };

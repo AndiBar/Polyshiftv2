@@ -2,6 +2,7 @@ package hamburg.haw.polyshift.Adapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
     private Context context;
     public ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String,String>>();
     public String response;
+    public static ProgressDialog dialog = null;
 
 	public ChooseOpponentAdapter(Context context,
                                  List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -42,7 +44,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
 		// TODO Auto-generated constructor stub
 	}
 
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, final ViewGroup parent) {
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.activity_choose_opponent_item, null);
@@ -56,16 +58,17 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
             public void onClick(View v) {
 
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-                builder.setMessage(data.get(position).get("title") + " herausfordern?");
-                builder = builder.setPositiveButton("Ja",
+                builder.setMessage(context.getString(R.string.challenge, data.get(position).get("title")));
+                builder = builder.setPositiveButton(context.getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                dialog = ProgressDialog.show(context, "","Spiel wird erstellt", true);
                                 Thread thread = new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                                         nameValuePairs.add(new BasicNameValuePair("opponent_id", data.get(position).get("ID")));
-                                        GameSync.SendChangeNotification(data.get(position).get("ID"),"Sie wurden herausgefordert!","");
+                                        GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"");
                                         response = PHPConnector.doRequest(nameValuePairs, "add_game.php");
                                     }
                                 });
@@ -76,6 +79,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     while (thread.isAlive()) {
                                         thread.join(waitMillis);
                                     }
+                                    dialog.dismiss();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -83,8 +87,8 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                 {
                                     Log.d("res:", response);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Spiel wurde erstellt. Warte auf Bestätigung durch " + data.get(position).get("title") + ".");
-                                    builder.setPositiveButton("OK",
+                                    builder.setMessage(context.getString(R.string.game_created, data.get(position).get("title")));
+                                    builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     dialog.cancel();
@@ -100,8 +104,8 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                 else if(response.equals("game exists"))
                                 {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Du spielst bereits gegen " + data.get(position).get("title") + ".");
-                                    builder.setPositiveButton("OK",
+                                    builder.setMessage(context.getString(R.string.game_exists, data.get(position).get("title")));
+                                    builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     dialog.cancel();
@@ -112,8 +116,8 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                 else
                                 {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Es ist ein Fehler aufgetreten. Das Spiel konnte nicht erstellt wertden.");
-                                    builder.setPositiveButton("OK",
+                                    builder.setMessage(context.getString(R.string.game_could_not_be_created));
+                                    builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     dialog.cancel();
@@ -123,7 +127,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                 }
                             }
                         });
-                builder.setNegativeButton("Nein",
+                builder.setNegativeButton(context.getString(R.string.No),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();

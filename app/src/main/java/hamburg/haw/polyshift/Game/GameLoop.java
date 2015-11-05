@@ -53,6 +53,7 @@ public class GameLoop{
                     Log.i("GCM", opponentName);
                     String msg = opponentName + " hat einen Spielzug gemacht";
                     GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
+                    PolyshiftActivity.statusUpdated = false;
                 }
             }
         }
@@ -77,6 +78,7 @@ public class GameLoop{
                     Log.i("GCM", opponentName);
                     String msg = opponentName + " hat einen Spielzug gemacht";
                     GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
+                    PolyshiftActivity.statusUpdated = false;
                 }
             }
         }

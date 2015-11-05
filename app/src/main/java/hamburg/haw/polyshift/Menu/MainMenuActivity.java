@@ -1,8 +1,10 @@
 package hamburg.haw.polyshift.Menu;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,20 +26,16 @@ public class MainMenuActivity extends Activity {
     Button scoresButton;
     Button logoutButton;
     Button quitGameButton;
-    private static boolean crashed = false;
     private static Context context;
     private LoginAdapter loginAdapter;
+    public static ProgressDialog dialog = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,MainMenuActivity.this);
         loginAdapter.handleSessionExpiration();
-
-
-        if(crashed) {
-            Toast.makeText(this, "Bei der Übertragung ist ein Fehler aufgetreten.", Toast.LENGTH_SHORT);
-        }
+        Bundle data = getIntent().getExtras();
 
         super.onCreate(savedInstanceState);
         setTheme(android.R.style.Theme_Holo_NoActionBar);
@@ -61,6 +59,7 @@ public class MainMenuActivity extends Activity {
         myGamesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Spiele werden geladen", true);
                 Intent intent = new Intent(v.getContext(), MyGamesActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
@@ -93,8 +92,22 @@ public class MainMenuActivity extends Activity {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
-    }
-    public static void setCrashed(){
-        crashed = true;
+
+        if(data != null && data.getBoolean("error_occured")) {
+            MainMenuActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
+                    builder.setMessage("Bei der Übertragung ist ein Fehler aufgetreten.");
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    builder.show();
+                }
+            });
+        }
     }
 }

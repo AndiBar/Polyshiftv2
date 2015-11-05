@@ -97,7 +97,7 @@ public class ScoresActivity extends ListActivity {
                         Integer loss = Integer.parseInt(data_array[3].split("=")[1]);
                         Integer score = 0;
                         if(loss != 0) {
-                            score = (win / loss) * (win + loss);
+                            score = (win / loss) * (win - loss);
                         }else{
                             score = win * (win + loss);
                         }

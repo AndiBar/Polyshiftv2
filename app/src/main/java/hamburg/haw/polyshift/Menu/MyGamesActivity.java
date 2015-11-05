@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
+import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
@@ -66,11 +67,14 @@ public class MyGamesActivity extends ListActivity {
             while (scores_thread.isAlive()) {
                 scores_thread.join(waitMillis);
             }
+            if(MainMenuActivity.dialog != null) {
+                MainMenuActivity.dialog.dismiss();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Collections.sort(games_list, new GameComparator());
+        Collections.sort(games_list, Collections.reverseOrder(new GameComparator()));
 
         mAdapter = new MyGamesAdapter(this,
                 games_list,
@@ -83,6 +87,10 @@ public class MyGamesActivity extends ListActivity {
         //listView.setClickable(true);
         listView.setFocusableInTouchMode(false);
         listView.setFocusable(false);
+
+        if(PolyshiftActivity.dialog != null) {
+            PolyshiftActivity.dialog.dismiss();
+        }
     }
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -217,15 +225,20 @@ public class MyGamesActivity extends ListActivity {
                         games_attending_list.add(data_map);
                     }
                 }else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                    builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
-                    builder.setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    builder.show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
+                        }
+                    });
                 }
             }
         }

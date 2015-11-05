@@ -54,7 +54,7 @@ public class Renderer3D extends Renderer {
 		try {
 			blockMesh = MeshLoader.loadObj(gl, activity.getAssets().open( "block.obj" ) );
 		} catch (IOException e1) {
-			Log.d("Fehler:","..loading cube");
+			Log.d("Fehler:","Error loading cube");
 		}
 
         for(int i = 0; i < objects.length; i++){

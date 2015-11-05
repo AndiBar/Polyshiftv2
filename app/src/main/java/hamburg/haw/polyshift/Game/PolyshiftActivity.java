@@ -3,11 +3,13 @@ package hamburg.haw.polyshift.Game;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,6 +45,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean downloaded = false;
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
+    public static boolean statusUpdated = true;
+    public boolean gameUpdated = false;
     private Thread game_status_thread = new GameStatusThread();
     private String notificationReceiver = "";
     private String notificationMessage = "";
@@ -50,6 +54,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private Context context;
     private LoginAdapter loginAdapter;
     private boolean onBackPressed = false;
+    public static ProgressDialog dialog = null;
 
 
     @Override
@@ -62,6 +67,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 
         super.onCreate(savedInstanceState);
+
+        dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spieldaten werden geladen", true);
 
         setGameListener(this);
 
@@ -103,6 +110,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
+        dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
         onBackPressed = true;
         final Intent intent = new Intent(this, MyGamesActivity.class);
         startActivity(intent);
@@ -115,22 +123,43 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         if(!(simulation instanceof Simulation)){
             game_status = getGameStatus();
 
-            gameLoop = new GameLoop(game_status.get("my_game"));
+            if(game_status.size() > 0) {
 
-            if(game_status.get("new_game").equals("1")){
-                simulation = new Simulation(activity);
-                gameLoop.setRandomPlayer();
-                GameSync.uploadSimulation(simulation);
+                gameLoop = new GameLoop(game_status.get("my_game"));
+
+                if (game_status.get("new_game").equals("1")) {
+                    simulation = new Simulation(activity);
+                    gameLoop.setRandomPlayer();
+                    GameSync.uploadSimulation(simulation);
+                }
+
+                simulation = GameSync.downloadSimulation();
+                if (simulation == null) {
+                    Log.d("crashed", "crashed while downloading simulation");
+                    final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
+                    Bundle error = new Bundle();
+                    error.putBoolean("error_occured", true);
+                    intent.putExtras(error);
+                    startActivity(intent);
+                    PolyshiftActivity.this.finish();
+                }
+                renderer = new Renderer3D(activity, gl, simulation.objects);
+                renderer.enableCoordinates(gl, simulation.objects);
+                simulation.player.isLocked = true;
+                simulation.player2.isLocked = true;
+
+                updateGame(activity, gl);
+
+                dialog.dismiss();
+            }else{
+                Log.d("crashed","crashed while reading game status. game status: " + game_status.toString());
+                final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
+                Bundle error = new Bundle();
+                error.putBoolean("error_occured", true);
+                intent.putExtras(error);
+                startActivity(intent);
+                PolyshiftActivity.this.finish();
             }
-
-            simulation = GameSync.downloadSimulation();
-            renderer = new Renderer3D(activity, gl, simulation.objects);
-            renderer.enableCoordinates(gl, simulation.objects);
-            simulation.player.isLocked = true;
-            simulation.player2.isLocked = true;
-
-            updateGame(activity, gl);
-
         }
 
     }
@@ -141,39 +170,45 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     @Override
     public void mainLoopIteration(GameActivity activity, GL10 gl) {
 
+        if(!onBackPressed && game_status.size() > 0) {
+
             renderer.setPerspective(activity, gl);
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
             simulation.update(activity);
-            gameLoop.update(simulation,notificationReceiver,notificationMessage,notificationGameID);
+            gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
 
-            if(gameLoop.RoundFinished && simulation.winner == null && !onBackPressed) {
-                if (System.nanoTime() - start > 1000000000){
-                    updateGame(activity, gl);
-                    statusDownloaded = true;
-                    game_status = getGameStatus();
-                    start = System.nanoTime();
+            if (simulation.winner == null) {
+                if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
+                    if (!statusUpdated || System.nanoTime() - start > 1000000000) {
+                        statusDownloaded = true;
+                        statusUpdated = true;
+                        gameUpdated = false;
+                        game_status = getGameStatus();
+                        updateGame(activity, gl);
+                        start = System.nanoTime();
+                    }
                 }
             }
 
-            if(simulation.hasWinner && !winnerIsAnnounced){
+            if (simulation.hasWinner && !winnerIsAnnounced) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
-                        if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
+                        if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
+                                            dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
                                             final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
                                         }
                                     });
-                        }
-                        else if(simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
+                        } else if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
                             builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -187,8 +222,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             deleteGame();
                                         }
                                     });
-                        }
-                        else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")){
+                        } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
                             builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -199,8 +233,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                        }
-                        else if(!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")){
+                        } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
                             builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
@@ -227,8 +260,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             }
 
 
-
-        frames++;
+            frames++;
+        }
     }
 
     private class GameStatusThread extends Thread{
@@ -248,10 +281,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(response.equals("error") || response.split(":").length == 1 || response == null){
-            Log.d("crashed","crashed");
-            MainMenuActivity.setCrashed();
+        if(response.equals("error") || response.split(":").length == 1 || response == null || response.equals("")){
+            Log.d("crashed","crashed while downloading game status. response: " + response);
             final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
+            Bundle error = new Bundle();
+            error.putBoolean("error_occured", true);
+            intent.putExtras(error);
             startActivity(intent);
             PolyshiftActivity.this.finish();
         }
@@ -273,81 +308,89 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     }
     public void updateGame(final GameActivity game_activity, final GL10 game_gl){
 
-        if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("yes")) {  // my turn & my game
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(menu != null) {
-                        MenuItem item = menu.findItem(R.id.action_game_status);
-                        if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
-                            item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
-                        }else if (simulation.lastMovedObject instanceof Polynomino) {
-                            item.setTitle("Bewege deinen Spieler.");
+        if(game_status != null) {
+            if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("yes")) {  // my turn & my game
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (menu != null) {
+                            MenuItem item = menu.findItem(R.id.action_game_status);
+                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
+                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
+                            } else if (simulation.lastMovedObject instanceof Polynomino) {
+                                item.setTitle("Bewege deinen Spieler.");
+                            }
                         }
                     }
+                });
+                gameLoop.PlayerOnesTurn = true;
+                gameUpdated = true;
+                if (!downloaded) {
+                    Log.d("download", "court is being downloaded");
+                    simulation = GameSync.downloadSimulation();
+                    simulation.allLocked = false;
+                    renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
+                    renderer.enableCoordinates(game_gl, simulation.objects);
+                    downloaded = true;
+                    notificationReceiver = game_status.get("opponent_id");
+                    notificationMessage = game_status.get("my_user_name");
                 }
-            });
-            gameLoop.PlayerOnesTurn = true;
-            if(!downloaded){
-                Log.d("download", "court is being downloaded");
-                simulation = GameSync.downloadSimulation();
-                simulation.allLocked = false;
-                renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
-                renderer.enableCoordinates(game_gl, simulation.objects);
-                downloaded = true;
-                notificationReceiver = game_status.get("opponent_id");
-                notificationMessage = game_status.get("my_user_name");
-            }
-        } else if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no")) { // my turn & not my game
-            gameLoop.PlayerOnesTurn = true;
-            simulation.allLocked = true;
-            downloaded = false;
-            notificationReceiver = game_status.get("user_id");
-            notificationMessage = game_status.get("my_user_name");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    MenuItem item = menu.findItem(R.id.action_game_status);
-                    item.setTitle(game_status.get("challenger_name") + " ist dran.");
-                }
-            });
-        } else if (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) { //  not my turn & my game
-            gameLoop.PlayerOnesTurn = false;
-            simulation.allLocked = true;
-            downloaded = false;
-            notificationReceiver = game_status.get("opponent_id");
-            notificationMessage = game_status.get("my_user_name");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    MenuItem item = menu.findItem(R.id.action_game_status);
-                    item.setTitle(game_status.get("opponent_name") + " ist dran.");
-                }
-            });
-        } else { //  not my turn & not my game
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(menu != null) {
-                        MenuItem item = menu.findItem(R.id.action_game_status);
-                        if(simulation.lastMovedObject instanceof Player && item.getTitle().equals("")|| simulation.lastMovedObject == null) {
-                            item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
-                        }else if (simulation.lastMovedObject instanceof Polynomino) {
-                            item.setTitle("Bewege deinen Spieler.");
-                        }
-                    }
-                }
-            });
-            gameLoop.PlayerOnesTurn = false;
-            if (!downloaded) {
-                simulation = GameSync.downloadSimulation();
-                //simulation.player2.isLocked = true;
-                simulation.allLocked = false;
-                renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
-                renderer.enableCoordinates(game_gl, simulation.objects);
-                downloaded = true;
+            } else if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no")) { // my turn & not my game
+                gameLoop.PlayerOnesTurn = true;
+                simulation.allLocked = true;
+                downloaded = false;
                 notificationReceiver = game_status.get("user_id");
                 notificationMessage = game_status.get("my_user_name");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    if (menu != null) {
+                        MenuItem item = menu.findItem(R.id.action_game_status);
+                        item.setTitle(game_status.get("challenger_name") + " ist dran.");
+                    }
+                    }
+                });
+            } else if (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) { //  not my turn & my game
+                gameLoop.PlayerOnesTurn = false;
+                simulation.allLocked = true;
+                downloaded = false;
+                notificationReceiver = game_status.get("opponent_id");
+                notificationMessage = game_status.get("my_user_name");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (menu != null) {
+                            MenuItem item = menu.findItem(R.id.action_game_status);
+                            item.setTitle(game_status.get("opponent_name") + " ist dran.");
+                        }
+                    }
+                });
+            } else { //  not my turn & not my game
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (menu != null) {
+                            MenuItem item = menu.findItem(R.id.action_game_status);
+                            if (simulation.lastMovedObject instanceof Player  && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
+                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
+                            } else if (simulation.lastMovedObject instanceof Polynomino) {
+                                item.setTitle("Bewege deinen Spieler.");
+                            }
+                        }
+                    }
+                });
+                gameLoop.PlayerOnesTurn = false;
+                gameUpdated = true;
+                if (!downloaded) {
+                    simulation = GameSync.downloadSimulation();
+                    //simulation.player2.isLocked = true;
+                    simulation.allLocked = false;
+                    renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
+                    renderer.enableCoordinates(game_gl, simulation.objects);
+                    downloaded = true;
+                    notificationReceiver = game_status.get("user_id");
+                    notificationMessage = game_status.get("my_user_name");
+                }
             }
         }
     }

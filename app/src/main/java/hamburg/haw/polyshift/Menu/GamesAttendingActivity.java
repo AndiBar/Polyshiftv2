@@ -89,7 +89,7 @@ public class GamesAttendingActivity extends ListActivity {
     	Intent intent;
         switch (item.getItemId()) {
             case R.id.action_accept:
-                //dialog = ProgressDialog.show(OpponentsAttendingActivity.this, "", getString(R.string.dialog_opponent_handling), true);
+                dialog = ProgressDialog.show(GamesAttendingActivity.this, "","Spiel wird erstellt", true);
 
                 Thread add_games_thread = new AddGamesThread();
                 add_games_thread.start();
@@ -98,6 +98,7 @@ public class GamesAttendingActivity extends ListActivity {
                     while (add_games_thread.isAlive()) {
                         add_games_thread.join(waitMillis);
                     }
+                    dialog.dismiss();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

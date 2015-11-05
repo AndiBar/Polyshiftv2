@@ -23,5 +23,27 @@
     <string name="opponent_decline">ablehnen</string>
     <string name="new_game">Neues Spiel</string>
     <string name="title_activity_scores">ScoresActivity</string>
+    <string name="challenge">%1$s herausfordern?</string>
+    <string name="yes">Ja</string>
+    <string name="challenged">Sie wurden herausgefordert!</string>
+    <string name="game_created">"Spiel wurde erstellt. Warte auf Bestätigung durch %1$s."</string>
+    <string name="game_exists">"Du spielst bereits gegen %1$s."</string>
+    <string name="OK">OK</string>
+    <string name="game_could_not_be_created">Es ist ein Fehler aufgetreten. Das Spiel konnte nicht erstellt wertden.</string>
+    <string name="No">Nein</string>
+    <string name="not_logged_in">Sie sind nicht eingeloggt.</string>
+    <string name="successfully_logged_in">%1$s wurde erfolgreich angemeldet.</string>
+    <string name="already_logged_in">Du bist bereits angemeldet.</string>
+    <string name="login_error">Der Benutzer wurde nicht gefunden oder das Passwort ist falsch.</string>
+    <string name="connection_error">Ein Verbindungsfehler ist aufgetreten.</string>
+    <string name="login_error_title">Login Error</string>
+    <string name="awaiting_acception">Warten auf Annahme.</string>
+    <string name="your_turn">Du bist dran!</string>
+    <string name="opponents_turn">%1$s ist dran.</string>
+    <string name="days">"Tage"</string>
+    <string name="hours">"Std"</string>
+    <string name="minutes">"Min"</string>
+    <string name="seconds">"Sek"</string>
+
 
 </resources>

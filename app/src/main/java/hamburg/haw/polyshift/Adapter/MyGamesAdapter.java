@@ -1,6 +1,7 @@
 package hamburg.haw.polyshift.Adapter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class MyGamesAdapter extends SimpleAdapter {
     private Context context;
     public ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String,String>>();
     public String response;
+    public static ProgressDialog dialog = null;
 
 	public MyGamesAdapter(Context context,
                           List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -41,7 +43,7 @@ public class MyGamesAdapter extends SimpleAdapter {
 		// TODO Auto-generated constructor stub
 	}
 
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, final ViewGroup parent) {
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.activity_my_games_item, null);
@@ -53,11 +55,11 @@ public class MyGamesAdapter extends SimpleAdapter {
 
             final TextView status_view = (TextView) convertView.findViewById(R.id.status);
             if (data.get(position).get("my_game").equals("yes") && data.get(position).get("game_accepted").equals("0")) {
-                status_view.setText("Warten auf Annahme.");
+                status_view.setText(context.getString(R.string.awaiting_acception));
             } else if ((data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("yes")) || (data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("no"))) {
-                status_view.setText("Du bist dran!");
+                status_view.setText(context.getString(R.string.your_turn));
             } else {
-                status_view.setText(data.get(position).get("opponent_name") + " ist dran.");
+                status_view.setText(context.getString(R.string.opponents_turn,data.get(position).get("opponent_name")));
             }
 
             final TextView time_view = (TextView) convertView.findViewById(R.id.time);
@@ -68,23 +70,30 @@ public class MyGamesAdapter extends SimpleAdapter {
             long diff_min = (TimeUnit.MILLISECONDS.toMinutes(current_time.getTime()) - TimeUnit.MILLISECONDS.toMinutes(round_time.getTime()));
             long diff_sec = (TimeUnit.MILLISECONDS.toSeconds(current_time.getTime()) - TimeUnit.MILLISECONDS.toSeconds(round_time.getTime()));
             if(diff_h > 24){
-                long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
-                time_view.setText(String.valueOf(diff_d) + " Tage");
+                if(diff_h > 99){
+                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
+                    time_view.setText("99 " + context.getString(R.string.days));
+                }else {
+                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
+                    time_view.setText(String.valueOf(diff_d) + " " + context.getString(R.string.days));
+                }
             }
             else if(diff_min > 60){
-                time_view.setText(String.valueOf(diff_h) + " Std");
+                time_view.setText(String.valueOf(diff_h) + " " + context.getString(R.string.hours));
             }
             else if(diff_sec > 60){
-                time_view.setText(String.valueOf(diff_min) + " Min");
+                time_view.setText(String.valueOf(diff_min) + " " + context.getString(R.string.minutes));
             }
             else{
-                time_view.setText(String.valueOf(diff_sec) + " Sek");
+                time_view.setText(String.valueOf(diff_sec) + " " + context.getString(R.string.seconds));
             }
 
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (data.get(position).get("game_accepted").equals("1")) {
+
+                        dialog = ProgressDialog.show(parent.getContext(), "", "Spiel wird gestartet", true);
                         class Update_Game_Thread extends Thread {
                             public void run() {
                                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

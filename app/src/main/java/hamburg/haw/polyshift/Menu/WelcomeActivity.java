@@ -104,13 +104,14 @@ public class WelcomeActivity extends Activity {
             editPassword= (EditText)findViewById(R.id.EditPassword);
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            Log.d("Reg","reg:" + regid);
             if (regid.isEmpty()) {
                 registerInBackground();
             }
             final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
             final String password = HandleSharedPreferences.getUserCredentials(context,"password");
             if(!(username.equals("")) && (!(password.equals("")))){
-                dialog = ProgressDialog.show(activity, "","Login läuft...", true);
+                dialog = ProgressDialog.show(activity, "","Login läuft", true);
                 Log.i("Autologin", "Login läuft..."+ username +" "+password);
                 new Thread(
                         new Runnable(){

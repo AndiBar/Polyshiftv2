@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import hamburg.haw.polyshift.Menu.HandleSharedPreferences;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
 import hamburg.haw.polyshift.Menu.WelcomeActivity;
+import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -53,7 +54,7 @@ public class LoginAdapter{
                 } else {
                     activity.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(activity, "Sie sind nicht eingeloggt...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, context.getString(R.string.not_logged_in), Toast.LENGTH_SHORT).show();
                         }
                     });
                     Intent intent = new Intent(activity, WelcomeActivity.class);
@@ -86,7 +87,7 @@ public class LoginAdapter{
         if(response.equalsIgnoreCase(username + " has logged in successfully.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(activity, response.split(" ")[0] + " wurde erfolgreich angemeldet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(R.string.successfully_logged_in, response.split(" ")[0]), Toast.LENGTH_SHORT).show();
                 }
             });
             if(activity instanceof WelcomeActivity) {
@@ -98,7 +99,7 @@ public class LoginAdapter{
         else if(response.equalsIgnoreCase(username + " already logged in.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(activity,"Du bist bereits angemeldet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity,activity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
                 }
             });
             if(activity instanceof WelcomeActivity) {
@@ -108,10 +109,10 @@ public class LoginAdapter{
             }
         }else if(response.equalsIgnoreCase("No Such User Found")){
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
-            AlertDialogs.showAlert(activity, "Login Error", "Der Benutzer wurde nicht gefunden oder das Passwort ist falsch.");
+            AlertDialogs.showAlert(activity, activity.getString(R.string.login_error_title), activity.getString(R.string.login_error));
         }else{
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
-            AlertDialogs.showAlert(activity, "Login Error", "Ein Verbindungsfehler ist aufgetreten.");
+            AlertDialogs.showAlert(activity, activity.getString(R.string.login_error_title), activity.getString(R.string.connection_error));
         }
     }
 
@@ -126,7 +127,7 @@ public class LoginAdapter{
         if(response.equalsIgnoreCase(newUsername + " has logged in successfully.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(newActivity, response.split(" ")[0] + " wurde erfolgreich angemeldet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(newActivity, activity.getString(R.string.successfully_logged_in, response.split(" ")[0]), Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -137,7 +138,7 @@ public class LoginAdapter{
         else if(response.equalsIgnoreCase(newUsername + " already logged in.")){
             newActivity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(newActivity,"Du bist bereits angemeldet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(newActivity,newActivity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
                 }
             });
             Intent intent = new Intent(newActivity, MainMenuActivity.class);
@@ -145,10 +146,10 @@ public class LoginAdapter{
             newActivity.finish();
         }else if(response.equalsIgnoreCase("No Such User Found")){
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
-            AlertDialogs.showAlert(newActivity, "Login Error", "Der Benutzer wurde nicht gefunden oder das Passwort ist falsch.");
+            AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.login_error_title), newActivity.getString(R.string.login_error));
         }else{
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
-            AlertDialogs.showAlert(newActivity, "Login Error", "Ein Verbindungsfehler ist aufgetreten.");
+            AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.login_error_title), newActivity.getString(R.string.connection_error));
         }
 
     }
