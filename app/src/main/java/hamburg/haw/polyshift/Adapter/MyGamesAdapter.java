@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -63,6 +65,7 @@ public class MyGamesAdapter extends SimpleAdapter {
             }
 
             final TextView time_view = (TextView) convertView.findViewById(R.id.time);
+            final LinearLayout item_layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
             java.util.Date date= new java.util.Date();
             Timestamp current_time = new Timestamp(date.getTime());
             Timestamp round_time = Timestamp.valueOf(data.get(position).get("timestamp"));
@@ -72,20 +75,25 @@ public class MyGamesAdapter extends SimpleAdapter {
             if(diff_h > 24){
                 if(diff_h > 99){
                     long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
-                    time_view.setText("99 " + context.getString(R.string.days));
+                    time_view.setText(String.valueOf(diff_d) + " " + context.getString(R.string.days));
+                    item_layout.setBackgroundColor(Color.parseColor("#DF4949"));
                 }else {
                     long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
                     time_view.setText(String.valueOf(diff_d) + " " + context.getString(R.string.days));
+                    item_layout.setBackgroundColor(Color.parseColor("#334D5C"));
                 }
             }
             else if(diff_min > 60){
                 time_view.setText(String.valueOf(diff_h) + " " + context.getString(R.string.hours));
+                item_layout.setBackgroundColor(Color.parseColor("#E27A41"));
             }
             else if(diff_sec > 60){
                 time_view.setText(String.valueOf(diff_min) + " " + context.getString(R.string.minutes));
+                item_layout.setBackgroundColor(Color.parseColor("#EFC94C"));
             }
             else{
                 time_view.setText(String.valueOf(diff_sec) + " " + context.getString(R.string.seconds));
+                item_layout.setBackgroundColor(Color.parseColor("#47B09C"));
             }
 
             View.OnClickListener onClickListener = new View.OnClickListener() {

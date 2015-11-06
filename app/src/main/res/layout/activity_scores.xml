@@ -78,7 +78,9 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:background="#F7F3DE"
-        android:drawSelectorOnTop="false" >
+        android:drawSelectorOnTop="false"
+        android:divider="#F7F3DE"
+        android:dividerHeight="15dp">
 
     </ListView>
 

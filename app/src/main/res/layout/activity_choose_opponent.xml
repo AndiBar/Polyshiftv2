@@ -3,13 +3,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F7F3DE">
-    
-		<ListView
+
+	<Space
+		android:layout_width="20px"
+		android:layout_height="15sp" />
+
+	<ListView
 		    android:id="@id/android:list"
 		    android:layout_width="fill_parent"
 		    android:layout_height="match_parent"
             android:background="#F7F3DE"
-		    android:drawSelectorOnTop="false" >
+		    android:drawSelectorOnTop="false"
+			android:divider="#F7F3DE"
+			android:dividerHeight="15dp">
 
 		</ListView>
 

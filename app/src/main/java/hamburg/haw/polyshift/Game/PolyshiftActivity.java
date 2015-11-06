@@ -172,6 +172,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         if(!onBackPressed && game_status.size() > 0) {
 
+            if(!statusUpdated){
+                GameSync.uploadSimulation(simulation);
+            }
+
             renderer.setPerspective(activity, gl);
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
@@ -181,6 +185,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             if (simulation.winner == null) {
                 if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
                     if (!statusUpdated || System.nanoTime() - start > 1000000000) {
+
                         statusDownloaded = true;
                         statusUpdated = true;
                         gameUpdated = false;

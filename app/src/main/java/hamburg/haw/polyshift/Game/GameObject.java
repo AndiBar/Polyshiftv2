@@ -15,12 +15,12 @@ public class GameObject{
     public Vector block_position;
     public Vector pixel_position;
     public Vector start_position = new Vector(0,0,0);
+    public String start_direction = "";
 	public  float []colors = new float[4];
 	boolean isPlayerOne;
     private Mesh mesh;
     public ArrayList<Mesh> border_list = new ArrayList<Mesh>();
     public ArrayList<Vector> border_pixel_list = new ArrayList<Vector>();
-    public int loop_count = 0;
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;

@@ -12,9 +12,9 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.7">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
@@ -25,70 +25,96 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dip"
+                    android:layout_height="fill_parent"
                     android:layout_weight="0.5">
 
-                <ImageView
+                    <ImageView
                     android:contentDescription="@string/logo"
                     android:id="@+id/background_logo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/background_logo" />
+                    android:src="@drawable/background_logo"
+                        android:layout_alignParentBottom="true" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dip"
+                    android:layout_height="fill_parent"
                     android:layout_weight="0.5">
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_centerInParent="true">
 
-                <Button
+                    <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:text="Neues Spiel"
                     android:id="@+id/new_game_button"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:background="#47B09C" />
 
-                <Button
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="20dp" />
+
+                    <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:text="Meine Spiele"
                     android:id="@+id/my_games_button"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:background="#EFC94C"/>
 
-                <Button
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="20dp" />
+
+                    <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:text="Bestenliste"
                     android:id="@+id/scores_button"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:background="#E27A41"/>
 
-                <Button
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="20dp" />
+
+                    <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:text="Abmelden"
                     android:id="@+id/logout_button"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:background="#334D5C"/>
 
-                <Button
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="20dp" />
+
+                    <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="28dp"
                     android:text="Beenden"
                     android:id="@+id/quit_game_button"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:background="#DF4949"/>
+
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="20dp" />
 
                 </LinearLayout>
 
                 </RelativeLayout>
 
-                </LinearLayout>
+            </LinearLayout>
 
         </RelativeLayout>
 

@@ -26,7 +26,7 @@ public class Simulation implements Serializable{
     public Player player2;
     public Player winner;
     public boolean allLocked = false;
-
+    public boolean loop_detected = false;
 
     ArrayList<Polynomino> polynominos = new ArrayList<Polynomino>();
 
@@ -408,41 +408,107 @@ public class Simulation implements Serializable{
     }
 
     public void movePlayer(int x, int y, String direction){
+        Log.d("bla","starting");
+        boolean moving_started = false;
+        loop_detected = false;
         if(lastMovedObject != objects[x][y]) {
             objects[x][y].start_position = new Vector(x, y, 0);
+            moving_started = true;
         }
         Player player = (Player) objects[x][y];
         objects[x][y].block_position = new Vector(x,y,0);
-        while(!predictCollision(x, y, direction)){
+        while(!predictCollision(x, y, direction) && !loop_detected){
             moveObject(x, y, direction);
+            if(moving_started) {
+                if(player.isMovingRight){
+                    player.start_direction = RIGHT;
+                }else if(player.isMovingLeft){
+                    player.start_direction = LEFT;
+                }else if(player.isMovingUp){
+                    player.start_direction = UP;
+                }else if(player.isMovingDown){
+                    player.start_direction = DOWN;
+                }
+                moving_started = false;
+            }
+            Log.d("test","dir: " + player.start_direction + " start: " + player.start_position.x + "," + player.start_position.y);
+            Log.d("test2","act_dir: " + direction + "act_pos: " + x + "," + y);
+            //Move player if no loop was detected, else break
             if(direction.equals(RIGHT)){
-                if(x+1 == player.start_position.x && y == player.start_position.y) {
-                    break;
+                if(x+1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x+1, y, direction).equals(player.start_direction)) {
+                    loop_detected = true;
                 }else{
                     x++;
                 }
             }
             else if(direction.equals(LEFT)){
-                if(x-1 == player.start_position.x && y == player.start_position.y){
-                    break;
+                if(x-1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x-1, y, direction).equals(player.start_direction)){
+                    loop_detected = true;
                 }else{
                     x--;
                 }
             }
             else if(direction.equals(UP)){
-                if(y+1 == player.start_position.y && x == player.start_position.x){
-                    break;
+                Log.d("bla","x: " + x + ",y: " + y + " predict:" + predictNextMovement(x, y + 1, direction));
+                if(y+1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y + 1, direction).equals(player.start_direction)){
+                    Log.d("tddg","dgssgsdgsdhg");
+                    loop_detected = true;
                 }else {
                     y++;
                 }
             }
             else if(direction.equals(DOWN)){
-                if(y-1 == player.start_position.y && x == player.start_position.x){
-                    break;
+                if(y-1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y-1 ,direction).equals(player.start_direction)){
+                    loop_detected = true;
                 }else {
                     y--;
                 }
             }
+        }
+    }
+    public String predictNextMovement(int x, int y, String direction){
+        if(direction.equals(UP)){
+            if(!predictCollision(x, y, UP)){
+                return UP;
+            }else if(predictCollision(x, y, LEFT) && !predictCollision(x, y, RIGHT)){
+                return RIGHT;
+            }else if(predictCollision(x, y, RIGHT) && !predictCollision(x, y, LEFT)){
+                return LEFT;
+            }else{
+                return "";
+            }
+        }else if(direction.equals(DOWN)){
+            if(!predictCollision(x, y, DOWN)){
+                return DOWN;
+            }else if(predictCollision(x, y, LEFT) && !predictCollision(x, y, RIGHT)){
+                return RIGHT;
+            }else if(predictCollision(x, y, RIGHT) && !predictCollision(x, y, LEFT)){
+                return LEFT;
+            }else{
+                return "";
+            }
+        }else if(direction.equals(RIGHT)){
+            if(!predictCollision(x, y, RIGHT)){
+                return RIGHT;
+            }else if(predictCollision(x, y, UP) && !predictCollision(x, y, DOWN)){
+                return DOWN;
+            }else if(predictCollision(x, y, DOWN) && !predictCollision(x, y, UP)){
+                return UP;
+            }else{
+                return "";
+            }
+        }else if(direction.equals(LEFT)){
+            if(!predictCollision(x, y, LEFT)){
+                return LEFT;
+            }else if(predictCollision(x, y, UP) && !predictCollision(x, y, DOWN)){
+                return DOWN;
+            }else if(predictCollision(x, y, DOWN) && !predictCollision(x, y, UP)){
+                return UP;
+            }else{
+                return "";
+            }
+        }else{
+            return "";
         }
     }
 
@@ -457,6 +523,7 @@ public class Simulation implements Serializable{
                     }
                 }
                 if(objects[i][j] instanceof Player) {
+                    //Check if Player is locked in. If true, skip his turn
                     if (!objects[i][j].isLocked  && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))) {
                         if (objects[i][j].isPlayerOne) {
                             player.isLockedIn = true;
@@ -466,12 +533,15 @@ public class Simulation implements Serializable{
                             lastMovedObject = player2;
                         }
                     } else if (lastMovedObject != null && objects[i][j] == lastMovedObject) {
+                        //Check if player has stopped moving
                         if (!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown) {
+                            //Check if one player has won the game
                             if (objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X) {
                                 setWinner((Player) objects[i][j]);
                             } else if (!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X) {
                                 setWinner((Player) objects[i][j]);
-                            } else if ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN))) {
+                            //Check if player collides while moving. If true, change moving direction
+                            } else if (!loop_detected && ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN)))) {
                                 if (j + 1 < objects[0].length && objects[i][j + 1] instanceof Player && !predictCollision(i, j + 1, UP)) {
                                     movePlayer(i, j + 1, UP);
                                 } else if (j - 1 >= 0 && objects[i][j - 1] instanceof Player && !predictCollision(i, j - 1, DOWN)) {
@@ -481,7 +551,7 @@ public class Simulation implements Serializable{
                                 } else if (predictCollision(i, j, RIGHT) && !predictCollision(i, j, LEFT)) {
                                     movePlayer(i, j, LEFT);
                                 }
-                            } else if ((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT))) {
+                            } else if (!loop_detected && ((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT)))) {
                                 if (i + 1 < objects.length && objects[i + 1][j] instanceof Player && !predictCollision(i + 1, j, RIGHT)){
                                     movePlayer(i + 1, j, RIGHT);
                                 } else if (i - 1 >= 0 && objects[i - 1][j] instanceof Player && !predictCollision(i - 1, j, LEFT)) {

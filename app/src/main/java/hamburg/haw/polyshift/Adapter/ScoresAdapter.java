@@ -3,9 +3,11 @@ package hamburg.haw.polyshift.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -62,6 +64,18 @@ public class ScoresAdapter extends SimpleAdapter {
             final TextView score_view = (TextView) convertView.findViewById(R.id.score);
             score_view.setText(data.get(position).get("score"));
 
+            final LinearLayout item_layout = (LinearLayout) convertView.findViewById(R.id.scores_item_layout);
+            if(position == 0) {
+                item_layout.setBackgroundColor(Color.parseColor("#47B09C"));
+            }else if(Integer.parseInt(data.get(position).get("score")) > 0 && position != 0){
+                item_layout.setBackgroundColor(Color.parseColor("#EFC94C"));
+            }else if(Integer.parseInt(data.get(position).get("win")) > 0){
+                item_layout.setBackgroundColor(Color.parseColor("#E27A41"));
+            }else if(Integer.parseInt(data.get(position).get("loss")) > Integer.parseInt(data.get(position).get("win"))) {
+                item_layout.setBackgroundColor(Color.parseColor("#DF4949"));
+            }else if(data.get(position).get("loss").equals("0") && data.get(position).get("win").equals("0")) {
+                item_layout.setBackgroundColor(Color.parseColor("#334D5C"));
+            }
         }
         return convertView;
     }

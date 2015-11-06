@@ -47,7 +47,6 @@ public class GameLoop{
                         simulation.player2.isLocked = false;
                     }
                     simulation.player.isLockedIn = false;
-                    GameSync.uploadSimulation(simulation);
                     updateGameStatus();
                     Log.i("GCM", opponentID);
                     Log.i("GCM", opponentName);
