@@ -110,6 +110,7 @@ public class GamesAttendingActivity extends ListActivity {
                     builder.setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
+                                    dialog = ProgressDialog.show(GamesAttendingActivity.this, "", "Spiel wird gestartet", true);
                                     final Intent intent = new Intent(GamesAttendingActivity.this, PolyshiftActivity.class);
                                     startActivity(intent);
                                     GamesAttendingActivity.this.finish();

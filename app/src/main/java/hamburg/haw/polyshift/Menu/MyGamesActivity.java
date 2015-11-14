@@ -89,7 +89,11 @@ public class MyGamesActivity extends ListActivity {
         listView.setFocusable(false);
 
         if(PolyshiftActivity.dialog != null) {
-            PolyshiftActivity.dialog.dismiss();
+            try {
+                PolyshiftActivity.dialog.dismiss();
+            }catch(IllegalArgumentException e){
+                e.printStackTrace();
+            }
         }
     }
     // Action Bar Button

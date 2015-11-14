@@ -1,5 +1,6 @@
 package hamburg.haw.polyshift.Game;
 
+import android.app.ProgressDialog;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ public class GameLoop{
     public boolean RoundFinished;
     public boolean PlayerOnesGame;
     public static Thread game_status_thread;
+    private String opponentID;
+    private String opponentName;
+    private String notificationGameID;
 
     public GameLoop(String PlayerOnesGame){
         RoundFinished = true;
@@ -47,11 +51,16 @@ public class GameLoop{
                         simulation.player2.isLocked = false;
                     }
                     simulation.player.isLockedIn = false;
-                    updateGameStatus();
-                    Log.i("GCM", opponentID);
-                    Log.i("GCM", opponentName);
-                    String msg = opponentName + " hat einen Spielzug gemacht";
-                    GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
+                    if(!simulation.bump_detected) {
+                        GameSync.uploadSimulation(simulation);
+                        updateGameStatus();
+                        String msg = opponentName + " hat einen Spielzug gemacht";
+                        GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
+                    }else{
+                        simulation.bump_detected = false;
+                        GameSync.uploadSimulation(simulation);
+                        updateGameStatus();
+                    }
                     PolyshiftActivity.statusUpdated = false;
                 }
             }
@@ -70,13 +79,16 @@ public class GameLoop{
                         simulation.player.isLocked = false;
                     }
                     simulation.player2.isLockedIn = false;
-                    GameSync.uploadSimulation(simulation);
-                    updateGameStatus();
-                    Log.i("GCM", "aufruf sendnotification round finished player two");
-                    Log.i("GCM", opponentID);
-                    Log.i("GCM", opponentName);
-                    String msg = opponentName + " hat einen Spielzug gemacht";
-                    GameSync.SendChangeNotification(opponentID,msg,notificationGameID);
+                    if(!simulation.bump_detected) {
+                        GameSync.uploadSimulation(simulation);
+                        updateGameStatus();
+                        String msg = opponentName + " hat einen Spielzug gemacht";
+                        GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
+                    }else{
+                        simulation.bump_detected = false;
+                        GameSync.uploadSimulation(simulation);
+                        updateGameStatus();
+                    }
                     PolyshiftActivity.statusUpdated = false;
                 }
             }

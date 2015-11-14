@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.games.Game;
+
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
 import org.apache.http.NameValuePair;
@@ -28,6 +30,7 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class PolyshiftActivity extends GameActivity implements GameListener {
@@ -126,6 +129,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             if(game_status.size() > 0) {
 
                 gameLoop = new GameLoop(game_status.get("my_game"));
+                Object syncObj = new Object();
 
                 if (game_status.get("new_game").equals("1")) {
                     simulation = new Simulation(activity);
@@ -172,10 +176,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         if(!onBackPressed && game_status.size() > 0) {
 
-            if(!statusUpdated){
-                GameSync.uploadSimulation(simulation);
-            }
-
             renderer.setPerspective(activity, gl);
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
@@ -185,7 +185,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             if (simulation.winner == null) {
                 if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
                     if (!statusUpdated || System.nanoTime() - start > 1000000000) {
-
                         statusDownloaded = true;
                         statusUpdated = true;
                         gameUpdated = false;
@@ -313,7 +312,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     }
     public void updateGame(final GameActivity game_activity, final GL10 game_gl){
 
-        if(game_status != null) {
+        if(game_status != null && game_status.get("opponents_turn") != null && game_status.get("my_game") != null) {
             if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("yes")) {  // my turn & my game
                 runOnUiThread(new Runnable() {
                     @Override
@@ -397,6 +396,14 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     notificationMessage = game_status.get("my_user_name");
                 }
             }
+        }else{
+            Log.d("crashed", "crashed while reading game status");
+            final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
+            Bundle error = new Bundle();
+            error.putBoolean("error_occured", true);
+            intent.putExtras(error);
+            startActivity(intent);
+            PolyshiftActivity.this.finish();
         }
     }
     public void deleteGame(){

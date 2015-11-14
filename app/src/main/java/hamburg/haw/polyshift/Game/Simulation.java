@@ -27,6 +27,7 @@ public class Simulation implements Serializable{
     public Player winner;
     public boolean allLocked = false;
     public boolean loop_detected = false;
+    public boolean bump_detected = false;
 
     ArrayList<Polynomino> polynominos = new ArrayList<Polynomino>();
 
@@ -149,49 +150,6 @@ public class Simulation implements Serializable{
     }
 
     public void getTouch(GameActivity activity){
-        /*if(activity.isSwiped()){
-            int x = Math.round(activity.getTouchX() / (activity.getViewportWidth() / objects.length));
-            int y = Math.round(objects[0].length - (activity.getTouchY() / (activity.getViewportHeight() / objects[0].length)) - 1);
-            int touchedX = Math.round(activity.getTouchedX() / (activity.getViewportWidth() / objects.length));
-            int touchedY = Math.round(objects[0].length - (activity.getTouchedY() / (activity.getViewportHeight() / objects[0].length)) - 1);
-
-            if(x > touchedX && y == touchedY){
-                activity.isSwiped = false;
-                if(touchedX >= PLAYGROUND_MIN_X && objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
-                    movePlayer(touchedX, touchedY, RIGHT);
-                }
-                if(touchedX >= PLAYGROUND_MIN_X && objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
-                    movePolynomio(touchedX, touchedY, RIGHT);
-                }
-            }
-            else if(x < touchedX && y == touchedY){
-                activity.isSwiped = false;
-                if(touchedX <= PLAYGROUND_MAX_X && objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
-                    movePlayer(touchedX, touchedY, LEFT);
-                }
-                if(touchedX <= PLAYGROUND_MAX_X &&objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
-                    movePolynomio(touchedX, touchedY, LEFT);
-                }
-            }
-            else if(y > touchedY && x == touchedX){
-                activity.isSwiped = false;
-                if(touchedY >= PLAYGROUND_MIN_Y && objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
-                    movePlayer(touchedX, touchedY, UP);
-                }
-                if(touchedY >= PLAYGROUND_MIN_Y && objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
-                    movePolynomio(touchedX, touchedY, UP);
-                }
-            }
-            else if(y < touchedY && x == touchedX){
-                activity.isSwiped = false;
-                if(touchedY <= PLAYGROUND_MAX_Y && objects[touchedX][touchedY] instanceof Player && !objects[touchedX][touchedY].isLocked){
-                    movePlayer(touchedX, touchedY, DOWN);
-                }
-                if(touchedY <= PLAYGROUND_MAX_Y && objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked){
-                    movePolynomio(touchedX, touchedY, DOWN);
-                }
-            }
-        }*/
         if(activity.swipedDirection != null){
             DisplayMetrics metrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -238,7 +196,6 @@ public class Simulation implements Serializable{
                 }
                 if (objects[touchedX][touchedY] instanceof Polynomino && !(lastMovedObject instanceof Polynomino) && !objects[touchedX][touchedY].isLocked && !objects[touchedX][touchedY].allLocked) {
                     movePolynomio(touchedX, touchedY, UP);
-                    Log.d("test", "UP");
                 }
             } else if (activity.swipedDirection.equals(Simulation.DOWN)) {
                 activity.swipedDirection = null;
@@ -372,6 +329,7 @@ public class Simulation implements Serializable{
     }
     public void movePolynomio(int x, int y, String direction){
         boolean collision = false;
+        PolyshiftActivity.statusUpdated = false;
         Polynomino polynomino = (Polynomino) objects[x][y];
         polynomino.block_position = new Vector(x,y,0);
         polynomino.sortBlocks(direction);
@@ -408,7 +366,6 @@ public class Simulation implements Serializable{
     }
 
     public void movePlayer(int x, int y, String direction){
-        Log.d("bla","starting");
         boolean moving_started = false;
         loop_detected = false;
         if(lastMovedObject != objects[x][y]) {
@@ -431,8 +388,6 @@ public class Simulation implements Serializable{
                 }
                 moving_started = false;
             }
-            Log.d("test","dir: " + player.start_direction + " start: " + player.start_position.x + "," + player.start_position.y);
-            Log.d("test2","act_dir: " + direction + "act_pos: " + x + "," + y);
             //Move player if no loop was detected, else break
             if(direction.equals(RIGHT)){
                 if(x+1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x+1, y, direction).equals(player.start_direction)) {
@@ -449,9 +404,7 @@ public class Simulation implements Serializable{
                 }
             }
             else if(direction.equals(UP)){
-                Log.d("bla","x: " + x + ",y: " + y + " predict:" + predictNextMovement(x, y + 1, direction));
                 if(y+1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y + 1, direction).equals(player.start_direction)){
-                    Log.d("tddg","dgssgsdgsdhg");
                     loop_detected = true;
                 }else {
                     y++;
@@ -535,7 +488,7 @@ public class Simulation implements Serializable{
                     } else if (lastMovedObject != null && objects[i][j] == lastMovedObject) {
                         //Check if player has stopped moving
                         if (!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown) {
-                            //Check if one player has won the game
+                            //Check if a player has won the game
                             if (objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X) {
                                 setWinner((Player) objects[i][j]);
                             } else if (!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X) {
@@ -544,8 +497,10 @@ public class Simulation implements Serializable{
                             } else if (!loop_detected && ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN)))) {
                                 if (j + 1 < objects[0].length && objects[i][j + 1] instanceof Player && !predictCollision(i, j + 1, UP)) {
                                     movePlayer(i, j + 1, UP);
+                                    bump_detected = true;
                                 } else if (j - 1 >= 0 && objects[i][j - 1] instanceof Player && !predictCollision(i, j - 1, DOWN)) {
                                     movePlayer(i, j - 1, DOWN);
+                                    bump_detected = true;
                                 } else if (!predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT)) {
                                     movePlayer(i, j, RIGHT);
                                 } else if (predictCollision(i, j, RIGHT) && !predictCollision(i, j, LEFT)) {
@@ -554,8 +509,10 @@ public class Simulation implements Serializable{
                             } else if (!loop_detected && ((predictCollision(i, j, RIGHT) && objects[i][j].lastState.equals(RIGHT)) || (predictCollision(i, j, LEFT) && objects[i][j].lastState.equals(LEFT)))) {
                                 if (i + 1 < objects.length && objects[i + 1][j] instanceof Player && !predictCollision(i + 1, j, RIGHT)){
                                     movePlayer(i + 1, j, RIGHT);
+                                    bump_detected = true;
                                 } else if (i - 1 >= 0 && objects[i - 1][j] instanceof Player && !predictCollision(i - 1, j, LEFT)) {
                                     movePlayer(i - 1, j, LEFT);
+                                    bump_detected = true;
                                 } else if (!predictCollision(i, j, UP) && predictCollision(i, j, DOWN)) {
                                     movePlayer(i, j, UP);
                                 } else if (predictCollision(i, j, UP) && !predictCollision(i, j, DOWN)) {
