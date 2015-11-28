@@ -4,14 +4,16 @@
     android:background="#F7F3DE"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/contacts_new_enterusername"
-        android:layout_width="match_parent"
+    <AutoCompleteTextView
+        android:id="@+id/new_opponent_view"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
-        android:hint="@string/contacts_new_textfield_username">
-    </EditText>
+        android:layout_gravity="center"
+        android:dropDownVerticalOffset="5dp"
+        android:dropDownWidth="wrap_content"
+        android:inputType="textAutoComplete|textAutoCorrect"
+        android:popupBackground="#F7F3DE"
+        android:textColor="@color/black" >
+    </AutoCompleteTextView>
 
 </LinearLayout>
-    

@@ -7,49 +7,42 @@
     <RelativeLayout
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:layout_weight="0.15">
+        android:layout_weight="0.1">
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="0dip"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.7">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_vertical"
+            android:layout_height="fill_parent"
             android:background="#F7F3DE"
-            android:orientation="vertical"
-            android:layout_centerInParent="true">
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="0.5">
+                android:layout_height="match_parent"
+                android:layout_weight="0.6">
 
                 <ImageView
-                    android:contentDescription="@string/logo"
-                    android:id="@+id/background_kogo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/background_logo" />
+                    android:src="@drawable/polyshift" />
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="0.5">
+                android:layout_height="match_parent"
+                android:layout_weight="0.4">
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_centerInParent="true">
 
@@ -104,7 +97,6 @@
                         android:layout_gravity="center"
                         android:background="#F7F3DE"
                         android:orientation="horizontal"
-                        android:weightSum="1"
                         tools:context=".SignupActivity" >
 
                         <Button
@@ -120,6 +112,10 @@
 
                     </LinearLayout>
 
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="70dp" />
+
                 </LinearLayout>
 
             </RelativeLayout>
@@ -131,7 +127,7 @@
     <RelativeLayout
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:layout_weight="0.15">
+        android:layout_weight="0.1">
     </RelativeLayout>
 
 </LinearLayout>

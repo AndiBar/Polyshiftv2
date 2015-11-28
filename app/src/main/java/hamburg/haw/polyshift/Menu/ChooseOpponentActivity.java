@@ -37,6 +37,7 @@ public class ChooseOpponentActivity extends ListActivity {
     public static Activity activity;
     private static Context context;
     private LoginAdapter loginAdapter;
+    public static ProgressDialog dialog = null;
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -155,6 +156,7 @@ public class ChooseOpponentActivity extends ListActivity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_new_contacts:
+                dialog = ProgressDialog.show(ChooseOpponentActivity.this, "", "Benutzer werden geladen", true);
                 Intent intent = new Intent(this, NewOpponentActivity.class);
                 startActivity(intent);
                 ChooseOpponentActivity.this.finish();
