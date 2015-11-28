@@ -58,8 +58,7 @@ public class GameLoop{
                         GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     }else{
                         simulation.bump_detected = false;
-                        GameSync.uploadSimulation(simulation);
-                        updateGameStatus();
+                        simulation.player.isLocked = false;
                     }
                     PolyshiftActivity.statusUpdated = false;
                 }
@@ -86,8 +85,7 @@ public class GameLoop{
                         GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     }else{
                         simulation.bump_detected = false;
-                        GameSync.uploadSimulation(simulation);
-                        updateGameStatus();
+                        simulation.player2.isLocked = false;
                     }
                     PolyshiftActivity.statusUpdated = false;
                 }
