@@ -1,10 +1,13 @@
 package hamburg.haw.polyshift.Adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
@@ -99,30 +103,52 @@ public class MyGamesAdapter extends SimpleAdapter {
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    java.util.Date date= new java.util.Date();
+                    Timestamp current_time = new Timestamp(date.getTime());
+                    Timestamp round_time = Timestamp.valueOf(data.get(position).get("timestamp"));
+                    long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(round_time.getTime());
                     if (data.get(position).get("game_accepted").equals("1")) {
-
-                        dialog = ProgressDialog.show(parent.getContext(), "", "Spiel wird gestartet", true);
-                        class Update_Game_Thread extends Thread {
-                            public void run() {
-                                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                                nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
-                                PHPConnector.doRequest(nameValuePairs, "update_game.php");
-                            }
+                        if(diff_h > 1 && (data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("no")) || (data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("yes"))){
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+                            builder.setMessage("Möchtest du " + data.get(position).get("opponent_name") + " eine Erinnerung schicken?");
+                            builder = builder.setPositiveButton(context.getString(R.string.yes),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            String msg = data.get(position).get("my_name") + " wartet auf einen Spielzug von dir";
+                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
+                                        }
+                                    });
+                            builder.setNegativeButton("Nein, Spiel starten",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            startGame(position,parent);
+                                        }
+                                    });
+                            builder.show();
+                        }else{
+                            startGame(position,parent);
                         }
-                        Thread update_game_thread = new Update_Game_Thread();
-                        update_game_thread.start();
-                        try {
-                            long waitMillis = 10000;
-                            while (update_game_thread.isAlive()) {
-                                update_game_thread.join(waitMillis);
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    }else{
+                        if(diff_h > 1 ){
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+                            builder.setMessage("Möchtest du " + data.get(position).get("opponent_name") + " eine Erinnerung schicken?");
+                            builder = builder.setPositiveButton(context.getString(R.string.yes),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            String msg = data.get(position).get("my_name") + " wartet auf eine Spielannahme von dir";
+                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
+                                        }
+                                    });
+                            builder.setNegativeButton("Nein, Spiel starten",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            startGame(position,parent);
+                                        }
+                                    });
+                            builder.show();
                         }
-                        final Intent intent = new Intent(context, PolyshiftActivity.class);
-                        context.startActivity(intent);
-                        Activity activity = (Activity) context;
-                        activity.finish();
                     }
                 }
             };
@@ -132,5 +158,28 @@ public class MyGamesAdapter extends SimpleAdapter {
         }
 	    return convertView; 
     }
-    
+    public void startGame(final int position, final ViewGroup parent) {
+        dialog = ProgressDialog.show(parent.getContext(), "", "Spiel wird gestartet", true);
+        class Update_Game_Thread extends Thread {
+            public void run() {
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
+                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+            }
+        }
+        Thread update_game_thread = new Update_Game_Thread();
+        update_game_thread.start();
+        try {
+            long waitMillis = 10000;
+            while (update_game_thread.isAlive()) {
+                update_game_thread.join(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final Intent intent = new Intent(context, PolyshiftActivity.class);
+        context.startActivity(intent);
+        Activity activity = (Activity) context;
+        activity.finish();
+    }
 }

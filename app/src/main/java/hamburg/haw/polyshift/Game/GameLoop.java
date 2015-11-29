@@ -42,7 +42,10 @@ public class GameLoop{
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
                 RoundFinished = false;
             }
-            if(!RoundFinished || simulation.player.isLockedIn){
+            if(simulation.bump_detected) {
+                simulation.bump_detected = false;
+                PlayerOnesTurn = false;
+            }else if(!RoundFinished || simulation.player.isLockedIn){
                 if(!simulation.player.isMovingRight && !simulation.player.isMovingLeft && !simulation.player.isMovingUp && !simulation.player.isMovingDown){
                     RoundFinished = true;
                     PlayerOnesTurn = false;
@@ -51,15 +54,10 @@ public class GameLoop{
                         simulation.player2.isLocked = false;
                     }
                     simulation.player.isLockedIn = false;
-                    if(!simulation.bump_detected) {
-                        GameSync.uploadSimulation(simulation);
-                        updateGameStatus();
-                        String msg = opponentName + " hat einen Spielzug gemacht";
-                        GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
-                    }else{
-                        simulation.bump_detected = false;
-                        simulation.player.isLocked = false;
-                    }
+                    GameSync.uploadSimulation(simulation);
+                    updateGameStatus();
+                    String msg = opponentName + " hat einen Spielzug gemacht";
+                    GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     PolyshiftActivity.statusUpdated = false;
                 }
             }
@@ -69,7 +67,10 @@ public class GameLoop{
             if(simulation.player2.isMovingRight || simulation.player2.isMovingLeft || simulation.player2.isMovingUp || simulation.player2.isMovingDown){
                 RoundFinished = false;
             }
-            if(!RoundFinished || simulation.player2.isLockedIn){
+            if(simulation.bump_detected) {
+                simulation.bump_detected = false;
+                PlayerOnesTurn = true;
+            }else if(!RoundFinished || simulation.player2.isLockedIn){
                 if(!simulation.player2.isMovingRight && !simulation.player2.isMovingLeft && !simulation.player2.isMovingUp && !simulation.player2.isMovingDown){
                     RoundFinished = true;
                     PlayerOnesTurn = true;
@@ -78,15 +79,10 @@ public class GameLoop{
                         simulation.player.isLocked = false;
                     }
                     simulation.player2.isLockedIn = false;
-                    if(!simulation.bump_detected) {
-                        GameSync.uploadSimulation(simulation);
-                        updateGameStatus();
-                        String msg = opponentName + " hat einen Spielzug gemacht";
-                        GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
-                    }else{
-                        simulation.bump_detected = false;
-                        simulation.player2.isLocked = false;
-                    }
+                    GameSync.uploadSimulation(simulation);
+                    updateGameStatus();
+                    String msg = opponentName + " hat einen Spielzug gemacht";
+                    GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     PolyshiftActivity.statusUpdated = false;
                 }
             }

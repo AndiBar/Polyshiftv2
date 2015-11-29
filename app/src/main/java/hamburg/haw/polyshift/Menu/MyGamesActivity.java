@@ -191,6 +191,7 @@ public class MyGamesActivity extends ListActivity {
                         data_map.put("opponents_turn", data_array[4].split("=")[1]);
                         data_map.put("my_game", data_array[5].split("=")[1]);
                         data_map.put("timestamp", data_array[6].split("=")[1]);
+                        data_map.put("my_name", data_array[7].split("=")[1]);
                         Log.d("Map", data_map.toString());
                         games_list.add(data_map);
                     }
