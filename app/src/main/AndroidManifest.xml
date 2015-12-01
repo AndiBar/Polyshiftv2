@@ -52,6 +52,10 @@
             android:name=".Game.PolyshiftActivity"
             android:label="@string/title_poly_shift" >
         </activity>
+        <activity
+            android:name=".Game.TrainingActivity"
+            android:label="@string/title_poly_shift" >
+        </activity>
         <activity android:name=".Menu.MainMenuActivity" />
         <activity android:name=".Menu.ChooseOpponentActivity" />
         <activity android:name=".Menu.NewOpponentActivity" />

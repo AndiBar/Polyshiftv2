@@ -76,6 +76,18 @@
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
+                        android:text="Tutorial"
+                        android:id="@+id/tutorial_button"
+                        android:layout_gravity="center_horizontal"
+                        android:background="#EFC94C"/>
+
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="10dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
                         android:text="Bestenliste"
                         android:id="@+id/scores_button"
                         android:layout_gravity="center_horizontal"

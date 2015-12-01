@@ -43,6 +43,9 @@ public class ScoresActivity extends ListActivity {
             while (scores_thread.isAlive()) {
                 scores_thread.join(waitMillis);
             }
+            if(MainMenuActivity.dialog != null) {
+                MainMenuActivity.dialog.dismiss();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
