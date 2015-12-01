@@ -60,6 +60,9 @@ public class ChooseOpponentActivity extends ListActivity {
             while (friends_thread.isAlive()) {
                 friends_thread.join(waitMillis);
             }
+            if(MainMenuActivity.dialog != null) {
+                MainMenuActivity.dialog.dismiss();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

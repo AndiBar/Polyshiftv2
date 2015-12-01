@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Game.TrainingActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PasswordHash;
@@ -23,6 +24,7 @@ public class MainMenuActivity extends Activity {
 
     Button newGameButton;
     Button myGamesButton;
+    Button tutorialButton;
     Button scoresButton;
     Button logoutButton;
     Button quitGameButton;
@@ -43,6 +45,7 @@ public class MainMenuActivity extends Activity {
 
         newGameButton = (Button)findViewById(R.id.new_game_button);
         myGamesButton = (Button)findViewById(R.id.my_games_button);
+        tutorialButton = (Button)findViewById(R.id.tutorial_button);
         scoresButton = (Button)findViewById(R.id.scores_button);
         logoutButton = (Button)findViewById(R.id.logout_button);
         quitGameButton = (Button)findViewById(R.id.quit_game_button);
@@ -50,7 +53,17 @@ public class MainMenuActivity extends Activity {
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Gegner werden geladen", true);
                 Intent intent = new Intent(v.getContext(), ChooseOpponentActivity.class);
+                startActivity(intent);
+                MainMenuActivity.this.finish();
+            }
+        });
+
+        tutorialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), TrainingActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
             }
@@ -69,6 +82,7 @@ public class MainMenuActivity extends Activity {
         scoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Statistiken werden geladen", true);
                 Intent intent = new Intent(v.getContext(), ScoresActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
