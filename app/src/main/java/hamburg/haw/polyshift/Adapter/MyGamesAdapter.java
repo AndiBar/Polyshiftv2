@@ -140,11 +140,10 @@ public class MyGamesAdapter extends SimpleAdapter {
                                             GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
                                         }
                                     });
-                            builder.setNegativeButton("Nein, Spiel starten",
+                            builder.setNegativeButton("Nein",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
-                                            startGame(position,parent);
                                         }
                                     });
                             builder.show();
