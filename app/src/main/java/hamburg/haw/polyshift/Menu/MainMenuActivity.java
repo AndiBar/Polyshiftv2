@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
@@ -24,10 +25,10 @@ public class MainMenuActivity extends Activity {
 
     Button newGameButton;
     Button myGamesButton;
-    Button tutorialButton;
     Button scoresButton;
     Button logoutButton;
     Button quitGameButton;
+    ImageView backgroundLogo;
     private static Context context;
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
@@ -36,7 +37,7 @@ public class MainMenuActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,MainMenuActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
         Bundle data = getIntent().getExtras();
 
         super.onCreate(savedInstanceState);
@@ -45,10 +46,10 @@ public class MainMenuActivity extends Activity {
 
         newGameButton = (Button)findViewById(R.id.new_game_button);
         myGamesButton = (Button)findViewById(R.id.my_games_button);
-        tutorialButton = (Button)findViewById(R.id.tutorial_button);
         scoresButton = (Button)findViewById(R.id.scores_button);
         logoutButton = (Button)findViewById(R.id.logout_button);
         quitGameButton = (Button)findViewById(R.id.quit_game_button);
+        backgroundLogo = (ImageView) findViewById(R.id.background_logo);
 
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +61,7 @@ public class MainMenuActivity extends Activity {
             }
         });
 
-        tutorialButton.setOnClickListener(new View.OnClickListener() {
+        backgroundLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), TrainingActivity.class);

@@ -39,7 +39,7 @@ public class NewOpponentActivity extends Activity {
 	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
 		loginAdapter = new LoginAdapter(context, NewOpponentActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);
 

@@ -46,9 +46,6 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private boolean winnerIsAnnounced = false;
     public static boolean statusUpdated = true;
     public boolean gameUpdated = false;
-    private String notificationReceiver = "";
-    private String notificationMessage = "";
-    private String notificationGameID =  "";
     private Context context;
     private LoginAdapter loginAdapter;
     private boolean onBackPressed = false;
@@ -59,7 +56,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,TrainingActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
@@ -121,14 +118,10 @@ public class TrainingActivity extends GameActivity implements GameListener {
         if(!(simulation instanceof Simulation)){
 
             game_status = new HashMap<String,String>();
-            game_status.put("game_id", "1");
-            game_status.put("opponent_id", "2");
             game_status.put("opponent_name", "Test");
-            game_status.put("game_accepted", "1");
             game_status.put("opponents_turn", "0");
-            game_status.put("my_game", "1");
+            game_status.put("my_game", "yes");
             game_status.put("challenger_name", "Test");
-            game_status.put("user_id", "1");
             game_status.put("my_user_name", "Test");
 
             gameLoop = new OfflineGameLoop("yes");
@@ -166,9 +159,16 @@ public class TrainingActivity extends GameActivity implements GameListener {
             renderer.renderLight(gl);
             renderer.renderObjects(activity, gl, simulation.objects);
             simulation.update(activity);
-            gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
+            gameLoop.update(simulation);
 
-            updateGame(activity, gl);
+            if(!statusUpdated){
+                if(!gameLoop.PlayerOnesTurn) {
+                    game_status.put("opponents_turn", "1");
+                }else{
+                    game_status.put("opponents_turn", "0");
+                }
+                updateGame(activity, gl);
+            }
 
             if (simulation.hasWinner && !winnerIsAnnounced) {
                 runOnUiThread(new Runnable() {
@@ -225,11 +225,6 @@ public class TrainingActivity extends GameActivity implements GameListener {
                     }
                 });
                 winnerIsAnnounced = true;
-
-                /*if(activity.isTouched()){
-                    activity.finish();
-                    startActivity(activity.getIntent());
-                }*/
             }
 
 
@@ -247,50 +242,20 @@ public class TrainingActivity extends GameActivity implements GameListener {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
                             if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
-                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
-                            } else if (simulation.lastMovedObject instanceof Polynomino) {
-                                item.setTitle("Bewege deinen Spieler.");
+                                item.setTitle("Blau ist dran.");
                             }
                         }
                     }
                 });
                 gameLoop.PlayerOnesTurn = true;
                 gameUpdated = true;
-            } else if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no")) { // my turn & not my game
-                gameLoop.PlayerOnesTurn = true;
-                simulation.allLocked = true;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    if (menu != null) {
-                        MenuItem item = menu.findItem(R.id.action_game_status);
-                        item.setTitle(game_status.get("challenger_name") + " ist dran.");
-                    }
-                    }
-                });
             } else if (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) { //  not my turn & my game
-                gameLoop.PlayerOnesTurn = false;
-                simulation.allLocked = true;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            item.setTitle(game_status.get("opponent_name") + " ist dran.");
-                        }
-                    }
-                });
-            } else { //  not my turn & not my game
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (menu != null) {
-                            MenuItem item = menu.findItem(R.id.action_game_status);
-                            if (simulation.lastMovedObject instanceof Player  && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
-                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
-                            } else if (simulation.lastMovedObject instanceof Polynomino) {
-                                item.setTitle("Bewege deinen Spieler.");
-                            }
+                            item.setTitle("Rot ist dran.");
                         }
                     }
                 });

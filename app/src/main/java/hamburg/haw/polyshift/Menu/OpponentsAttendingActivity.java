@@ -45,7 +45,7 @@ public class OpponentsAttendingActivity extends ListActivity {
    	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,OpponentsAttendingActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
 
         setContentView(R.layout.activity_opponents_attending);
         setTitle(R.string.opponents_attending_title);

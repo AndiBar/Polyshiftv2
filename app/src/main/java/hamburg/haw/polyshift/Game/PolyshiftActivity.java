@@ -57,6 +57,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private Context context;
     private LoginAdapter loginAdapter;
     private boolean onBackPressed = false;
+    private boolean onDestroyed = false;
     public static ProgressDialog dialog = null;
 
 
@@ -64,7 +65,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
@@ -104,7 +105,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public void onDestroy( )
     {
         super.onDestroy();
-        Log.d( "Polyshift", "Polyshift beendet" );
+        Log.d("Polyshift", "Polyshift beendet");
+        onDestroyed = true;
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -123,7 +125,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     @Override
     public void setup(GameActivity activity, GL10 gl) {
 
-        if(!(simulation instanceof Simulation)){
+        if((!(simulation instanceof Simulation)) && !onDestroyed){
             game_status = getGameStatus();
 
             if(game_status.size() > 0) {
@@ -146,15 +148,16 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     intent.putExtras(error);
                     startActivity(intent);
                     PolyshiftActivity.this.finish();
+                }else{
+                    renderer = new Renderer3D(activity, gl, simulation.objects);
+                    renderer.enableCoordinates(gl, simulation.objects);
+                    simulation.player.isLocked = true;
+                    simulation.player2.isLocked = true;
+
+                    updateGame(activity, gl);
+
+                    dialog.dismiss();
                 }
-                renderer = new Renderer3D(activity, gl, simulation.objects);
-                renderer.enableCoordinates(gl, simulation.objects);
-                simulation.player.isLocked = true;
-                simulation.player2.isLocked = true;
-
-                updateGame(activity, gl);
-
-                dialog.dismiss();
             }else{
                 Log.d("crashed","crashed while reading game status. game status: " + game_status.toString());
                 final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
@@ -174,7 +177,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     @Override
     public void mainLoopIteration(GameActivity activity, GL10 gl) {
 
-        if(!onBackPressed && game_status.size() > 0) {
+        if(!onBackPressed && !onDestroyed && game_status.size() > 0 && simulation != null) {
 
             renderer.setPerspective(activity, gl);
             renderer.renderLight(gl);
@@ -272,11 +275,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     }
                 });
                 winnerIsAnnounced = true;
-
-                /*if(activity.isTouched()){
-                    activity.finish();
-                    startActivity(activity.getIntent());
-                }*/
             }
 
 
@@ -460,6 +458,4 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             e.printStackTrace();
         }
     }
-
-
 }

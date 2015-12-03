@@ -52,7 +52,7 @@ public class MyGamesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,MyGamesActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
 
 
         setTitle("Meine Spiele");

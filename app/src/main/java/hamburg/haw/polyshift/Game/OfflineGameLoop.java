@@ -35,7 +35,7 @@ public class OfflineGameLoop{
         PlayerOnesTurn = random.nextBoolean();
     }
 
-    public void update(Simulation simulation, final String opponentID,final String opponentName,final String notificationGameID){
+    public void update(Simulation simulation){
         if(PlayerOnesTurn){
             simulation.player2.isLocked = true;
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
@@ -49,11 +49,10 @@ public class OfflineGameLoop{
                     RoundFinished = true;
                     PlayerOnesTurn = false;
                     simulation.player.isLocked = true;
-                    if(!PlayerOnesGame) {
-                        simulation.player2.isLocked = false;
-                    }
+                    simulation.player2.isLocked = false;
                     simulation.player.isLockedIn = false;
-                    PolyshiftActivity.statusUpdated = false;
+                    TrainingActivity.statusUpdated = false;
+
                 }
             }
         }
@@ -70,11 +69,9 @@ public class OfflineGameLoop{
                     RoundFinished = true;
                     PlayerOnesTurn = true;
                     simulation.player2.isLocked = true;
-                    if(PlayerOnesGame) {
-                        simulation.player.isLocked = false;
-                    }
+                    simulation.player.isLocked = false;
                     simulation.player2.isLockedIn = false;
-                    PolyshiftActivity.statusUpdated = false;
+                    TrainingActivity.statusUpdated = false;
                 }
             }
         }

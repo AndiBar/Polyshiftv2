@@ -47,7 +47,7 @@ public class ChooseOpponentActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         loginAdapter = new LoginAdapter(context,ChooseOpponentActivity.this);
-        loginAdapter.handleSessionExpiration();
+        loginAdapter.handleSessionExpiration(this);
         setTitle("Meine Gegner");
         setContentView(R.layout.activity_choose_opponent);
 

@@ -42,22 +42,22 @@ public class LoginAdapter{
         this.GCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
     }
 
-    public void handleSessionExpiration() {
+    public void handleSessionExpiration(final Activity calling_activity) {
         class TestSessionThread extends Thread {
             public void run() {
                 String response = PHPConnector.doRequest("test_session.php");
                 if (response.equalsIgnoreCase("not logged in") && (!encryptedPassword.equals("")) && (!username.equals(""))) {
-                    Log.i("Status Login","Not logged in... using stored credentials for login");
+                    Log.i("Status Login", "Not logged in... using stored credentials for login");
                     userLoginStoredCredentials();
                 } else if (response.equalsIgnoreCase("logged in")) {
                     Log.i("Status Login:", response);
                 } else {
                     activity.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(activity, context.getString(R.string.not_logged_in), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, context.getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
                         }
                     });
-                    Intent intent = new Intent(activity, WelcomeActivity.class);
+                    Intent intent = new Intent(activity, calling_activity.getClass());
                     activity.startActivity(intent);
                     activity.finish();
                 }
