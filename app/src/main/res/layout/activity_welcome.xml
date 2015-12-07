@@ -108,6 +108,18 @@
 
                     <Space
                         android:layout_width="20px"
+                        android:layout_height="20dp" />
+
+                    <Button
+                        android:id="@+id/forgotButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:text="Passwort vergessen"
+                        android:layout_gravity="center_horizontal"
+                        android:background="#E27A41"/>
+
+                    <Space
+                        android:layout_width="20px"
                         android:layout_height="70dp" />
 
                 </LinearLayout>

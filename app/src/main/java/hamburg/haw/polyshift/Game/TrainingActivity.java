@@ -44,6 +44,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private boolean downloaded = false;
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
+    private boolean infoIsAnnounced = false;
     public static boolean statusUpdated = true;
     public boolean gameUpdated = false;
     private Context context;
@@ -118,11 +119,10 @@ public class TrainingActivity extends GameActivity implements GameListener {
         if(!(simulation instanceof Simulation)){
 
             game_status = new HashMap<String,String>();
-            game_status.put("opponent_name", "Test");
+            game_status.put("opponent_name", "Rot");
             game_status.put("opponents_turn", "0");
             game_status.put("my_game", "yes");
-            game_status.put("challenger_name", "Test");
-            game_status.put("my_user_name", "Test");
+            game_status.put("my_user_name", "Blau");
 
             gameLoop = new OfflineGameLoop("yes");
 
@@ -176,34 +176,12 @@ public class TrainingActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
+                            builder.setMessage(game_status.get("my_user_name") + " hat das Spiel gewonnen!");
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog = ProgressDialog.show(TrainingActivity.this, "", "Spiel wird beendet", true);
-                                            final Intent intent = new Intent(TrainingActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            TrainingActivity.this.finish();
-                                            dialog.cancel();
-                                        }
-                                    });
-                        } else if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(TrainingActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            TrainingActivity.this.finish();
-                                            dialog.cancel();
-                                        }
-                                    });
-                        } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(TrainingActivity.this, MyGamesActivity.class);
+                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
                                             TrainingActivity.this.finish();
                                             dialog.cancel();
@@ -214,7 +192,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(TrainingActivity.this, MyGamesActivity.class);
+                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
                                             TrainingActivity.this.finish();
                                             dialog.cancel();
@@ -227,7 +205,70 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 winnerIsAnnounced = true;
             }
 
+            if(gameLoop.RoundFinished && !infoIsAnnounced){
+                Log.d("bla", "aaaaah");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
+                        if (gameLoop.roundCount == 0) {
+                            builder.setMessage(R.string.rule_one);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                        } else if (gameLoop.roundCount == 1) {
+                            builder.setMessage(R.string.rule_two);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                        } else if (gameLoop.roundCount == 2) {
+                            builder.setMessage(R.string.rule_three);
+                            builder.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        } else if (gameLoop.roundCount == 3) {
+                            builder.setMessage(R.string.rule_four);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                        } else if (gameLoop.roundCount == 4) {
+                            builder.setMessage(R.string.rule_five);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                        } else if (gameLoop.roundCount == 5) {
+                            builder.setMessage(R.string.rule_six);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                        }
+                        builder.show();
+                        infoIsAnnounced = true;
+                    }
+                });
+            }
 
+            if(!gameLoop.RoundFinished){
+                infoIsAnnounced = false;
+            }
             frames++;
         }
     }

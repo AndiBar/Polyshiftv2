@@ -12,7 +12,10 @@ import android.widget.Toast;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 import hamburg.haw.polyshift.Menu.HandleSharedPreferences;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
@@ -20,6 +23,7 @@ import hamburg.haw.polyshift.Menu.WelcomeActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
+import hamburg.haw.polyshift.Tools.PasswordHash;
 
 
 /**
@@ -81,7 +85,7 @@ public class LoginAdapter{
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username",username.toString().trim()));
         nameValuePairs.add(new BasicNameValuePair("password",encryptedPassword));
-        nameValuePairs.add(new BasicNameValuePair("regid",GCMregId));
+        nameValuePairs.add(new BasicNameValuePair("regid", GCMregId));
 
         final String response = PHPConnector.doRequest(nameValuePairs, "login_user.php");
         if(response.equalsIgnoreCase(username + " has logged in successfully.")){
@@ -99,7 +103,7 @@ public class LoginAdapter{
         else if(response.equalsIgnoreCase(username + " already logged in.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(activity,activity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
                 }
             });
             if(activity instanceof WelcomeActivity) {
@@ -152,5 +156,50 @@ public class LoginAdapter{
             AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.login_error_title), newActivity.getString(R.string.connection_error));
         }
 
+    }
+    public static void validateEmail(String email, final Activity newActivity){
+        HashMap<String, String> user_map = new HashMap<String, String>();
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        final String response = PHPConnector.doRequest(nameValuePairs, "validate_email.php");
+
+        if(response.split(";").length != 1) {
+            String[] data_array = response.split(";");
+            nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("user_id", data_array[0].split("=")[1]));
+            nameValuePairs.add(new BasicNameValuePair("email", data_array[2].split("=")[1]));
+            nameValuePairs.add(new BasicNameValuePair("title", newActivity.getString(R.string.email_title)));
+            nameValuePairs.add(new BasicNameValuePair("header", "Hallo " + data_array[1].split("=")[1] + ","));
+            nameValuePairs.add(new BasicNameValuePair("text", "Dein neues Polyshift Passwort lautet: "));
+            String random_password = generateRandomPassword(8);
+            nameValuePairs.add(new BasicNameValuePair("password", random_password));
+            nameValuePairs.add(new BasicNameValuePair("password_hash", PasswordHash.toHash(random_password)));
+
+            final String response2 = PHPConnector.doRequest(nameValuePairs, "update_password.php");
+
+            if(response2.equals("password updated.")){
+                AlertDialogs.showAlert(newActivity, "Neues Passwort", "Es wurde ein neues Passwort an die von dir angegebene E-Mail Adresse gesendet.");
+            }else{
+                AlertDialogs.showAlert(newActivity, "Fehler", "Es konnte kein neues Passwort erstellt werden.");
+            }
+        }else{
+            AlertDialogs.showAlert(newActivity, "Fehler", "Es wurde kein Benutzer mit dieser E-Mail Adresse gefunden.");
+        }
+    }
+
+    public static String generateRandomPassword(int password_length)
+    {
+        // Pick from some letters that won't be easily mistaken for each
+        // other. So, for example, omit o O and 0, 1 l and L.
+        String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
+
+        Random RANDOM = new SecureRandom();
+        String pw = "";
+        for (int i=0; i < password_length; i++)
+        {
+            int index = (int)(RANDOM.nextDouble()*letters.length());
+            pw += letters.substring(index, index+1);
+        }
+        return pw;
     }
 }

@@ -44,6 +44,15 @@
     <string name="hours">"Std"</string>
     <string name="minutes">"Min"</string>
     <string name="seconds">"Sek"</string>
+    <string name="rule_one">Bewege einen Spielstein, indem du ihn mit dem Finger berührst und verschiebst. Bewege anschließend den blauen Spieler.</string>
+    <string name="rule_two">Jetzt ist Rot an der Reihe. Der Spielstein, der in der Runde zuvor bewegt wurde, kann jetzt nicht mehr bewegt werden.</string>
+    <string name="rule_three">Du kannst entweder einen Spielstein oder direkt deinen Spieler bewegen. Sobald dein Spieler bewegt wurde, ist die Runde beendet.</string>
+    <string name="rule_four">Trifft ein Spieler auf eine Ecke, dann wird dieser entlang der Ecke reflektiert. Ziel ist es, auf diese Weise den anderen Spielfeldrand zu erreichen.</string>
+    <string name="rule_five">Trifft dein Spieler in gerader Bewegung auf den anderen Spieler, dann wird dieser angestoßen. Anschließend bist du noch einmal dran.</string>
+    <string name="rule_six">Das wars schon. Jetzt versuche das Spiel zu gewinnen, indem du einen Spieler zu einem Spielfeldrand mit identischer Farbe bewegst.</string>
+    <string name="please_enter_email">bitte gib deine E-Mail Adresse ein.</string>
+    <string name="email_address">E-Mail Adresse</string>
+    <string name="email_title">Neues Passwort</string>
 
 
 </resources>

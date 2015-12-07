@@ -1,15 +1,6 @@
 package hamburg.haw.polyshift.Game;
 
-import android.app.ProgressDialog;
-import android.util.Log;
-
-import java.util.ArrayList;
 import java.util.Random;
-
-import hamburg.haw.polyshift.Tools.PHPConnector;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 public class OfflineGameLoop{
 
@@ -20,9 +11,11 @@ public class OfflineGameLoop{
     private String opponentID;
     private String opponentName;
     private String notificationGameID;
+    public int roundCount;
 
     public OfflineGameLoop(String PlayerOnesGame){
         RoundFinished = true;
+        roundCount = 0;
         if(PlayerOnesGame.equals("yes")){
             this.PlayerOnesGame = true;
         }else{
@@ -52,7 +45,7 @@ public class OfflineGameLoop{
                     simulation.player2.isLocked = false;
                     simulation.player.isLockedIn = false;
                     TrainingActivity.statusUpdated = false;
-
+                    roundCount++;
                 }
             }
         }
@@ -72,6 +65,7 @@ public class OfflineGameLoop{
                     simulation.player.isLocked = false;
                     simulation.player2.isLockedIn = false;
                     TrainingActivity.statusUpdated = false;
+                    roundCount++;
                 }
             }
         }

@@ -2,6 +2,7 @@ package hamburg.haw.polyshift.Menu;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,6 +12,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 
 import android.content.pm.PackageInfo;
@@ -46,6 +49,7 @@ import hamburg.haw.polyshift.R;
 public class WelcomeActivity extends Activity {
 	
 	Button loginButton;
+    Button forgotButton;
     EditText editUsername,editPassword;
     TextView debugText;
     HttpPost httppost;
@@ -100,6 +104,7 @@ public class WelcomeActivity extends Activity {
         //  GCM registration.
         if (checkPlayServices()) {
             loginButton = (Button)findViewById(R.id.LoginButton);
+            forgotButton = (Button)findViewById(R.id.forgotButton);
             editUsername = (EditText)findViewById(R.id.EditUsername);
             editPassword= (EditText)findViewById(R.id.EditPassword);
             gcm = GoogleCloudMessaging.getInstance(this);
@@ -145,6 +150,36 @@ public class WelcomeActivity extends Activity {
 	            }
     		}
     	);
+
+        forgotButton.setOnClickListener(
+                new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(WelcomeActivity.this);
+                        final EditText edittext = new EditText(WelcomeActivity.this);
+                        alert.setMessage(R.string.please_enter_email);
+                        alert.setTitle(R.string.email_address);
+
+                        alert.setView(edittext);
+
+                        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                final String email = edittext.getText().toString();
+                                new Thread(
+                                        new Runnable() {
+                                            public void run() {
+                                                LoginAdapter.validateEmail(email, WelcomeActivity.this);
+                                            }
+                                        }
+                                ).start();
+
+                            }
+                        });
+
+                        alert.show();
+                    }
+                }
+        );
 	}
 
 
@@ -269,9 +304,9 @@ public class WelcomeActivity extends Activity {
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend(String regid) {
-        Log.i(TAG, "Wo ist das Problem: "+ regid);
+        Log.i(TAG, "Wo ist das Problem: " + regid);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-        nameValuePairs.add(new BasicNameValuePair("regid",regid));
+        nameValuePairs.add(new BasicNameValuePair("regid", regid));
         PHPConnector.doRequest(nameValuePairs, "add_cloudmessage_regid.php");
     }
 
