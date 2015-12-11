@@ -53,6 +53,7 @@
     <string name="please_enter_email">bitte gib deine E-Mail Adresse ein.</string>
     <string name="email_address">E-Mail Adresse</string>
     <string name="email_title">Neues Passwort</string>
+    <string name="error_loading_opponents">Beim Abrufen der Gegner ist ein Fehler aufgetreten.</string>
 
 
 </resources>

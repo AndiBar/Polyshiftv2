@@ -29,15 +29,10 @@ public class MainMenuActivity extends Activity {
     Button logoutButton;
     Button quitGameButton;
     ImageView backgroundLogo;
-    private static Context context;
-    private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        context = getApplicationContext();
-        loginAdapter = new LoginAdapter(context,MainMenuActivity.this);
-        loginAdapter.handleSessionExpiration(this);
         Bundle data = getIntent().getExtras();
 
         super.onCreate(savedInstanceState);
@@ -54,7 +49,6 @@ public class MainMenuActivity extends Activity {
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Gegner werden geladen", true);
                 Intent intent = new Intent(v.getContext(), ChooseOpponentActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
@@ -73,7 +67,6 @@ public class MainMenuActivity extends Activity {
         myGamesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Spiele werden geladen", true);
                 Intent intent = new Intent(v.getContext(), MyGamesActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
@@ -83,7 +76,6 @@ public class MainMenuActivity extends Activity {
         scoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog = ProgressDialog.show(MainMenuActivity.this, "", "Statistiken werden geladen", true);
                 Intent intent = new Intent(v.getContext(), ScoresActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
@@ -93,7 +85,7 @@ public class MainMenuActivity extends Activity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HandleSharedPreferences.setUserCredentials(context,"","");
+                HandleSharedPreferences.setUserCredentials(MainMenuActivity.this,"","");
                 Intent intent = new Intent(v.getContext(), WelcomeActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();

@@ -45,49 +45,6 @@ public class NewOpponentActivity extends Activity {
 
 		Thread users_thread = new UsersThread();
 		users_thread.start();
-		try {
-			long waitMillis = 10000;
-			while (users_thread.isAlive()) {
-				users_thread.join(waitMillis);
-			}
-			if(ChooseOpponentActivity.dialog != null) {
-				ChooseOpponentActivity.dialog.dismiss();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		AutoCompleteTextView autocomplete = (AutoCompleteTextView)
-				findViewById(R.id.new_opponent_view);
-
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>
-				(this,R.layout.activity_new_opponent_item, users_list);
-
-		autocomplete.setThreshold(1);
-		autocomplete.setAdapter(adapter);
-
-		EditText usernameTextfield = (EditText)findViewById(R.id.new_opponent_view);
-		usernameTextfield.addTextChangedListener(new TextWatcher(){
-			@Override
-			public void afterTextChanged(Editable arg0) {
-				username = arg0.toString();
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1,
-										  int arg2, int arg3) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-									  int arg3) {
-				// TODO Auto-generated method stub
-
-			}
-
-		});
 	}
 
 	@Override
@@ -162,6 +119,44 @@ public class NewOpponentActivity extends Activity {
 						HashMap<String, String> data_map = new HashMap<String, String>();
 						String[] data_array = item.split(";");
 						users_list.add(data_array[2].split("=")[1]);
+
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+
+								AutoCompleteTextView autocomplete = (AutoCompleteTextView)
+										findViewById(R.id.new_opponent_view);
+
+								ArrayAdapter<String> adapter = new ArrayAdapter<String>
+										(NewOpponentActivity.this,R.layout.activity_new_opponent_item, users_list);
+
+								autocomplete.setThreshold(1);
+								autocomplete.setAdapter(adapter);
+
+								EditText usernameTextfield = (EditText)findViewById(R.id.new_opponent_view);
+								usernameTextfield.addTextChangedListener(new TextWatcher() {
+									@Override
+									public void afterTextChanged(Editable arg0) {
+										username = arg0.toString();
+									}
+
+									@Override
+									public void beforeTextChanged(CharSequence arg0, int arg1,
+																  int arg2, int arg3) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+															  int arg3) {
+										// TODO Auto-generated method stub
+
+									}
+								});
+
+							}
+						});
 					}
 				} else {
 					runOnUiThread(new Runnable() {

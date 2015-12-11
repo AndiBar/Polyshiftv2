@@ -35,67 +35,41 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
  * Created by Andi on 12.03.2015.
  */
 public class MyGamesActivity extends ListActivity {
-    public static ArrayList<HashMap<String, String>> games_list = new ArrayList<HashMap<String,String>>();
-    public static ArrayList<HashMap<String, String>> games_attending_list = new ArrayList<HashMap<String,String>>();
+    public static ArrayList<HashMap<String, String>> games_list = new ArrayList<HashMap<String, String>>();
+    public static ArrayList<HashMap<String, String>> games_attending_list = new ArrayList<HashMap<String, String>>();
     private ListView settings;
     public static MyGamesAdapter mAdapter;
     private int bell_number = 0;
     public static Activity activity;
     private Context context;
     private LoginAdapter loginAdapter;
+    public static ProgressDialog dialog = null;
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
         activity = this;
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
-        loginAdapter = new LoginAdapter(context,MyGamesActivity.this);
-        loginAdapter.handleSessionExpiration(this);
-
 
         setTitle("Meine Spiele");
         setContentView(R.layout.activity_my_games);
 
-        Toast.makeText(activity,"Zum Starten auf ein Spiel klicken.", Toast.LENGTH_SHORT).show();
+        dialog = ProgressDialog.show(MyGamesActivity.this, "", "Spiele werden geladen", true);
 
         Thread scores_thread = new GamesThread();
         scores_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (scores_thread.isAlive()) {
-                scores_thread.join(waitMillis);
-            }
-            if(MainMenuActivity.dialog != null) {
-                MainMenuActivity.dialog.dismiss();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        Collections.sort(games_list, Collections.reverseOrder(new GameComparator()));
-
-        mAdapter = new MyGamesAdapter(this,
-                games_list,
-                R.layout.activity_my_games,
-                new String[] {"title"},
-                new int[] {R.id.title});
-
-        ListView listView = getListView();
-        setListAdapter(mAdapter);
-        //listView.setClickable(true);
-        listView.setFocusableInTouchMode(false);
-        listView.setFocusable(false);
-
-        if(PolyshiftActivity.dialog != null) {
+        if (PolyshiftActivity.dialog != null) {
             try {
                 PolyshiftActivity.dialog.dismiss();
-            }catch(IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
     }
+
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -136,9 +110,11 @@ public class MyGamesActivity extends ListActivity {
             view.setOnLongClickListener(this);
         }
 
-        @Override abstract public void onClick(View v);
+        @Override
+        abstract public void onClick(View v);
 
-        @Override public boolean onLongClick(View v) {
+        @Override
+        public boolean onLongClick(View v) {
             final int[] screenPos = new int[2];
             final Rect displayFrame = new Rect();
             view.getLocationOnScreen(screenPos);
@@ -173,14 +149,14 @@ public class MyGamesActivity extends ListActivity {
         this.finish();
     }
 
-    public class GamesThread extends Thread{
-        public void run(){
+    public class GamesThread extends Thread {
+        public void run() {
 
             String stringResponse = PHPConnector.doRequest("get_games.php");
             String[] data_unformatted = stringResponse.split(",");
-            games_list = new ArrayList<HashMap<String,String>>();
-            if(!stringResponse.equals("no games found")) {
-                if(!(stringResponse.split(";").length == 1)) {
+            games_list = new ArrayList<HashMap<String, String>>();
+            if (!stringResponse.equals("no games found")) {
+                if (!(stringResponse.split(";").length == 1)) {
                     for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
                         String[] data_array = item.split(";");
@@ -195,7 +171,12 @@ public class MyGamesActivity extends ListActivity {
                         Log.d("Map", data_map.toString());
                         games_list.add(data_map);
                     }
-                }else{
+                } else if(stringResponse.equals("not logged in.")){
+                        context = getApplicationContext();
+                        loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
+                        loginAdapter.userLoginStoredCredentials();
+
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -214,10 +195,10 @@ public class MyGamesActivity extends ListActivity {
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");
             data_unformatted = stringResponse.split(",");
-            games_attending_list = new ArrayList<HashMap<String,String>>();
-            if(!stringResponse.equals("no games found")){
-                if(!(stringResponse.split(":").length == 1)) {
-                    for(String item : data_unformatted){
+            games_attending_list = new ArrayList<HashMap<String, String>>();
+            if (!stringResponse.equals("no games found")) {
+                if (!(stringResponse.split(":").length == 1)) {
+                    for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
                         String[] data_array = item.split(":");
                         data_map.put("game_id", data_array[0]);
@@ -229,7 +210,12 @@ public class MyGamesActivity extends ListActivity {
                         data_map.put("my_user_name", data_array[6].split("=")[1]);
                         games_attending_list.add(data_map);
                     }
-                }else{
+                } else if(stringResponse.equals("not logged in.")){
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+
+                } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -246,6 +232,27 @@ public class MyGamesActivity extends ListActivity {
                     });
                 }
             }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Collections.sort(games_list, Collections.reverseOrder(new GameComparator()));
+
+                    mAdapter = new MyGamesAdapter(MyGamesActivity.this,
+                            games_list,
+                            R.layout.activity_my_games,
+                            new String[]{"title"},
+                            new int[]{R.id.title});
+
+                    ListView listView = getListView();
+                    setListAdapter(mAdapter);
+                    //listView.setClickable(true);
+                    listView.setFocusableInTouchMode(false);
+                    listView.setFocusable(false);
+
+                    dialog.dismiss();
+                    Toast.makeText(activity, "Zum Starten auf ein Spiel klicken.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

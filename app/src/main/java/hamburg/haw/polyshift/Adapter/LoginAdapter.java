@@ -94,11 +94,10 @@ public class LoginAdapter{
                     Toast.makeText(activity, activity.getString(R.string.successfully_logged_in, response.split(" ")[0]), Toast.LENGTH_SHORT).show();
                 }
             });
-            if(activity instanceof WelcomeActivity) {
-                Intent intent = new Intent(activity, MainMenuActivity.class);
-                activity.startActivity(intent);
-                activity.finish();
-            }
+            Intent intent = new Intent(activity, MainMenuActivity.class);
+            activity.startActivity(intent);
+            activity.finish();
+
         }
         else if(response.equalsIgnoreCase(username + " already logged in.")){
             activity.runOnUiThread(new Runnable() {
@@ -106,11 +105,10 @@ public class LoginAdapter{
                     Toast.makeText(activity, activity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
                 }
             });
-            if(activity instanceof WelcomeActivity) {
-                Intent intent = new Intent(activity, MainMenuActivity.class);
-                activity.startActivity(intent);
-                activity.finish();
-            }
+            Intent intent = new Intent(activity, MainMenuActivity.class);
+            activity.startActivity(intent);
+            activity.finish();
+
         }else if(response.equalsIgnoreCase("No Such User Found")){
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(activity, activity.getString(R.string.login_error_title), activity.getString(R.string.login_error));
@@ -171,6 +169,8 @@ public class LoginAdapter{
             nameValuePairs.add(new BasicNameValuePair("title", newActivity.getString(R.string.email_title)));
             nameValuePairs.add(new BasicNameValuePair("header", "Hallo " + data_array[1].split("=")[1] + ","));
             nameValuePairs.add(new BasicNameValuePair("text", "Dein neues Polyshift Passwort lautet: "));
+            nameValuePairs.add(new BasicNameValuePair("footer", "Besten Gruss"));
+            nameValuePairs.add(new BasicNameValuePair("sender", "Dein Polyshift-Team"));
             String random_password = generateRandomPassword(8);
             nameValuePairs.add(new BasicNameValuePair("password", random_password));
             nameValuePairs.add(new BasicNameValuePair("password_hash", PasswordHash.toHash(random_password)));

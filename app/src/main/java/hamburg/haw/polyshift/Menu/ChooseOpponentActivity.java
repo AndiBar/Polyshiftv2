@@ -1,9 +1,11 @@
 package hamburg.haw.polyshift.Menu;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -45,49 +47,13 @@ public class ChooseOpponentActivity extends ListActivity {
     }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
-        loginAdapter = new LoginAdapter(context,ChooseOpponentActivity.this);
-        loginAdapter.handleSessionExpiration(this);
         setTitle("Meine Gegner");
         setContentView(R.layout.activity_choose_opponent);
 
-        Toast.makeText(activity,"Um ein neues Spiel zu starten auf einen Gegner klicken.", Toast.LENGTH_SHORT).show();
+        dialog = ProgressDialog.show(ChooseOpponentActivity.this, "", "Gegner werden geladen", true);
 
         Thread friends_thread = new FriendsThread();
         friends_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (friends_thread.isAlive()) {
-                friends_thread.join(waitMillis);
-            }
-            if(MainMenuActivity.dialog != null) {
-                MainMenuActivity.dialog.dismiss();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        mAdapter = new ChooseOpponentAdapter(this,
-                friends_list,
-                R.layout.activity_choose_opponent,
-                new String[] {"title"},
-                new int[] {R.id.title});
-
-        ListView listView = getListView();
-        setListAdapter(mAdapter);
-        //listView.setClickable(true);
-        listView.setFocusableInTouchMode(false);
-        listView.setFocusable(false);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*SaveValue.setSelectedFriendName(friends_list.get(position).get("title"));
-                Log.i("ContactsFragment", "Friend: " + friends_list.get(position).get("title"));
-                Fragment fragment = new ContactsDetailFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();*/
-            }
-        });
     }
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,7 +125,6 @@ public class ChooseOpponentActivity extends ListActivity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_new_contacts:
-                dialog = ProgressDialog.show(ChooseOpponentActivity.this, "", "Benutzer werden geladen", true);
                 Intent intent = new Intent(this, NewOpponentActivity.class);
                 startActivity(intent);
                 ChooseOpponentActivity.this.finish();
@@ -177,32 +142,93 @@ public class ChooseOpponentActivity extends ListActivity {
 
     public class FriendsThread extends Thread{
         public void run(){
-
             String stringResponse = PHPConnector.doRequest("get_opponents.php");
-            String[] data_unformatted = stringResponse.split(",");
-            friends_list = new ArrayList<HashMap<String,String>>();
-            if(!stringResponse.equals("no opponents found")){
-                for(String item : data_unformatted){
-                    HashMap<String, String>data_map = new HashMap<String, String>();
-                    String[] data_array = item.split(":");
-                    data_map.put("ID", data_array[0]);
-                    data_map.put("title", data_array[1]);
-                    friends_list.add(data_map);
+            if(!stringResponse.equals("no opponents found")) {
+                if (!(stringResponse.split(",").length == 1)) {
+                    String[] data_unformatted = stringResponse.split(",");
+                    friends_list = new ArrayList<HashMap<String, String>>();
+                    for (String item : data_unformatted) {
+                        HashMap<String, String> data_map = new HashMap<String, String>();
+                        String[] data_array = item.split(":");
+                        data_map.put("ID", data_array[0]);
+                        data_map.put("title", data_array[1]);
+                        friends_list.add(data_map);
+                    }
+                } else if(stringResponse.equals("not logged in.")) {
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setMessage(R.string.error_loading_opponents);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
+                        }
+                    });
                 }
             }
-
             stringResponse = PHPConnector.doRequest("get_opponents_attending.php");
-            data_unformatted = stringResponse.split(",");
-            friends_attending_list = new ArrayList<HashMap<String,String>>();
-            if(!stringResponse.equals("no opponents found")){
-                for(String item : data_unformatted){
-                    HashMap<String, String>data_map = new HashMap<String, String>();
-                    String[] data_array = item.split(":");
-                    data_map.put("ID", data_array[0]);
-                    data_map.put("title", data_array[1]);
-                    friends_attending_list.add(data_map);
+            if(!stringResponse.equals("no opponents found")) {
+                if (!(stringResponse.split(",").length == 1)) {
+                    String[] data_unformatted = stringResponse.split(",");
+                    data_unformatted = stringResponse.split(",");
+                    friends_attending_list = new ArrayList<HashMap<String, String>>();
+                    for (String item : data_unformatted) {
+                        HashMap<String, String> data_map = new HashMap<String, String>();
+                        String[] data_array = item.split(":");
+                        data_map.put("ID", data_array[0]);
+                        data_map.put("title", data_array[1]);
+                        friends_attending_list.add(data_map);
+                    }
+                } else if(stringResponse.equals("not logged in.")){
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setMessage(R.string.error_loading_opponents);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
+                        }
+                    });
                 }
             }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter = new ChooseOpponentAdapter(ChooseOpponentActivity.this,
+                            friends_list,
+                            R.layout.activity_choose_opponent,
+                            new String[]{"title"},
+                            new int[]{R.id.title});
+
+                    ListView listView = getListView();
+                    setListAdapter(mAdapter);
+                    //listView.setClickable(true);
+                    listView.setFocusableInTouchMode(false);
+                    listView.setFocusable(false);
+
+                    dialog.dismiss();
+                    Toast.makeText(activity, "Um ein neues Spiel zu starten auf einen Gegner klicken.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
     }
 }

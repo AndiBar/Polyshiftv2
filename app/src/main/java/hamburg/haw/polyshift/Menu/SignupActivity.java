@@ -55,37 +55,33 @@ public class SignupActivity extends Activity {
         repeatPassword= (EditText)findViewById(R.id.RepeatPassword);
 
         signupButton.setOnClickListener(
-    		new OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
-	            	if(editUsername.getText().toString().trim().equals("")){
-	            		Toast.makeText(SignupActivity.this,"Kein Benutzername angegeben", Toast.LENGTH_SHORT).show();
-	            	}
-	            	else if(editEmail.getText().toString().trim().equals("")){
-	            		Toast.makeText(SignupActivity.this,"Keine E-Mail-Adresse angegeben", Toast.LENGTH_SHORT).show();
-	            	}
-	            	else if((editEmail.getText().toString().trim().split("@").length < 2) || (editEmail.getText().toString().split("\\.").length < 2)){
-	            		Toast.makeText(SignupActivity.this,"Ungültige E-Mail-Adresse", Toast.LENGTH_SHORT).show();
-	            	}
-	            	else if(editPassword.getText().toString().trim().equals("")){
-	            		Toast.makeText(SignupActivity.this,"Kein Passwort angegeben", Toast.LENGTH_SHORT).show();
-	            	}
-	            	else if(!editPassword.getText().toString().trim().equals(repeatPassword.getText().toString().trim())){
-	            		Toast.makeText(SignupActivity.this,"Passwörter stimmen nicht überein", Toast.LENGTH_SHORT).show();
-	            		
-	            	}else{
-	            		WelcomeActivity.dialog = ProgressDialog.show(SignupActivity.this, "","Login läuft", true);
-	            		new Thread(
-		                		new Runnable(){
-		                			public void run(){
-		                				userSignup();
-		                			}
-		                		}
-		                ).start();
-	            	}
-	            }
-    		}
-    	);
+				new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (editUsername.getText().toString().trim().equals("")) {
+							Toast.makeText(SignupActivity.this, "Kein Benutzername angegeben", Toast.LENGTH_SHORT).show();
+						} else if (editEmail.getText().toString().trim().equals("")) {
+							Toast.makeText(SignupActivity.this, "Keine E-Mail-Adresse angegeben", Toast.LENGTH_SHORT).show();
+						} else if ((editEmail.getText().toString().trim().split("@").length < 2) || (editEmail.getText().toString().split("\\.").length < 2)) {
+							Toast.makeText(SignupActivity.this, "Ungültige E-Mail-Adresse", Toast.LENGTH_SHORT).show();
+						} else if (editPassword.getText().toString().trim().equals("")) {
+							Toast.makeText(SignupActivity.this, "Kein Passwort angegeben", Toast.LENGTH_SHORT).show();
+						} else if (!editPassword.getText().toString().trim().equals(repeatPassword.getText().toString().trim())) {
+							Toast.makeText(SignupActivity.this, "Passwörter stimmen nicht überein", Toast.LENGTH_SHORT).show();
+
+						} else {
+							WelcomeActivity.dialog = ProgressDialog.show(SignupActivity.this, "", "Login läuft", true);
+							new Thread(
+									new Runnable() {
+										public void run() {
+											userSignup();
+										}
+									}
+							).start();
+						}
+					}
+				}
+		);
 	}
 
 	void userSignup(){        	
@@ -110,7 +106,10 @@ public class SignupActivity extends Activity {
             }else if(response.equalsIgnoreCase("Error: Username already exists.")){
                 AlertDialogs.showAlert(this, "Fehler", "Der Benutzername ist bereits vergeben.");
                 WelcomeActivity.dialog.dismiss();
-            }else{
+            }else if(response.equalsIgnoreCase("Error: Email already exists.")) {
+				AlertDialogs.showAlert(this, "Fehler", "Die E-Mail Adresse ist bereits vergeben.");
+				WelcomeActivity.dialog.dismiss();
+			}else{
                 AlertDialogs.showAlert(this, "Fehler", "Bitte versuchen sie es später erneut.");
                 WelcomeActivity.dialog.dismiss();
             }
