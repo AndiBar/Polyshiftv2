@@ -33,17 +33,48 @@ public class MainMenuActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         Bundle data = getIntent().getExtras();
 
         super.onCreate(savedInstanceState);
         setTheme(android.R.style.Theme_Holo_NoActionBar);
         setContentView(R.layout.activity_main_menu);
 
-        newGameButton = (Button)findViewById(R.id.new_game_button);
-        myGamesButton = (Button)findViewById(R.id.my_games_button);
-        scoresButton = (Button)findViewById(R.id.scores_button);
-        logoutButton = (Button)findViewById(R.id.logout_button);
-        quitGameButton = (Button)findViewById(R.id.quit_game_button);
+        if (HandleSharedPreferences.checkfirstStart(MainMenuActivity.this)) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
+            builder.setMessage(R.string.first_time);
+            builder = builder.setPositiveButton(MainMenuActivity.this.getString(R.string.yes),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(MainMenuActivity.this, TrainingActivity.class);
+                            startActivity(intent);
+                            MainMenuActivity.this.finish();
+                        }
+                    });
+            builder.setNegativeButton("Nein",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
+                            builder.setMessage(R.string.start_tutorial_later);
+                            builder.setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
+                        }
+                    });
+            builder.show();
+
+        }
+
+        newGameButton = (Button) findViewById(R.id.new_game_button);
+        myGamesButton = (Button) findViewById(R.id.my_games_button);
+        scoresButton = (Button) findViewById(R.id.scores_button);
+        logoutButton = (Button) findViewById(R.id.logout_button);
+        quitGameButton = (Button) findViewById(R.id.quit_game_button);
         backgroundLogo = (ImageView) findViewById(R.id.background_logo);
 
         newGameButton.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +116,7 @@ public class MainMenuActivity extends Activity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HandleSharedPreferences.setUserCredentials(MainMenuActivity.this,"","");
+                HandleSharedPreferences.setUserCredentials(MainMenuActivity.this, "", "");
                 Intent intent = new Intent(v.getContext(), WelcomeActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
@@ -100,7 +131,7 @@ public class MainMenuActivity extends Activity {
             }
         });
 
-        if(data != null && data.getBoolean("error_occured")) {
+        if (data != null && data.getBoolean("error_occured")) {
             MainMenuActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

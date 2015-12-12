@@ -144,7 +144,11 @@ public class ChooseOpponentActivity extends ListActivity {
         public void run(){
             String stringResponse = PHPConnector.doRequest("get_opponents.php");
             if(!stringResponse.equals("no opponents found")) {
-                if (!(stringResponse.split(",").length == 1)) {
+                if(stringResponse.equals("not logged in.")) {
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+                } else {
                     String[] data_unformatted = stringResponse.split(",");
                     friends_list = new ArrayList<HashMap<String, String>>();
                     for (String item : data_unformatted) {
@@ -154,30 +158,15 @@ public class ChooseOpponentActivity extends ListActivity {
                         data_map.put("title", data_array[1]);
                         friends_list.add(data_map);
                     }
-                } else if(stringResponse.equals("not logged in.")) {
-                    context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setMessage(R.string.error_loading_opponents);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                            builder.show();
-                        }
-                    });
                 }
             }
             stringResponse = PHPConnector.doRequest("get_opponents_attending.php");
             if(!stringResponse.equals("no opponents found")) {
-                if (!(stringResponse.split(",").length == 1)) {
+                if(stringResponse.equals("not logged in.")){
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+                } else {
                     String[] data_unformatted = stringResponse.split(",");
                     data_unformatted = stringResponse.split(",");
                     friends_attending_list = new ArrayList<HashMap<String, String>>();
@@ -188,25 +177,6 @@ public class ChooseOpponentActivity extends ListActivity {
                         data_map.put("title", data_array[1]);
                         friends_attending_list.add(data_map);
                     }
-                } else if(stringResponse.equals("not logged in.")){
-                    context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setMessage(R.string.error_loading_opponents);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                            builder.show();
-                        }
-                    });
                 }
             }
             runOnUiThread(new Runnable() {
@@ -225,7 +195,7 @@ public class ChooseOpponentActivity extends ListActivity {
                     listView.setFocusable(false);
 
                     dialog.dismiss();
-                    Toast.makeText(activity, "Um ein neues Spiel zu starten auf einen Gegner klicken.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.how_to_start_game, Toast.LENGTH_SHORT).show();
                 }
             });
 

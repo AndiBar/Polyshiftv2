@@ -54,6 +54,14 @@
     <string name="email_address">E-Mail Adresse</string>
     <string name="email_title">Neues Passwort</string>
     <string name="error_loading_opponents">Beim Abrufen der Gegner ist ein Fehler aufgetreten.</string>
+    <string name="user_not_found">Der Benutzer wurde nicht gefunden.</string>
+    <string name="do_not_add_yourself">Du kannst dich nicht selbst als Gegner hinzufügen.</string>
+    <string name="already_sent">Du hast bereits eine Anfrage an %1$s gesendet.</string>
+    <string name="already_opponent">%1$s ist bereits unter deinen Gegnern.</string>
+    <string name="invitation_sent">Es wurde eine Anfrage an %1$s gesendet. Sobald die Anfrage bestätgt wurde, wird %1$s unter deinen Gegnern aufgeführt.</string>
+    <string name="first_time">Du startest Polyshift zu ersten Mal. Möchtest du das Tutorial starten, um dich mit den Spielregeln vertraut zu machen?</string>
+    <string name="start_tutorial_later">Du kannst das Tutorial jederzeit starten, indem du das Polyshift Logo antippst.</string>
+    <string name="how_to_start_game">Um ein neues Spiel zu starten, auf einen Gegner klicken.</string>
 
 
 </resources>

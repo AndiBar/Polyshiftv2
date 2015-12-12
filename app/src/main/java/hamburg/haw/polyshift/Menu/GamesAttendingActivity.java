@@ -104,6 +104,7 @@ public class GamesAttendingActivity extends ListActivity {
                 }
 
                 if (response.equals("game accepted")) {
+                    GameSync.SendChangeNotification(opponentId,opponentName + " hat deine Herausforderung angenommen","");
                     Log.d("res:", response);
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Herausforderung wurde angenommen. Spiel wird gestartet.");
@@ -168,7 +169,6 @@ public class GamesAttendingActivity extends ListActivity {
                     }
                 }
                 response = PHPConnector.doRequest(nameValuePairs, "accept_game.php");
-               GameSync.SendChangeNotification(opponentId,opponentName + " hat deine Herausforderung angenommen","");
             }
         }
     }

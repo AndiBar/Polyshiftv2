@@ -25,7 +25,7 @@ public class HandleSharedPreferences {
     }
 
     public static String getUserCredentials(Context context, String key){
-        Log.d("SaveSharedPreference",PreferenceManager.getDefaultSharedPreferences(context).getString(key, ""));
+        Log.d("SaveSharedPreference", PreferenceManager.getDefaultSharedPreferences(context).getString(key, ""));
         return PreferenceManager.getDefaultSharedPreferences(context).getString(key, "");
     }
 
@@ -44,6 +44,16 @@ public class HandleSharedPreferences {
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+    public static boolean checkfirstStart(Context context){
+        if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("firstrun", true)){
+            Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+            editor.putBoolean("firstrun", false);
+            editor.commit();
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //public static void setRegid(Context context,)

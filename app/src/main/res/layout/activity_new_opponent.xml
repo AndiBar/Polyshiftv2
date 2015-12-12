@@ -13,6 +13,7 @@
         android:dropDownWidth="wrap_content"
         android:inputType="textAutoComplete|textAutoCorrect"
         android:popupBackground="#F7F3DE"
+        android:hint="@string/username"
         android:textColor="@color/black" >
     </AutoCompleteTextView>
 

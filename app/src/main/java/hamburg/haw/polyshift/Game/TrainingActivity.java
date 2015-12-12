@@ -206,7 +206,6 @@ public class TrainingActivity extends GameActivity implements GameListener {
             }
 
             if(gameLoop.RoundFinished && !infoIsAnnounced){
-                Log.d("bla", "aaaaah");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -261,9 +260,9 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                     });
                         }
                         builder.show();
-                        infoIsAnnounced = true;
                     }
                 });
+                infoIsAnnounced = true;
             }
 
             if(!gameLoop.RoundFinished){

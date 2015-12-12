@@ -77,20 +77,22 @@ public class NewOpponentActivity extends Activity {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
 
             if(response.equals("kein Gegner gefunden")) {
-                builder.setMessage("Der Benutzer wurde nicht gefunden.");
+                builder.setMessage(R.string.user_not_found);
             }else if(response.equals("gleiche Person")){
-                builder.setMessage("Du kannst dich nicht selbst als Gegner hinzufügen.");
+                builder.setMessage(R.string.do_not_add_yourself);
             }else if(response.equals("bereits verschickt")){
-                builder.setMessage("Du hast bereits eine Anfrage an " + username + " gesendet.");
+                builder.setMessage(context.getString(R.string.already_sent, username));
+			}else if(response.equals("bereits befeindet")){
+				builder.setMessage(context.getString(R.string.already_opponent, username));
             }else{
-                builder.setMessage("Es wurde eine Anfrage an " + username + " gesendet. Sobald die Anfrage bestätgt wurde, wird " + username + " unter deinen Gegnern aufgeführt.");
+                builder.setMessage(context.getString(R.string.invitation_sent, username));
+				Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
+				startActivity(intent);
+				NewOpponentActivity.this.finish();
             }
             builder.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
-                            startActivity(intent);
-                            NewOpponentActivity.this.finish();
                             dialog.cancel();
                         }
                     });
