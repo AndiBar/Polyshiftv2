@@ -108,7 +108,7 @@ public class MyGamesAdapter extends SimpleAdapter {
                     Timestamp round_time = Timestamp.valueOf(data.get(position).get("timestamp"));
                     long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(round_time.getTime());
                     if (data.get(position).get("game_accepted").equals("1")) {
-                        if(diff_h > 1 && (data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("no")) || (data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("yes"))){
+                        if(diff_h > 1 && (data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("no")) || (diff_h > 1 && data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("yes"))){
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
                             builder.setMessage("Möchtest du " + data.get(position).get("opponent_name") + " eine Erinnerung schicken?");
                             builder = builder.setPositiveButton(context.getString(R.string.yes),

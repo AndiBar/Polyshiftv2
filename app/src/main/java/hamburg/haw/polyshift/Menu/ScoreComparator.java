@@ -24,6 +24,10 @@ public class ScoreComparator implements Comparator<HashMap> {
                 return Integer.compare(lhs_win - lhs_loss, rhs_win - rhs_loss);
         }else if(lhs_score == 0 && lhs_win <= 0 && rhs_score == 0 && rhs_win <= 0) {
                 return Integer.compare(-lhs_loss, -rhs_loss);
+        }else if(((lhs_loss != 0 || lhs_win != 0) && lhs_score == 0) && rhs_loss == 0 || rhs_win == 0){
+                return Integer.compare(lhs_score, -1);
+        }else if(lhs_loss == 0 || lhs_win == 0 && ((rhs_loss != 0 || rhs_win != 0) && rhs_score == 0)){
+                return Integer.compare(-1, rhs_score);
         }else{
                 return Integer.compare(lhs_score, rhs_score);
         }

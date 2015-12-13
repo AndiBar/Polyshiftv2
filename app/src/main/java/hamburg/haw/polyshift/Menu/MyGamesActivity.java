@@ -44,6 +44,7 @@ public class MyGamesActivity extends ListActivity {
     private Context context;
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
+    private boolean error_shown = false;
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
@@ -191,6 +192,7 @@ public class MyGamesActivity extends ListActivity {
                             builder.show();
                         }
                     });
+                    error_shown = true;
                 }
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");
@@ -215,7 +217,7 @@ public class MyGamesActivity extends ListActivity {
                     loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
                     loginAdapter.userLoginStoredCredentials();
 
-                } else {
+                } else if(!error_shown) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

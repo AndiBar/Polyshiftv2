@@ -40,6 +40,7 @@ public class ChooseOpponentActivity extends ListActivity {
     private static Context context;
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
+    private boolean error_shown = false;
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -144,7 +145,7 @@ public class ChooseOpponentActivity extends ListActivity {
         public void run(){
             String stringResponse = PHPConnector.doRequest("get_opponents.php");
             if(!stringResponse.equals("no opponents found")) {
-                if(stringResponse.equals("not logged in.")) {
+                if(stringResponse.equals("not logged in.") || stringResponse == null) {
                     context = getApplicationContext();
                     loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
                     loginAdapter.userLoginStoredCredentials();
@@ -154,15 +155,33 @@ public class ChooseOpponentActivity extends ListActivity {
                     for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
                         String[] data_array = item.split(":");
-                        data_map.put("ID", data_array[0]);
-                        data_map.put("title", data_array[1]);
-                        friends_list.add(data_map);
+                        if(item.split(":").length != 1){
+                            data_map.put("ID", data_array[0]);
+                            data_map.put("title", data_array[1]);
+                            friends_list.add(data_map);
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                                    builder.setMessage("Beim Abrufen der Gegner ist ein Fehler aufgetreten.");
+                                    builder.setPositiveButton("OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    builder.show();
+                                }
+                            });
+                            error_shown = true;
+                        }
                     }
                 }
             }
             stringResponse = PHPConnector.doRequest("get_opponents_attending.php");
             if(!stringResponse.equals("no opponents found")) {
-                if(stringResponse.equals("not logged in.")){
+                if(stringResponse.equals("not logged in.") || stringResponse == null){
                     context = getApplicationContext();
                     loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
                     loginAdapter.userLoginStoredCredentials();
@@ -173,9 +192,26 @@ public class ChooseOpponentActivity extends ListActivity {
                     for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
                         String[] data_array = item.split(":");
-                        data_map.put("ID", data_array[0]);
-                        data_map.put("title", data_array[1]);
-                        friends_attending_list.add(data_map);
+                        if(item.split(":").length != 1){
+                            data_map.put("ID", data_array[0]);
+                            data_map.put("title", data_array[1]);
+                            friends_attending_list.add(data_map);
+                        } else if(!error_shown){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                                    builder.setMessage("Beim Abrufen der Gegner ist ein Fehler aufgetreten.");
+                                    builder.setPositiveButton("OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    builder.show();
+                                }
+                            });
+                        }
                     }
                 }
             }

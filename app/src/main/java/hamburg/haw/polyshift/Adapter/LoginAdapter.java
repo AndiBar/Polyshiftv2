@@ -94,7 +94,12 @@ public class LoginAdapter{
                     Toast.makeText(activity, activity.getString(R.string.successfully_logged_in, response.split(" ")[0]), Toast.LENGTH_SHORT).show();
                 }
             });
-            Intent intent = new Intent(activity, MainMenuActivity.class);
+            Intent intent;
+            if(activity instanceof WelcomeActivity){
+                intent = new Intent(activity, MainMenuActivity.class);
+            }else {
+                intent = new Intent(activity, activity.getClass());
+            }
             activity.startActivity(intent);
             activity.finish();
 
@@ -105,7 +110,12 @@ public class LoginAdapter{
                     Toast.makeText(activity, activity.getString(R.string.already_logged_in), Toast.LENGTH_SHORT).show();
                 }
             });
-            Intent intent = new Intent(activity, MainMenuActivity.class);
+            Intent intent;
+            if(activity instanceof WelcomeActivity){
+                intent = new Intent(activity, MainMenuActivity.class);
+            }else {
+                intent = new Intent(activity, activity.getClass());
+            }
             activity.startActivity(intent);
             activity.finish();
 

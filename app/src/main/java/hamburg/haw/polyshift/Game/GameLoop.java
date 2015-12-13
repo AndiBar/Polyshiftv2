@@ -16,12 +16,13 @@ public class GameLoop{
     public boolean PlayerOnesTurn;
     public boolean RoundFinished;
     public boolean PlayerOnesGame;
-    public static Thread game_status_thread;
+    public Thread game_status_thread;
     private String opponentID;
     private String opponentName;
     private String notificationGameID;
 
     public GameLoop(String PlayerOnesGame){
+        game_status_thread = new Thread();
         RoundFinished = true;
         if(PlayerOnesGame.equals("yes")){
             this.PlayerOnesGame = true;
@@ -33,10 +34,26 @@ public class GameLoop{
     public void setRandomPlayer(){
         Random random = new Random();
         PlayerOnesTurn = random.nextBoolean();
-        updateGameStatus();
+        class GameStatusThread extends Thread{
+            public void run(){
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+            }
+        }
+        game_status_thread = new GameStatusThread();
+        game_status_thread.start();
+        try {
+            long waitMillis = 10000;
+            while (game_status_thread.isAlive()) {
+                game_status_thread.join(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void update(Simulation simulation, final String opponentID,final String opponentName,final String notificationGameID){
+    public void update(final Simulation simulation, final String opponentID,final String opponentName,final String notificationGameID){
         if(PlayerOnesTurn){
             simulation.player2.isLocked = true;
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
@@ -54,11 +71,20 @@ public class GameLoop{
                         simulation.player2.isLocked = false;
                     }
                     simulation.player.isLockedIn = false;
-                    GameSync.uploadSimulation(simulation);
-                    updateGameStatus();
-                    String msg = opponentName + " hat einen Spielzug gemacht";
-                    GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     PolyshiftActivity.statusUpdated = false;
+                    class GameStatusThread extends Thread{
+                        public void run(){
+                            GameSync.uploadSimulation(simulation);
+                            String msg = opponentName + " hat einen Spielzug gemacht";
+                            GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
+                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                            nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                            PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                        }
+                    }
+                    game_status_thread = new GameStatusThread();
+                    game_status_thread.start();
+                    simulation.allLocked = true;
                 }
             }
         }
@@ -79,32 +105,22 @@ public class GameLoop{
                         simulation.player.isLocked = false;
                     }
                     simulation.player2.isLockedIn = false;
-                    GameSync.uploadSimulation(simulation);
-                    updateGameStatus();
-                    String msg = opponentName + " hat einen Spielzug gemacht";
-                    GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                     PolyshiftActivity.statusUpdated = false;
+                    class GameStatusThread extends Thread{
+                        public void run(){
+                            GameSync.uploadSimulation(simulation);
+                            String msg = opponentName + " hat einen Spielzug gemacht";
+                            GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
+                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                            nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                            PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                        }
+                    }
+                    game_status_thread = new GameStatusThread();
+                    game_status_thread.start();
+                    simulation.allLocked = true;
                 }
             }
-        }
-    }
-    public void updateGameStatus(){
-        class GameStatusThread extends Thread{
-            public void run(){
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                PHPConnector.doRequest(nameValuePairs, "update_game.php");
-            }
-        }
-        game_status_thread = new GameStatusThread();
-        game_status_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (game_status_thread.isAlive()) {
-                game_status_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

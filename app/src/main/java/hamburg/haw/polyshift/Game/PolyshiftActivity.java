@@ -59,6 +59,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean onBackPressed = false;
     private boolean onDestroyed = false;
     public static ProgressDialog dialog = null;
+    private boolean isSaving = false;
 
 
     @Override
@@ -115,11 +116,13 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
-        dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
-        onBackPressed = true;
-        final Intent intent = new Intent(this, MyGamesActivity.class);
-        startActivity(intent);
-        this.finish();
+        if(!isSaving) {
+            dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
+            onBackPressed = true;
+            final Intent intent = new Intent(this, MyGamesActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
     }
 
     @Override
@@ -185,7 +188,17 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             simulation.update(activity);
             gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
 
-            if (simulation.winner == null) {
+            if (gameLoop.game_status_thread.isAlive() && !isSaving) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MenuItem item = menu.findItem(R.id.action_game_status);
+                        item.setTitle("Spiel wird gespeichert.");
+                        isSaving = true;
+                    }
+                });
+            }
+            if (simulation.winner == null && !gameLoop.game_status_thread.isAlive()) {
                 if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
                     if (!statusUpdated || System.nanoTime() - start > 1000000000) {
                         statusDownloaded = true;
@@ -194,9 +207,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                         game_status = getGameStatus();
                         updateGame(activity, gl);
                         start = System.nanoTime();
+                        isSaving = false;
                     }
                 }
-            }else if(!winnerIsAnnounced){
+            }else if(!winnerIsAnnounced && !gameLoop.game_status_thread.isAlive()){
                 game_status = getGameStatus();
             }
 
