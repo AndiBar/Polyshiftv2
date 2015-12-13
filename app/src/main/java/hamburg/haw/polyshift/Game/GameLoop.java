@@ -20,6 +20,7 @@ public class GameLoop{
     private String opponentID;
     private String opponentName;
     private String notificationGameID;
+    private boolean move_again = false;
 
     public GameLoop(String PlayerOnesGame){
         game_status_thread = new Thread();
@@ -61,6 +62,7 @@ public class GameLoop{
             }
             if(simulation.bump_detected) {
                 simulation.bump_detected = false;
+                move_again = true;
                 PlayerOnesTurn = false;
             }else if(!RoundFinished || simulation.player.isLockedIn){
                 if(!simulation.player.isMovingRight && !simulation.player.isMovingLeft && !simulation.player.isMovingUp && !simulation.player.isMovingDown){
@@ -84,7 +86,11 @@ public class GameLoop{
                     }
                     game_status_thread = new GameStatusThread();
                     game_status_thread.start();
-                    simulation.allLocked = true;
+                    if(!move_again) {
+                        simulation.allLocked = true;
+                    }else{
+                        move_again = false;
+                    }
                 }
             }
         }
@@ -95,6 +101,7 @@ public class GameLoop{
             }
             if(simulation.bump_detected) {
                 simulation.bump_detected = false;
+                move_again = true;
                 PlayerOnesTurn = true;
             }else if(!RoundFinished || simulation.player2.isLockedIn){
                 if(!simulation.player2.isMovingRight && !simulation.player2.isMovingLeft && !simulation.player2.isMovingUp && !simulation.player2.isMovingDown){
@@ -118,7 +125,11 @@ public class GameLoop{
                     }
                     game_status_thread = new GameStatusThread();
                     game_status_thread.start();
-                    simulation.allLocked = true;
+                    if(!move_again) {
+                        simulation.allLocked = true;
+                    }else{
+                        move_again = false;
+                    }
                 }
             }
         }

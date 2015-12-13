@@ -41,6 +41,7 @@ public class ChooseOpponentActivity extends ListActivity {
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
     private boolean error_shown = false;
+    private Menu menu;
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -58,9 +59,15 @@ public class ChooseOpponentActivity extends ListActivity {
     }
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.new_opponent, menu);
+        MenuItem bell_button = menu.findItem(R.id.action_attending_contacts);
+        bell_button.setVisible(false);
+        return super.onCreateOptionsMenu(menu);
 
+    }
+    public void setMenuItems(){
         final View menu_hotlist = menu.findItem(R.id.action_attending_contacts).getActionView();
 
         MenuItem bell_button = menu.findItem(R.id.action_attending_contacts);
@@ -81,8 +88,6 @@ public class ChooseOpponentActivity extends ListActivity {
                 ChooseOpponentActivity.this.finish();
             }
         };
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     static abstract class MyMenuItemStuffListener implements View.OnClickListener, View.OnLongClickListener {
@@ -196,6 +201,13 @@ public class ChooseOpponentActivity extends ListActivity {
                             data_map.put("ID", data_array[0]);
                             data_map.put("title", data_array[1]);
                             friends_attending_list.add(data_map);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //set opponents attenting in menu bar
+                                    setMenuItems();
+                                }
+                            });
                         } else if(!error_shown){
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -218,6 +230,7 @@ public class ChooseOpponentActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
                     mAdapter = new ChooseOpponentAdapter(ChooseOpponentActivity.this,
                             friends_list,
                             R.layout.activity_choose_opponent,

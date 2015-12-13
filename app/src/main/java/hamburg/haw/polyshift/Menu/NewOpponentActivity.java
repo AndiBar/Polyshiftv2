@@ -32,6 +32,7 @@ public class NewOpponentActivity extends Activity {
     private LoginAdapter loginAdapter;
     private String response;
 	private ArrayList users_list;
+	private boolean sending_success;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -40,6 +41,7 @@ public class NewOpponentActivity extends Activity {
         context = getApplicationContext();
 		loginAdapter = new LoginAdapter(context, NewOpponentActivity.this);
         loginAdapter.handleSessionExpiration(this);
+		sending_success = false;
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);
 
@@ -86,14 +88,17 @@ public class NewOpponentActivity extends Activity {
 				builder.setMessage(context.getString(R.string.already_opponent, username));
             }else{
                 builder.setMessage(context.getString(R.string.invitation_sent, username));
-				Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
-				startActivity(intent);
-				NewOpponentActivity.this.finish();
+				sending_success = true;
             }
             builder.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
+							if(sending_success) {
+								Intent intent = new Intent(NewOpponentActivity.this, ChooseOpponentActivity.class);
+								startActivity(intent);
+								NewOpponentActivity.this.finish();
+							}
                         }
                     });
             builder.show();

@@ -60,7 +60,7 @@
     <string name="already_opponent">%1$s ist bereits unter deinen Gegnern.</string>
     <string name="invitation_sent">Es wurde eine Anfrage an %1$s gesendet. Sobald die Anfrage bestätgt wurde, wird %1$s unter deinen Gegnern aufgeführt.</string>
     <string name="first_time">Du startest Polyshift zu ersten Mal. Möchtest du das Tutorial starten, um dich mit den Spielregeln vertraut zu machen?</string>
-    <string name="start_tutorial_later">Du kannst das Tutorial jederzeit starten, indem du das Polyshift Logo antippst.</string>
+    <string name="start_tutorial_later">Du kannst das Tutorial jederzeit starten, indem du auf das Polyshift Logo tippst.</string>
     <string name="how_to_start_game">Um ein neues Spiel zu starten, auf einen Gegner klicken.</string>
 
 

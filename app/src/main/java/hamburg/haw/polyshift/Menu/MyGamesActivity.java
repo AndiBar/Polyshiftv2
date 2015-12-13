@@ -45,6 +45,7 @@ public class MyGamesActivity extends ListActivity {
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
     private boolean error_shown = false;
+    private Menu menu;
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
@@ -73,31 +74,35 @@ public class MyGamesActivity extends ListActivity {
 
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.new_game, menu);
-
-        final View menu_hotlist = menu.findItem(R.id.action_attending_contacts).getActionView();
-
-        MenuItem bell_button = menu.findItem(R.id.action_attending_contacts);
-        TextView ui_bell = (TextView) menu_hotlist.findViewById(R.id.hotlist_hot);
-        bell_number = games_attending_list.size();
-        if (bell_number == 0) {
-            bell_button.setVisible(false);
-        } else {
-            bell_button.setVisible(true);
-            ui_bell.setText(Integer.toString(bell_number));
-        }
-
-        new MyMenuItemStuffListener(menu_hotlist, "Show hot message") {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), GamesAttendingActivity.class);
-                startActivity(intent);
-                MyGamesActivity.this.finish();
-            }
-        };
-
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
+    }
+    public void setMenuItems(){
+        if(menu != null) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.new_game, menu);
+
+            final View menu_hotlist = menu.findItem(R.id.action_attending_contacts).getActionView();
+
+            MenuItem bell_button = menu.findItem(R.id.action_attending_contacts);
+            TextView ui_bell = (TextView) menu_hotlist.findViewById(R.id.hotlist_hot);
+            bell_number = games_attending_list.size();
+            if (bell_number == 0) {
+                bell_button.setVisible(false);
+            } else {
+                bell_button.setVisible(true);
+                ui_bell.setText(Integer.toString(bell_number));
+            }
+
+            new MyMenuItemStuffListener(menu_hotlist, "Show hot message") {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), GamesAttendingActivity.class);
+                    startActivity(intent);
+                    MyGamesActivity.this.finish();
+                }
+            };
+        }
     }
 
     static abstract class MyMenuItemStuffListener implements View.OnClickListener, View.OnLongClickListener {
@@ -237,6 +242,9 @@ public class MyGamesActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    //show games attending in menu bar
+                    setMenuItems();
+
                     Collections.sort(games_list, Collections.reverseOrder(new GameComparator()));
 
                     mAdapter = new MyGamesAdapter(MyGamesActivity.this,
