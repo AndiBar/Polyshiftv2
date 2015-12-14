@@ -164,6 +164,8 @@ public class ChooseOpponentActivity extends ListActivity {
                             data_map.put("ID", data_array[0]);
                             data_map.put("title", data_array[1]);
                             friends_list.add(data_map);
+                        }else if(stringResponse.equals("no opponents found")) {
+
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -208,6 +210,8 @@ public class ChooseOpponentActivity extends ListActivity {
                                     setMenuItems();
                                 }
                             });
+                        }else if(stringResponse.equals("no opponents found")) {
+
                         } else if(!error_shown){
                             runOnUiThread(new Runnable() {
                                 @Override

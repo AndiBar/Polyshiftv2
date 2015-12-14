@@ -177,10 +177,12 @@ public class MyGamesActivity extends ListActivity {
                         Log.d("Map", data_map.toString());
                         games_list.add(data_map);
                     }
-                } else if(stringResponse.equals("not logged in.")){
-                        context = getApplicationContext();
-                        loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
-                        loginAdapter.userLoginStoredCredentials();
+                } else if(stringResponse.equals("not logged in.")) {
+                    context = getApplicationContext();
+                    loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
+                    loginAdapter.userLoginStoredCredentials();
+
+                }else if(stringResponse.equals("no games found")) {
 
                 } else {
                     runOnUiThread(new Runnable() {
@@ -221,6 +223,8 @@ public class MyGamesActivity extends ListActivity {
                     context = getApplicationContext();
                     loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
                     loginAdapter.userLoginStoredCredentials();
+
+                }else if(stringResponse.equals("no games found")) {
 
                 } else if(!error_shown) {
                     runOnUiThread(new Runnable() {
