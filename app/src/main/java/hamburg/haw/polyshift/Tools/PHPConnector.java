@@ -33,8 +33,7 @@ public class PHPConnector {
 	public static HttpPost httppost;
 	public static ArrayList<NameValuePair> nameValuePairs;
 	public static ResponseHandler<String> responseHandler;
-    //public static final String server = "http://d1wsomrjgveehwkw.myfritz.net:8080/Polyshift/";
-    public static final String server = "http://andibar.bplaced.net/Polyshift/";
+    public static final String server = "http://game.polyshift.de/";
 	public static HttpEntity entity;
 	public static HttpResponse httpResponse;
 	public static String response;

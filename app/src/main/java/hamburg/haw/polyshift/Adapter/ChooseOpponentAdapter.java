@@ -62,13 +62,12 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                 builder = builder.setPositiveButton(context.getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                dialog = ProgressDialog.show(context, "","Spiel wird erstellt", true);
+                                dialog = ProgressDialog.show(context, "",context.getString(R.string.game_is_created), true);
                                 Thread thread = new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                                         nameValuePairs.add(new BasicNameValuePair("opponent_id", data.get(position).get("ID")));
-                                        GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"");
                                         response = PHPConnector.doRequest(nameValuePairs, "add_game.php");
                                     }
                                 });
@@ -91,6 +90,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
+                                                    GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"");
                                                     dialog.cancel();
                                                     Intent intent = new Intent(context, MyGamesActivity.class);
                                                     context.startActivity(intent);

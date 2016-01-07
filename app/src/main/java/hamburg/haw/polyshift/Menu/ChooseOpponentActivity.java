@@ -40,7 +40,6 @@ public class ChooseOpponentActivity extends ListActivity {
     private static Context context;
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
-    private boolean error_shown = false;
     private Menu menu;
 
     public ChooseOpponentActivity() {
@@ -171,7 +170,7 @@ public class ChooseOpponentActivity extends ListActivity {
                                 @Override
                                 public void run() {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                    builder.setMessage("Beim Abrufen der Gegner ist ein Fehler aufgetreten.");
+                                    builder.setMessage(R.string.error_loading_opponents);
                                     builder.setPositiveButton("OK",
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
@@ -181,7 +180,6 @@ public class ChooseOpponentActivity extends ListActivity {
                                     builder.show();
                                 }
                             });
-                            error_shown = true;
                         }
                     }
                 }
@@ -212,21 +210,6 @@ public class ChooseOpponentActivity extends ListActivity {
                             });
                         }else if(stringResponse.equals("no opponents found")) {
 
-                        } else if(!error_shown){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                    builder.setMessage("Beim Abrufen der Gegner ist ein Fehler aufgetreten.");
-                                    builder.setPositiveButton("OK",
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                    builder.show();
-                                }
-                            });
                         }
                     }
                 }

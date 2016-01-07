@@ -1,8 +1,6 @@
 package hamburg.haw.polyshift.Adapter;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -178,9 +176,9 @@ public class LoginAdapter{
             nameValuePairs.add(new BasicNameValuePair("email", data_array[2].split("=")[1]));
             nameValuePairs.add(new BasicNameValuePair("title", newActivity.getString(R.string.email_title)));
             nameValuePairs.add(new BasicNameValuePair("header", "Hallo " + data_array[1].split("=")[1] + ","));
-            nameValuePairs.add(new BasicNameValuePair("text", "Dein neues Polyshift Passwort lautet: "));
-            nameValuePairs.add(new BasicNameValuePair("footer", "Besten Gruss"));
-            nameValuePairs.add(new BasicNameValuePair("sender", "Dein Polyshift-Team"));
+            nameValuePairs.add(new BasicNameValuePair("text", newActivity.getString(R.string.new_password_text)));
+            nameValuePairs.add(new BasicNameValuePair("footer", newActivity.getString(R.string.regards)));
+            nameValuePairs.add(new BasicNameValuePair("sender", newActivity.getString(R.string.footer)));
             String random_password = generateRandomPassword(8);
             nameValuePairs.add(new BasicNameValuePair("password", random_password));
             nameValuePairs.add(new BasicNameValuePair("password_hash", PasswordHash.toHash(random_password)));
@@ -188,12 +186,12 @@ public class LoginAdapter{
             final String response2 = PHPConnector.doRequest(nameValuePairs, "update_password.php");
 
             if(response2.equals("password updated.")){
-                AlertDialogs.showAlert(newActivity, "Neues Passwort", "Es wurde ein neues Passwort an die von dir angegebene E-Mail Adresse gesendet.");
+                AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.new_password), newActivity.getString(R.string.new_password_sent));
             }else{
-                AlertDialogs.showAlert(newActivity, "Fehler", "Es konnte kein neues Passwort erstellt werden.");
+                AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.error), newActivity.getString(R.string.password_not_created));
             }
         }else{
-            AlertDialogs.showAlert(newActivity, "Fehler", "Es wurde kein Benutzer mit dieser E-Mail Adresse gefunden.");
+            AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.error), newActivity.getString(R.string.no_user_found));
         }
     }
 

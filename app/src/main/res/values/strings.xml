@@ -62,6 +62,19 @@
     <string name="first_time">Du startest Polyshift zu ersten Mal. Möchtest du das Tutorial starten, um dich mit den Spielregeln vertraut zu machen?</string>
     <string name="start_tutorial_later">Du kannst das Tutorial jederzeit starten, indem du auf das Polyshift Logo tippst.</string>
     <string name="how_to_start_game">Um ein neues Spiel zu starten, auf einen Gegner klicken.</string>
+    <string name="game_is_created">Spiel wird erstellt</string>
+    <string name="new_password_text">"Dein neues Polyshift Passwort lautet: "</string>
+    <string name="regards">Besten Gruss</string>
+    <string name="footer">Dein Polyshift-Team</string>
+    <string name="new_password">Neues Passwort</string>
+    <string name="new_password_sent">Es wurde ein neues Passwort an die von dir angegebene E-Mail Adresse gesendet.</string>
+    <string name="error">Fehler</string>
+    <string name="password_not_created">Es konnte kein neues Passwort erstellt werden.</string>
+    <string name="no_user_found">Es wurde kein Benutzer mit dieser E-Mail Adresse gefunden.</string>
+    <string name="send_reminder">Möchtest du %1$s eine Erinnerung schicken?</string>
+    <string name="opponent_waiting">%1$s wartet auf einen Spielzug von dir."</string>
+    <string name="start_game">Nein, Spiel starten</string>
+    <string name="send_acceptance_reminder">Möchtest du %1$s eine Erinnerung schicken?</string>
 
 
 </resources>

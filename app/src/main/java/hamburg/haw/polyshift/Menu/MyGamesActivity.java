@@ -44,7 +44,6 @@ public class MyGamesActivity extends ListActivity {
     private Context context;
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
-    private boolean error_shown = false;
     private Menu menu;
 
     public MyGamesActivity() {
@@ -199,7 +198,6 @@ public class MyGamesActivity extends ListActivity {
                             builder.show();
                         }
                     });
-                    error_shown = true;
                 }
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");
@@ -226,21 +224,6 @@ public class MyGamesActivity extends ListActivity {
 
                 }else if(stringResponse.equals("no games found")) {
 
-                } else if(!error_shown) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                            builder.show();
-                        }
-                    });
                 }
             }
             runOnUiThread(new Runnable() {

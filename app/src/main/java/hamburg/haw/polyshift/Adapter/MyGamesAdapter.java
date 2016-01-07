@@ -110,15 +110,15 @@ public class MyGamesAdapter extends SimpleAdapter {
                     if (data.get(position).get("game_accepted").equals("1")) {
                         if(diff_h > 1 && (data.get(position).get("opponents_turn").equals("0") && data.get(position).get("my_game").equals("no")) || (diff_h > 1 && data.get(position).get("opponents_turn").equals("1") && data.get(position).get("my_game").equals("yes"))){
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-                            builder.setMessage("Möchtest du " + data.get(position).get("opponent_name") + " eine Erinnerung schicken?");
+                            builder.setMessage(context.getString(R.string.send_reminder, data.get(position).get("opponent_name")));
                             builder = builder.setPositiveButton(context.getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            String msg = data.get(position).get("my_name") + " wartet auf einen Spielzug von dir";
+                                            String msg = context.getString(R.string.opponent_waiting, data.get(position).get("my_name"));
                                             GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
                                         }
                                     });
-                            builder.setNegativeButton("Nein, Spiel starten",
+                            builder.setNegativeButton(R.string.start_game,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();
@@ -132,7 +132,7 @@ public class MyGamesAdapter extends SimpleAdapter {
                     }else{
                         if(diff_h > 1 ){
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-                            builder.setMessage("Möchtest du " + data.get(position).get("opponent_name") + " eine Erinnerung schicken?");
+                            builder.setMessage(context.getString(R.string.send_acceptance_reminder, data.get(position).get("opponent_name")));
                             builder = builder.setPositiveButton(context.getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
