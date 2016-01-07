@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
-import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 

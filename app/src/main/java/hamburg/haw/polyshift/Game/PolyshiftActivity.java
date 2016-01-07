@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,10 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.google.android.gms.games.Game;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
@@ -30,7 +32,6 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 
 public class PolyshiftActivity extends GameActivity implements GameListener {
@@ -60,6 +61,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean onDestroyed = false;
     public static ProgressDialog dialog = null;
     private boolean isSaving = false;
+    private Tracker mTracker = null;
 
 
     @Override
@@ -68,7 +70,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
         loginAdapter.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 
         super.onCreate(savedInstanceState);
@@ -79,7 +81,15 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         setTitle("Polyshift");
 
-        Log.d( "Polyshift", "Polyshift Spiel erstellt");
+        Log.d("Polyshift", "Polyshift Spiel erstellt");
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Share")
+                .build());
     }
 
     public void onSaveInstanceState( Bundle outState )
@@ -99,7 +109,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public void onResume( )
     {
         super.onResume();
-        Log.d( "Polyshift", "Polyshift wiederhergestellt" );
+        Log.d("Polyshift", "Polyshift wiederhergestellt");
+
+        mTracker.setScreenName("Image~" + getClass().getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
