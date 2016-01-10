@@ -13,12 +13,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Adapter.ScoresAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.BlockComparator;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
@@ -29,6 +32,7 @@ public class ScoresActivity extends ListActivity {
     private Activity activity;
     public static ArrayList<HashMap<String, String>> scores_list = new ArrayList<HashMap<String,String>>();
     public static ProgressDialog dialog = null;
+    private Tracker mTracker = null;
 
     public ScoresActivity(){
         activity = this;
@@ -41,6 +45,9 @@ public class ScoresActivity extends ListActivity {
         setTitle("Bestenliste");
 
         dialog = ProgressDialog.show(ScoresActivity.this, "", "Statistiken werden geladen", true);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         Thread scores_thread = new ScoresThread();
         scores_thread.start();

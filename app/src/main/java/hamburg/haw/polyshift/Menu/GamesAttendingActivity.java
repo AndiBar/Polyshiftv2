@@ -9,6 +9,7 @@ import org.apache.http.message.BasicNameValuePair;
 import hamburg.haw.polyshift.Adapter.AcceptGameAdapter;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
@@ -31,6 +32,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.Tracker;
+
 
 public class GamesAttendingActivity extends ListActivity {
 
@@ -41,6 +44,7 @@ public class GamesAttendingActivity extends ListActivity {
     private static String opponentId  = "";
     private static String opponentName = "";
     private LoginAdapter loginAdapter;
+    private Tracker mTracker = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -76,6 +80,8 @@ public class GamesAttendingActivity extends ListActivity {
 	        });
 
        }
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 	}
 
 	// Action Bar Button

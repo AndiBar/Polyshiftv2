@@ -21,7 +21,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.google.android.gms.analytics.Tracker;
+
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -33,6 +36,7 @@ public class NewOpponentActivity extends Activity {
     private String response;
 	private ArrayList users_list;
 	private boolean sending_success;
+	private Tracker mTracker = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -44,6 +48,8 @@ public class NewOpponentActivity extends Activity {
 		sending_success = false;
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);
+		AnalyticsApplication application = (AnalyticsApplication) getApplication();
+		mTracker = application.getDefaultTracker();
 
 		Thread users_thread = new UsersThread();
 		users_thread.start();

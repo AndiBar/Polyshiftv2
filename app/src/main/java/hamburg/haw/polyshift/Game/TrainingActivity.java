@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.analytics.Tracker;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import javax.microedition.khronos.opengles.GL10;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Menu.MainMenuActivity;
 import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
@@ -51,6 +54,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private LoginAdapter loginAdapter;
     private boolean onBackPressed = false;
     public static ProgressDialog dialog = null;
+    private Tracker mTracker = null;
 
 
     @Override
@@ -59,7 +63,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
         loginAdapter = new LoginAdapter(context,TrainingActivity.this);
         loginAdapter.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 
         super.onCreate(savedInstanceState);
@@ -70,7 +74,10 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
         setTitle("Polyshift");
 
-        Log.d( "Polyshift", "Polyshift Spiel erstellt");
+        Log.d("Polyshift", "Polyshift Spiel erstellt");
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     public void onSaveInstanceState( Bundle outState )

@@ -8,6 +8,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import hamburg.haw.polyshift.Adapter.AcceptOpponentAdapter;
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -28,6 +29,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.Tracker;
+
 
 public class OpponentsAttendingActivity extends ListActivity {
 	
@@ -37,6 +40,7 @@ public class OpponentsAttendingActivity extends ListActivity {
     public String response = "";
     private Context context;
     private LoginAdapter loginAdapter;
+    private Tracker mTracker = null;
 
 
 	/** Called when the activity is first created. */
@@ -86,6 +90,8 @@ public class OpponentsAttendingActivity extends ListActivity {
 	        });
         
        }
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 	}
 	
 	// Action Bar Button

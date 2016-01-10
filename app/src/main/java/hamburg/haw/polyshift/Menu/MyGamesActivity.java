@@ -20,12 +20,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -45,6 +48,7 @@ public class MyGamesActivity extends ListActivity {
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
     private Menu menu;
+    private Tracker mTracker = null;
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
@@ -69,6 +73,8 @@ public class MyGamesActivity extends ListActivity {
                 e.printStackTrace();
             }
         }
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     // Action Bar Button

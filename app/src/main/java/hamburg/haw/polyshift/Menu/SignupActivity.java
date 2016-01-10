@@ -1,5 +1,6 @@
 package hamburg.haw.polyshift.Menu;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -10,18 +11,24 @@ import org.apache.http.message.BasicNameValuePair;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PasswordHash;
@@ -36,6 +43,9 @@ public class SignupActivity extends Activity {
     HttpResponse response;
     HttpClient httpclient;
     Context context;
+	private Tracker mTracker = null;
+	private GoogleCloudMessaging gcm;
+	private static final String TAG = SignupActivity.class.getName();
 
 
 
@@ -47,6 +57,9 @@ public class SignupActivity extends Activity {
 		setTheme(android.R.style.Theme_Holo_NoActionBar);
 		setContentView(R.layout.activity_signup);
 		context= getApplicationContext();
+
+		AnalyticsApplication application = (AnalyticsApplication) getApplication();
+		mTracker = application.getDefaultTracker();
 
 		signupButton = (Button)findViewById(R.id.SignupButton);
         editUsername = (EditText)findViewById(R.id.EditUsername);
@@ -87,10 +100,11 @@ public class SignupActivity extends Activity {
 	void userSignup(){        	
         	
         	ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-            nameValuePairs.add(new BasicNameValuePair("username",editUsername.getText().toString().trim()));
-            nameValuePairs.add(new BasicNameValuePair("email",editEmail.getText().toString().trim())); 
+            nameValuePairs.add(new BasicNameValuePair("username", editUsername.getText().toString().trim()));
+            nameValuePairs.add(new BasicNameValuePair("email", editEmail.getText().toString().trim()));
             nameValuePairs.add(new BasicNameValuePair("password",PasswordHash.toHash(editPassword.getText().toString().trim())));
-            
+        	nameValuePairs.add(new BasicNameValuePair("regid", getNewRegistrationID()));
+
             String response = PHPConnector.doRequest(nameValuePairs, "create_user.php");
 
             if(response.equalsIgnoreCase("Success")){
@@ -119,4 +133,46 @@ public class SignupActivity extends Activity {
         startActivity(intent);
         this.finish();
     }
+
+	/**
+	 * Registers the application with GCM servers asynchronously.
+	 * <p>
+	 * Stores the registration ID and the app versionCode in the application's
+	 * shared preferences.
+	 */
+	private String getNewRegistrationID() {
+		Log.d("doInBackground", "active");
+		String msg = "";
+		String regid = "";
+		try {
+			if (gcm == null) {
+				gcm = GoogleCloudMessaging.getInstance(context);
+			}
+			regid = gcm.register(getString(R.string.gcm_sender_id));
+			msg = "Device registered, registration ID=" + regid;
+			Log.d("regid success", msg);
+			// You should send the registration ID to your server over HTTP, so it
+			// can use GCM/HTTP or CCS to send messages to your app.
+
+			// For this demo: we don't need to send it because the device will send
+			// upstream messages to a server that echo back the message using the
+			// 'from' address in the message.
+
+			// Persist the regID - no need to register again.
+			HandleSharedPreferences.setGcmPreferences(context, regid, WelcomeActivity.getAppVersion(context));
+		} catch (IOException ex) {
+			msg = "Error :" + ex.getMessage();
+			Log.d("regid error", msg);
+			// If there is an error, don't just keep trying to register.
+			// Require the user to click a button again, or perform
+			// exponential back-off.
+		}
+		return regid;
+	}
+	/**
+	 * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
+	 * or CCS to send messages to your app. Not needed for this demo since the
+	 * device sends upstream messages to a server that echoes back the message
+	 * using the 'from' address in the message.
+	 */
 }

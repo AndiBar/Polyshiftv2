@@ -12,7 +12,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
+
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
+import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.TrainingActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
@@ -30,6 +33,7 @@ public class MainMenuActivity extends Activity {
     Button quitGameButton;
     ImageView backgroundLogo;
     public static ProgressDialog dialog = null;
+    private Tracker mTracker = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,9 @@ public class MainMenuActivity extends Activity {
             builder.show();
 
         }
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         newGameButton = (Button) findViewById(R.id.new_game_button);
         myGamesButton = (Button) findViewById(R.id.my_games_button);

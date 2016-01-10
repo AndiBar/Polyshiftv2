@@ -116,7 +116,7 @@ public class GameLoop{
                     class GameStatusThread extends Thread{
                         public void run(){
                             GameSync.uploadSimulation(simulation);
-                            String msg = opponentName + " hat einen Spielzug gemacht";
+                            String msg = opponentName + " hat einen Spielzug gemacht.";
                             GameSync.SendChangeNotification(opponentID, msg, notificationGameID);
                             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                             nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));

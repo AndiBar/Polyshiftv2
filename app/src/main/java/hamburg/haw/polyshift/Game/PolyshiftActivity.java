@@ -86,10 +86,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("Share")
-                .build());
     }
 
     public void onSaveInstanceState( Bundle outState )
