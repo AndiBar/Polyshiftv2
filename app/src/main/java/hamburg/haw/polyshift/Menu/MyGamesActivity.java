@@ -48,6 +48,7 @@ public class MyGamesActivity extends ListActivity {
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
     private Menu menu;
+    private Thread scores_thread;
     private Tracker mTracker = null;
 
     public MyGamesActivity() {
@@ -61,10 +62,19 @@ public class MyGamesActivity extends ListActivity {
         setTitle("Meine Spiele");
         setContentView(R.layout.activity_my_games);
 
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         dialog = ProgressDialog.show(MyGamesActivity.this, "", "Spiele werden geladen", true);
 
-        Thread scores_thread = new GamesThread();
-        scores_thread.start();
+        scores_thread = new GamesThread();
+        if(scores_thread == null || !scores_thread.isAlive()) {
+            scores_thread.start();
+        }
 
         if (PolyshiftActivity.dialog != null) {
             try {
@@ -73,8 +83,7 @@ public class MyGamesActivity extends ListActivity {
                 e.printStackTrace();
             }
         }
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
+
     }
 
     // Action Bar Button

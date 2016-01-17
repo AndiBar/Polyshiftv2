@@ -24,10 +24,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class MyGamesAdapter extends SimpleAdapter {
@@ -71,17 +74,24 @@ public class MyGamesAdapter extends SimpleAdapter {
             final LinearLayout item_layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
             java.util.Date date= new java.util.Date();
             Timestamp current_time = new Timestamp(date.getTime());
-            Timestamp round_time = Timestamp.valueOf(data.get(position).get("timestamp"));
-            long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(round_time.getTime());
-            long diff_min = (TimeUnit.MILLISECONDS.toMinutes(current_time.getTime()) - TimeUnit.MILLISECONDS.toMinutes(round_time.getTime()));
-            long diff_sec = (TimeUnit.MILLISECONDS.toSeconds(current_time.getTime()) - TimeUnit.MILLISECONDS.toSeconds(round_time.getTime()));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+            try {
+                sdf.parse(data.get(position).get("timestamp"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            Log.d("test","Uhr:" + sdf.getCalendar().toString());
+            long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(sdf.getCalendar().getTimeInMillis());
+            long diff_min = (TimeUnit.MILLISECONDS.toMinutes(current_time.getTime()) - TimeUnit.MILLISECONDS.toMinutes(sdf.getCalendar().getTimeInMillis()));
+            long diff_sec = (TimeUnit.MILLISECONDS.toSeconds(current_time.getTime()) - TimeUnit.MILLISECONDS.toSeconds(sdf.getCalendar().getTimeInMillis()));
             if(diff_h > 24){
                 if(diff_h > 99){
-                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
+                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(sdf.getCalendar().getTimeInMillis());
                     time_view.setText(String.valueOf(diff_d) + " " + context.getString(R.string.days));
                     item_layout.setBackgroundColor(Color.parseColor("#DF4949"));
                 }else {
-                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(round_time.getTime());
+                    long diff_d = TimeUnit.MILLISECONDS.toDays(current_time.getTime()) - TimeUnit.MILLISECONDS.toDays(sdf.getCalendar().getTimeInMillis());
                     time_view.setText(String.valueOf(diff_d) + " " + context.getString(R.string.days));
                     item_layout.setBackgroundColor(Color.parseColor("#334D5C"));
                 }

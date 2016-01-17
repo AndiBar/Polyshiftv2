@@ -114,6 +114,15 @@ public class WelcomeActivity extends Activity {
             editPassword= (EditText)findViewById(R.id.EditPassword);
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            if(regid.equals("")){
+                new Thread(
+                        new Runnable() {
+                            public void run() {
+                                regid = getNewRegistrationID();
+                            }
+                        }
+                ).start();
+            }
             Log.d("Reg","reg:" + regid);
             final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
             final String password = HandleSharedPreferences.getUserCredentials(context,"password");
@@ -140,12 +149,11 @@ public class WelcomeActivity extends Activity {
 	            public void onClick(View v) {
 	                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft", true);
                     final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
-                    final String newGCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
                     HandleSharedPreferences.setUserCredentials(context, editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()));	//	username und pw werden gespeichert, damit beim nächsten Mal kein Login notwendig ist
                     new Thread(
 	                		new Runnable(){
 	                			public void run(){
-	                				loginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), WelcomeActivity.this, newGCMregId);
+	                				loginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), WelcomeActivity.this, regid);
 	                			}
 	                		}
 	                ).start();
@@ -258,6 +266,36 @@ public class WelcomeActivity extends Activity {
             // should never happen
             throw new RuntimeException("Could not get package name: " + e);
         }
+    }
+
+    private String getNewRegistrationID() {
+        Log.d("doInBackground", "active");
+        String msg = "";
+        String regid = "";
+        try {
+            if (gcm == null) {
+                gcm = GoogleCloudMessaging.getInstance(context);
+            }
+            regid = gcm.register(getString(R.string.gcm_sender_id));
+            msg = "Device registered, registration ID=" + regid;
+            Log.d("regid success", msg);
+            // You should send the registration ID to your server over HTTP, so it
+            // can use GCM/HTTP or CCS to send messages to your app.
+
+            // For this demo: we don't need to send it because the device will send
+            // upstream messages to a server that echo back the message using the
+            // 'from' address in the message.
+
+            // Persist the regID - no need to register again.
+            HandleSharedPreferences.setGcmPreferences(context, regid, WelcomeActivity.getAppVersion(context));
+        } catch (IOException ex) {
+            msg = "Error :" + ex.getMessage();
+            Log.d("regid error", msg);
+            // If there is an error, don't just keep trying to register.
+            // Require the user to click a button again, or perform
+            // exponential back-off.
+        }
+        return regid;
     }
 
 }

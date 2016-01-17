@@ -241,7 +241,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             if(game_status.get("opponents_turn").equals("0")) {
                                                 updateScores(game_status.get("opponent_id"), false);
                                                 updateScores(game_status.get("user_id"), true);
-                                                deleteGame();
                                             }
                                         }
                                     });
@@ -255,8 +254,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
                                             if(game_status.get("opponents_turn").equals("1")) {
-                                                updateScores(game_status.get("opponent_id"), false);
-                                                updateScores(game_status.get("user_id"), true);
                                                 deleteGame();
                                             }
                                         }
@@ -273,7 +270,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             if(game_status.get("opponents_turn").equals("1")) {
                                                 updateScores(game_status.get("user_id"), false);
                                                 updateScores(game_status.get("opponent_id"), true);
-                                                deleteGame();
                                             }
                                         }
                                     });
@@ -287,8 +283,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
                                             if(game_status.get("opponents_turn").equals("0")) {
-                                                updateScores(game_status.get("user_id"), false);
-                                                updateScores(game_status.get("opponent_id"), true);
                                                 deleteGame();
                                             }
                                         }
