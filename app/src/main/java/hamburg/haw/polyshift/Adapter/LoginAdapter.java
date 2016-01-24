@@ -86,6 +86,7 @@ public class LoginAdapter{
         nameValuePairs.add(new BasicNameValuePair("regid", GCMregId));
 
         final String response = PHPConnector.doRequest(nameValuePairs, "login_user.php");
+        Log.d("resp","responselogin:" + response);
         if(response.equalsIgnoreCase(username + " has logged in successfully.")){
             activity.runOnUiThread(new Runnable() {
                 public void run() {

@@ -4,7 +4,7 @@
     <string name="app_name">Polyshift</string>
     <string name="gcm_sender_id">194130675682</string>
     <string name="title_activity_polyshift">PolyshiftActivity</string>
-    <string name="title_poly_shift">PolyShift</string>
+    <string name="title_poly_shift">Polyshift</string>
     <string name="login">Login</string>
     <string name="signup">Registrieren</string>
     <string name="username">Benutzername</string>
@@ -76,6 +76,48 @@
     <string name="opponent_waiting">%1$s wartet auf einen Spielzug von dir."</string>
     <string name="start_game">Nein, Spiel starten</string>
     <string name="send_acceptance_reminder">Möchtest du %1$s eine Erinnerung schicken?</string>
+    <string name="login_in_progress">Login läuft</string>
+    <string name="no_username_entered">Kein Benutzername angegeben</string>
+    <string name="no_email_entered">Keine E-Mail-Adresse angegeben</string>
+    <string name="email_not_valid">Ungültige E-Mail-Adresse</string>
+    <string name="no_password_entered">Kein Passwort angegeben</string>
+    <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>
+    <string name="successfully_registered">Registrierung erfolgreich.</string>
+    <string name="username_already_exists">Der Benutzername ist bereits vergeben.</string>
+    <string name="email_already_exists">Die E-Mail Adresse ist bereits vergeben.</string>
+    <string name="please_try_again_later">Bitte versuchen sie es später erneut.</string>
+    <string name="highscores">Bestenliste</string>
+    <string name="scores_are_loading">Statistiken werden geladen</string>
+    <string name="error_loading_scores">Beim Abrufen der Statistiken ist ein Fehler aufgetreten.</string>
+    <string name="opponents_saved">Gegner wurden gespeichert.</string>
+    <string name="at_least_one_opponent_not_saved">Mindestens ein Gegner konnte nicht gespeichert werden.</string>
+    <string name="you_have_been_added">%1$s hat dich hinzugefügt. %1$s jetzt harausfordern?</string>
+    <string name="request_sent">%1$s möchte dich als Gegner hinzufügen.</string>
+    <string name="error_loading_games">Beim Abrufen der Spiele ist ein Fehler aufgetreten.</string>
+    <string name="click_game_to_start">Zum Starten auf ein Spiel klicken.</string>
+    <string name="my_games">Meine Spiele</string>
+    <string name="game_are_loading">Spiele werden geladen</string>
+    <string name="no">Nein</string>
+    <string name="error_during_transmition">Bei der Übertragung ist ein Fehler aufgetreten.</string>
+    <string name="crearing_game">Spiel wird erstellt</string>
+    <string name="accepted_your_challenge">" hat deine Herausforderung angenommen"</string>
+    <string name="challenge_accepted">Herausforderung wurde angenommen. Spiel wird gestartet.</string>
+    <string name="game_is_starting">Spiel wird gestartet</string>
+    <string name="game_could_not_be_started">Das Spiel konnte nicht gestartet werden.</string>
+    <string name="my_opponents">Meine Gegner</string>
+    <string name="opponents_are_loading">Gegner werden geladen</string>
+    <string name="you_won">Glückwunsch! Du hast das Spiel gewonnen!</string>
+    <string name="has_won">" hat das Spiel gewonnen."</string>
+    <string name="move_token_or_player">Bewege einen Spielstein oder deinen Spieler.</string>
+    <string name="move_player">Bewege deinen Spieler.</string>
+    <string name="game_data_is_loading">Spieldaten werden geladen</string>
+    <string name="game_is_closing">Spiel wird beendet</string>
+    <string name="game_is_saving">Spiel wird gespeichert.</string>
+    <string name="blues_turn">Blau ist dran.</string>
+    <string name="reds_turn">Rot ist dran.</string>
+    <string name="red">Rot</string>
+    <string name="blue">Blau</string>
+    <string name="has_done_a_move">" hat einen Spielzug gemacht."</string>
 
 
 </resources>

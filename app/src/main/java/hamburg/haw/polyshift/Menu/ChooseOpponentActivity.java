@@ -34,8 +34,8 @@ import hamburg.haw.polyshift.Tools.PHPConnector;
  * Created by Andi on 12.03.2015.
  */
 public class ChooseOpponentActivity extends ListActivity {
-    public static ArrayList<HashMap<String, String>> friends_list = new ArrayList<HashMap<String,String>>();
-    public static ArrayList<HashMap<String, String>> friends_attending_list = new ArrayList<HashMap<String,String>>();
+    public static ArrayList<HashMap<String, String>> friends_list;
+    public static ArrayList<HashMap<String, String>> friends_attending_list;
     private ListView settings;
     public static ChooseOpponentAdapter mAdapter;
     private int bell_number = 0;
@@ -52,10 +52,13 @@ public class ChooseOpponentActivity extends ListActivity {
     }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Meine Gegner");
+        setTitle(getString(R.string.my_opponents));
         setContentView(R.layout.activity_choose_opponent);
 
-        dialog = ProgressDialog.show(ChooseOpponentActivity.this, "", "Gegner werden geladen", true);
+        dialog = ProgressDialog.show(ChooseOpponentActivity.this, "", getString(R.string.opponents_are_loading), true);
+
+        friends_list = new ArrayList<HashMap<String,String>>();
+        friends_attending_list = new ArrayList<HashMap<String,String>>();
 
         Thread friends_thread = new FriendsThread();
         friends_thread.start();

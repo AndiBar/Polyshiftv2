@@ -86,6 +86,7 @@
                             android:layout_height="28dp"
                             android:layout_below="@id/EditPassword"
                             android:text="@string/login"
+                            android:textColor="#FFFFFF"
                             android:background="#47B09C"/>
 
                         <Space
@@ -102,6 +103,7 @@
                             android:onClick="userSignup"
                             android:text="@string/signup"
                             android:layout_gravity="center_horizontal"
+                            android:textColor="#FFFFFF"
                             android:background="#EFC94C"/>
 
                     </LinearLayout>
@@ -116,6 +118,7 @@
                         android:layout_height="28dp"
                         android:text="Passwort vergessen"
                         android:layout_gravity="center_horizontal"
+                        android:textColor="#FFFFFF"
                         android:background="#E27A41"/>
 
                     <Space

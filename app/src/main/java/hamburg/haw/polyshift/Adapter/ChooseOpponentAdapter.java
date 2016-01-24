@@ -14,6 +14,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import hamburg.haw.polyshift.Game.GameSync;
+import hamburg.haw.polyshift.Menu.GamesAttendingActivity;
 import hamburg.haw.polyshift.Menu.MyGamesActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
@@ -90,7 +91,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"");
+                                                    GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"", GamesAttendingActivity.class.getName());
                                                     dialog.cancel();
                                                     Intent intent = new Intent(context, MyGamesActivity.class);
                                                     context.startActivity(intent);

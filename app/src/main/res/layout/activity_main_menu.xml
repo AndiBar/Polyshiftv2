@@ -56,6 +56,7 @@
                     android:text="Neues Spiel"
                     android:id="@+id/new_game_button"
                     android:layout_gravity="center_horizontal"
+                    android:textColor="#FFFFFF"
                     android:background="#47B09C" />
 
                     <Space
@@ -68,6 +69,7 @@
                     android:text="Meine Spiele"
                     android:id="@+id/my_games_button"
                     android:layout_gravity="center_horizontal"
+                    android:textColor="#FFFFFF"
                     android:background="#EFC94C"/>
 
                     <Space
@@ -80,6 +82,7 @@
                     android:text="Bestenliste"
                     android:id="@+id/scores_button"
                     android:layout_gravity="center_horizontal"
+                    android:textColor="#FFFFFF"
                     android:background="#E27A41"/>
 
                     <Space
@@ -89,9 +92,10 @@
                     <Button
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
-                    android:text="Abmelden"
-                    android:id="@+id/logout_button"
+                    android:text="Tutorial"
+                    android:id="@+id/tutorial_button"
                     android:layout_gravity="center_horizontal"
+                    android:textColor="#FFFFFF"
                     android:background="#334D5C"/>
 
                     <Space
@@ -104,6 +108,7 @@
                     android:text="Beenden"
                     android:id="@+id/quit_game_button"
                     android:layout_gravity="center_horizontal"
+                    android:textColor="#FFFFFF"
                     android:background="#DF4949"/>
 
                     <Space

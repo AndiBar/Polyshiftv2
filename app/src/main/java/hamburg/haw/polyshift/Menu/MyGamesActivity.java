@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +30,6 @@ import hamburg.haw.polyshift.Adapter.MyGamesAdapter;
 import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
 import hamburg.haw.polyshift.R;
-import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
 /**
@@ -48,7 +46,7 @@ public class MyGamesActivity extends ListActivity {
     private LoginAdapter loginAdapter;
     public static ProgressDialog dialog = null;
     private Menu menu;
-    private Thread scores_thread;
+    private Thread my_games_thread;
     private Tracker mTracker = null;
 
     public MyGamesActivity() {
@@ -59,7 +57,7 @@ public class MyGamesActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle("Meine Spiele");
+        setTitle(getString(R.string.my_games));
         setContentView(R.layout.activity_my_games);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
@@ -69,11 +67,11 @@ public class MyGamesActivity extends ListActivity {
     @Override
     public void onResume(){
         super.onResume();
-        dialog = ProgressDialog.show(MyGamesActivity.this, "", "Spiele werden geladen", true);
+        dialog = ProgressDialog.show(MyGamesActivity.this, "", getString(R.string.game_are_loading), true);
 
-        scores_thread = new GamesThread();
-        if(scores_thread == null || !scores_thread.isAlive()) {
-            scores_thread.start();
+        if(my_games_thread == null || !my_games_thread.isAlive()) {
+            my_games_thread = new GamesThread();
+            my_games_thread.start();
         }
 
         if (PolyshiftActivity.dialog != null) {
@@ -103,7 +101,7 @@ public class MyGamesActivity extends ListActivity {
             bell_number = games_attending_list.size();
             if (bell_number == 0) {
                 bell_button.setVisible(false);
-            } else {
+            } else if(bell_number > 0) {
                 bell_button.setVisible(true);
                 ui_bell.setText(Integer.toString(bell_number));
             }
@@ -174,7 +172,7 @@ public class MyGamesActivity extends ListActivity {
 
             String stringResponse = PHPConnector.doRequest("get_games.php");
             String[] data_unformatted = stringResponse.split(",");
-            games_list = new ArrayList<HashMap<String, String>>();
+            MyGamesActivity.games_list = new ArrayList<HashMap<String, String>>();
             if (!stringResponse.equals("no games found")) {
                 if (!(stringResponse.split(";").length == 1)) {
                     for (String item : data_unformatted) {
@@ -203,7 +201,7 @@ public class MyGamesActivity extends ListActivity {
                         @Override
                         public void run() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setMessage("Beim Abrufen der Spiele ist ein Fehler aufgetreten.");
+                            builder.setMessage(R.string.error_loading_games);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -217,7 +215,7 @@ public class MyGamesActivity extends ListActivity {
             }
             stringResponse = PHPConnector.doRequest("get_games_attending.php");
             data_unformatted = stringResponse.split(",");
-            games_attending_list = new ArrayList<HashMap<String, String>>();
+            MyGamesActivity.games_attending_list = new ArrayList<HashMap<String, String>>();
             if (!stringResponse.equals("no games found")) {
                 if (!(stringResponse.split(":").length == 1)) {
                     for (String item : data_unformatted) {
@@ -262,7 +260,7 @@ public class MyGamesActivity extends ListActivity {
                     listView.setFocusable(false);
 
                     dialog.dismiss();
-                    Toast.makeText(activity, "Zum Starten auf ein Spiel klicken.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.click_game_to_start, Toast.LENGTH_SHORT).show();
                 }
             });
         }

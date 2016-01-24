@@ -15,15 +15,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-
-import hamburg.haw.polyshift.Menu.HandleSharedPreferences;
-import hamburg.haw.polyshift.Menu.MainMenuActivity;
-import hamburg.haw.polyshift.Menu.WelcomeActivity;
 
 public class PHPConnector {
 	

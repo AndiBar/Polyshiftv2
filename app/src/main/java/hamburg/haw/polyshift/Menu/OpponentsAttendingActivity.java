@@ -7,12 +7,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import hamburg.haw.polyshift.Adapter.AcceptOpponentAdapter;
+import hamburg.haw.polyshift.Adapter.ChooseOpponentAdapter;
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PHPConnector;
+import hamburg.haw.polyshift.Tools.SaveValue;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -118,10 +120,10 @@ public class OpponentsAttendingActivity extends ListActivity {
                     e.printStackTrace();
                 }
 
-                if (response.equals("opponent accepted")) {
+                if (response.split(":").length > 1 && response.split(":")[0].equals("opponent accepted by")) {
                     Log.d("res:", response);
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-                    builder.setMessage("Gegner wurden gespeichert.");
+                    builder.setMessage(R.string.opponents_saved);
                     builder.setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -130,11 +132,11 @@ public class OpponentsAttendingActivity extends ListActivity {
                                     OpponentsAttendingActivity.this.finish();
                                     dialog.cancel();
                                 }
-                    });
+                            });
                     builder.show();
 
                 } else {
-                    AlertDialogs.showAlert(OpponentsAttendingActivity.this, "Fehler", "Mindestens ein Gegner konnte nicht gespeichert werden.");
+                    AlertDialogs.showAlert(OpponentsAttendingActivity.this, "Fehler", getString(R.string.at_least_one_opponent_not_saved));
                 }
                 break;
 
@@ -150,7 +152,7 @@ public class OpponentsAttendingActivity extends ListActivity {
                         }
                     }
                 ).start();
-                 intent = new Intent(OpponentsAttendingActivity.this, MainMenuActivity.class);
+                 intent = new Intent(OpponentsAttendingActivity.this, ChooseOpponentActivity.class);
                 startActivity(intent);
                 OpponentsAttendingActivity.this.finish();
                 break;
@@ -188,11 +190,13 @@ public class OpponentsAttendingActivity extends ListActivity {
     public class AddOpponentsThread extends Thread{
         public void run() {
             for (String user : mAdapter.getCheckedUserIDs()) {
-                Log.d("user",user);
+                Log.d("user", user);
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("opponent", user));
-                GameSync.SendChangeNotification(user,"Sie wurden hinzugefügt, fordern?","");
                 response = PHPConnector.doRequest(nameValuePairs, "accept_opponent.php");
+                if(response.split(":").length > 1) {
+                    GameSync.SendChangeNotification(user, getString(R.string.you_have_been_added, response.split(":")[1]), "", ChooseOpponentActivity.class.getName());
+                }
             }
         }
     }

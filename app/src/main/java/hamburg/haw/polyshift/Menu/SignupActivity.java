@@ -11,7 +11,6 @@ import org.apache.http.message.BasicNameValuePair;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
@@ -53,8 +52,7 @@ public class SignupActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setTheme(android.R.style.Theme_Holo_NoActionBar);
+
 		setContentView(R.layout.activity_signup);
 		context= getApplicationContext();
 
@@ -72,18 +70,18 @@ public class SignupActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						if (editUsername.getText().toString().trim().equals("")) {
-							Toast.makeText(SignupActivity.this, "Kein Benutzername angegeben", Toast.LENGTH_SHORT).show();
+							Toast.makeText(SignupActivity.this, R.string.no_username_entered, Toast.LENGTH_SHORT).show();
 						} else if (editEmail.getText().toString().trim().equals("")) {
-							Toast.makeText(SignupActivity.this, "Keine E-Mail-Adresse angegeben", Toast.LENGTH_SHORT).show();
+							Toast.makeText(SignupActivity.this, R.string.no_email_entered, Toast.LENGTH_SHORT).show();
 						} else if ((editEmail.getText().toString().trim().split("@").length < 2) || (editEmail.getText().toString().split("\\.").length < 2)) {
-							Toast.makeText(SignupActivity.this, "Ungültige E-Mail-Adresse", Toast.LENGTH_SHORT).show();
+							Toast.makeText(SignupActivity.this, R.string.email_not_valid, Toast.LENGTH_SHORT).show();
 						} else if (editPassword.getText().toString().trim().equals("")) {
-							Toast.makeText(SignupActivity.this, "Kein Passwort angegeben", Toast.LENGTH_SHORT).show();
+							Toast.makeText(SignupActivity.this, R.string.no_password_entered, Toast.LENGTH_SHORT).show();
 						} else if (!editPassword.getText().toString().trim().equals(repeatPassword.getText().toString().trim())) {
-							Toast.makeText(SignupActivity.this, "Passwörter stimmen nicht überein", Toast.LENGTH_SHORT).show();
+							Toast.makeText(SignupActivity.this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
 
 						} else {
-							WelcomeActivity.dialog = ProgressDialog.show(SignupActivity.this, "", "Login läuft", true);
+							WelcomeActivity.dialog = ProgressDialog.show(SignupActivity.this, "", SignupActivity.this.getString(R.string.login_in_progress), true);
 							new Thread(
 									new Runnable() {
 										public void run() {
@@ -110,7 +108,7 @@ public class SignupActivity extends Activity {
             if(response.equalsIgnoreCase("Success")){
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(SignupActivity.this,"Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, R.string.successfully_registered, Toast.LENGTH_SHORT).show();
                     }
                 });
                 final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
@@ -118,13 +116,13 @@ public class SignupActivity extends Activity {
                 LoginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), this,newGCMregId);
                 this.finish();
             }else if(response.equalsIgnoreCase("Error: Username already exists.")){
-                AlertDialogs.showAlert(this, "Fehler", "Der Benutzername ist bereits vergeben.");
+                AlertDialogs.showAlert(this, "Fehler", getString(R.string.username_already_exists));
                 WelcomeActivity.dialog.dismiss();
             }else if(response.equalsIgnoreCase("Error: Email already exists.")) {
-				AlertDialogs.showAlert(this, "Fehler", "Die E-Mail Adresse ist bereits vergeben.");
+				AlertDialogs.showAlert(this, "Fehler", getString(R.string.email_already_exists));
 				WelcomeActivity.dialog.dismiss();
 			}else{
-                AlertDialogs.showAlert(this, "Fehler", "Bitte versuchen sie es später erneut.");
+                AlertDialogs.showAlert(this, "Fehler", getString(R.string.please_try_again_later));
                 WelcomeActivity.dialog.dismiss();
             }
     }

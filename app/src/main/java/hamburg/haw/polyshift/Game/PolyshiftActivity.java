@@ -62,11 +62,14 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public static ProgressDialog dialog = null;
     private boolean isSaving = false;
     private Tracker mTracker = null;
-
+    public static boolean isActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
+
+        dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_data_is_loading), true);
+
         loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
         loginAdapter.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -74,8 +77,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 
         super.onCreate(savedInstanceState);
-
-        dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spieldaten werden geladen", true);
 
         setGameListener(this);
 
@@ -98,6 +99,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public void onPause( )
     {
         super.onPause();
+        isActive = false;
         Log.d( "Polyshift", "Polyshift pausiert" );
     }
 
@@ -105,6 +107,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public void onResume( )
     {
         super.onResume();
+        isActive = true;
         Log.d("Polyshift", "Polyshift wiederhergestellt");
 
         mTracker.setScreenName("Image~" + getClass().getName());
@@ -126,7 +129,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     }
     public void onBackPressed() {
         if(!isSaving) {
-            dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
+            dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
             onBackPressed = true;
             final Intent intent = new Intent(this, MyGamesActivity.class);
             startActivity(intent);
@@ -142,7 +145,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
             if(game_status.size() > 0) {
 
-                gameLoop = new GameLoop(game_status.get("my_game"));
+                gameLoop = new GameLoop(game_status.get("my_game"),activity);
                 Object syncObj = new Object();
 
                 if (game_status.get("new_game").equals("1")) {
@@ -197,12 +200,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             simulation.update(activity);
             gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
 
-            if (gameLoop.game_status_thread.isAlive() && !isSaving) {
+            if (gameLoop.game_status_thread.isAlive() && !isSaving && !simulation.hasWinner) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         MenuItem item = menu.findItem(R.id.action_game_status);
-                        item.setTitle("Spiel wird gespeichert.");
+                        item.setTitle(R.string.game_is_saving);
                         isSaving = true;
                     }
                 });
@@ -229,11 +232,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
+                            builder.setMessage(getString(R.string.you_won));
+                            builder.setCancelable(false);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            dialog = ProgressDialog.show(PolyshiftActivity.this, "", "Spiel wird beendet", true);
+                                            dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
                                             final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
@@ -245,7 +249,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                         }
                                     });
                         } else if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage(game_status.get("challenger_name") + " hat das Spiel gewonnen.");
+                            builder.setMessage(game_status.get("challenger_name") + getString(R.string.has_won));
+                            builder.setCancelable(false);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -259,7 +264,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                         }
                                     });
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage("Glückwunsch! Du hast das Spiel gewonnen!");
+                            builder.setMessage(R.string.you_won);
+                            builder.setCancelable(false);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -274,7 +280,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                         }
                                     });
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
+                            builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
+                            builder.setCancelable(false);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -282,7 +289,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("0")) {
+                                            if (game_status.get("opponents_turn").equals("0")) {
                                                 deleteGame();
                                             }
                                         }
@@ -350,10 +357,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
-                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
+                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals(getString(R.string.move_token_or_player)) || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
+                                item.setTitle(getString(R.string.move_token_or_player));
                             } else if (simulation.lastMovedObject instanceof Polynomino) {
-                                item.setTitle("Bewege deinen Spieler.");
+                                item.setTitle(R.string.move_player);
                             }
                         }
                     }
@@ -396,7 +403,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            item.setTitle(game_status.get("opponent_name") + " ist dran.");
+                            item.setTitle(getString(R.string.opponents_turn,game_status.get("opponent_name")));
                         }
                     }
                 });
@@ -406,10 +413,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            if (simulation.lastMovedObject instanceof Player  && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
-                                item.setTitle("Bewege einen Spielstein oder deinen Spieler.");
+                            if (simulation.lastMovedObject instanceof Player  && (!item.getTitle().equals(getString(R.string.move_token_or_player)) || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
+                                item.setTitle(getString(R.string.move_token_or_player));
                             } else if (simulation.lastMovedObject instanceof Polynomino) {
-                                item.setTitle("Bewege deinen Spieler.");
+                                item.setTitle(getString(R.string.move_player));
                             }
                         }
                     }

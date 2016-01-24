@@ -1,8 +1,6 @@
 package hamburg.haw.polyshift.Menu;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,15 +8,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
@@ -32,7 +30,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
@@ -42,11 +39,8 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
 import hamburg.haw.polyshift.R;
-import hamburg.haw.polyshift.Tools.AlertDialogs;
 import hamburg.haw.polyshift.Tools.PasswordHash;
 import hamburg.haw.polyshift.Tools.PHPConnector;
-
-import hamburg.haw.polyshift.R;
 
 public class WelcomeActivity extends Activity {
 	
@@ -94,11 +88,9 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		context=getApplicationContext();
         activity=this;
         this.loginAdapter = new LoginAdapter(context,WelcomeActivity.this);
-		setTheme(android.R.style.Theme_Holo_NoActionBar);
 		setContentView(R.layout.activity_welcome);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
@@ -124,10 +116,10 @@ public class WelcomeActivity extends Activity {
                 ).start();
             }
             Log.d("Reg","reg:" + regid);
-            final String username = HandleSharedPreferences.getUserCredentials(context,"user_name");
+            final String username = HandleSharedPreferences.getUserCredentials(context, "user_name");
             final String password = HandleSharedPreferences.getUserCredentials(context,"password");
             if(!(username.equals("")) && (!(password.equals("")))){
-                dialog = ProgressDialog.show(activity, "","Login läuft", true);
+                dialog = ProgressDialog.show(activity, "", getString(R.string.login_in_progress), true);
                 Log.i("Autologin", "Login läuft..."+ username +" "+password);
                 new Thread(
                         new Runnable(){
@@ -147,7 +139,7 @@ public class WelcomeActivity extends Activity {
     		new OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
-	                dialog = ProgressDialog.show(WelcomeActivity.this, "","Login läuft", true);
+	                dialog = ProgressDialog.show(WelcomeActivity.this, "",getString(R.string.login_in_progress), true);
                     final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
                     HandleSharedPreferences.setUserCredentials(context, editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()));	//	username und pw werden gespeichert, damit beim nächsten Mal kein Login notwendig ist
                     new Thread(

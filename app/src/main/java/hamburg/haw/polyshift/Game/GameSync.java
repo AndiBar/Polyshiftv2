@@ -12,6 +12,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class GameSync {
@@ -114,19 +116,28 @@ public class GameSync {
         return colors.get(randomColor);
     }
 
-    public static void SendChangeNotification(final String receiverUserId,final String msg,final String notificationGameID) {
+    public static void SendChangeNotification(final String receiverUserId,final String msg,final String notificationGameID, final String className) {
+        String encodedMsg = "";
         class ChangeNotificationThread extends Thread {
             public void run() {
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
                 nameValuePairs.add(new BasicNameValuePair("userid",receiverUserId));
-                nameValuePairs.add(new BasicNameValuePair("msg",msg));
+                String encodedMsg = null;
+                try {
+                    encodedMsg = URLEncoder.encode(msg, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                nameValuePairs.add(new BasicNameValuePair("msg",encodedMsg));
                 nameValuePairs.add(new BasicNameValuePair("game_id",notificationGameID));
+                nameValuePairs.add(new BasicNameValuePair("class_name",className));
                 PHPConnector.doRequest(nameValuePairs,"gcmpush.php");
             }
         }
         Log.i("GCM", "...gesendet an " + receiverUserId);
         Log.i("GCM", "Nachricht: " + msg);
         Log.i("GCM", "Game_ID: " + notificationGameID);
+        Log.i("GCM", "Class_Name: " + className);
         Thread send_change_notification = new ChangeNotificationThread();
         send_change_notification.start();
         try {

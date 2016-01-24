@@ -25,6 +25,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import hamburg.haw.polyshift.Adapter.LoginAdapter;
 import hamburg.haw.polyshift.Analytics.AnalyticsApplication;
+import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -95,6 +96,9 @@ public class NewOpponentActivity extends Activity {
             }else{
                 builder.setMessage(context.getString(R.string.invitation_sent, username));
 				sending_success = true;
+				if(response.split(":").length > 2){
+					GameSync.SendChangeNotification(response.split(":")[1], getString(R.string.request_sent, response.split(":")[2]), "", OpponentsAttendingActivity.class.getName());
+				}
             }
             builder.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {

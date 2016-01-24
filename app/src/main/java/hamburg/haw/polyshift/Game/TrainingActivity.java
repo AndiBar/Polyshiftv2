@@ -68,7 +68,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
         super.onCreate(savedInstanceState);
 
-        dialog = ProgressDialog.show(TrainingActivity.this, "", "Spieldaten werden geladen", true);
+        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_data_is_loading), true);
 
         setGameListener(this);
 
@@ -113,7 +113,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
-        dialog = ProgressDialog.show(TrainingActivity.this, "", "Spiel wird beendet", true);
+        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
         onBackPressed = true;
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
@@ -126,10 +126,10 @@ public class TrainingActivity extends GameActivity implements GameListener {
         if(!(simulation instanceof Simulation)){
 
             game_status = new HashMap<String,String>();
-            game_status.put("opponent_name", "Rot");
+            game_status.put("opponent_name", getString(R.string.red));
             game_status.put("opponents_turn", "0");
             game_status.put("my_game", "yes");
-            game_status.put("my_user_name", "Blau");
+            game_status.put("my_user_name", getString(R.string.blue));
 
             gameLoop = new OfflineGameLoop("yes");
 
@@ -183,11 +183,11 @@ public class TrainingActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(game_status.get("my_user_name") + " hat das Spiel gewonnen!");
+                            builder.setMessage(game_status.get("my_user_name") + getString(R.string.has_won));
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            dialog = ProgressDialog.show(TrainingActivity.this, "", "Spiel wird beendet", true);
+                                            dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
                                             final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
                                             TrainingActivity.this.finish();
@@ -195,7 +195,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                         }
                                     });
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(game_status.get("opponent_name") + " hat das Spiel gewonnen.");
+                            builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -288,8 +288,8 @@ public class TrainingActivity extends GameActivity implements GameListener {
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals("Bewege einen Spielstein oder deinen Spieler.") || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
-                                item.setTitle("Blau ist dran.");
+                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals(getString(R.string.move_token_or_player)) || !item.getTitle().equals(getString(R.string.move_player))) || simulation.lastMovedObject == null) {
+                                item.setTitle(R.string.blues_turn);
                             }
                         }
                     }
@@ -302,7 +302,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            item.setTitle("Rot ist dran.");
+                            item.setTitle(R.string.reds_turn);
                         }
                     }
                 });

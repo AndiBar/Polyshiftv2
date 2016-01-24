@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import hamburg.haw.polyshift.Game.GameSync;
 import hamburg.haw.polyshift.Game.PolyshiftActivity;
+import hamburg.haw.polyshift.Menu.GamesAttendingActivity;
 import hamburg.haw.polyshift.R;
 import hamburg.haw.polyshift.Tools.PHPConnector;
 
@@ -124,7 +125,7 @@ public class MyGamesAdapter extends SimpleAdapter {
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             String msg = context.getString(R.string.opponent_waiting, data.get(position).get("my_name"));
-                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
+                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"), PolyshiftActivity.class.getName());
                                         }
                                     });
                             builder.setNegativeButton(R.string.start_game,
@@ -146,7 +147,7 @@ public class MyGamesAdapter extends SimpleAdapter {
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             String msg = data.get(position).get("my_name") + " wartet auf eine Spielannahme von dir";
-                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"));
+                                            GameSync.SendChangeNotification(data.get(position).get("opponent_id"), msg, data.get(position).get("game_id"), GamesAttendingActivity.class.getName());
                                         }
                                     });
                             builder.setNegativeButton("Nein",

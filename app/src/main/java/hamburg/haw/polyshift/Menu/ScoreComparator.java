@@ -20,9 +20,10 @@ public class ScoreComparator implements Comparator<HashMap> {
         Integer rhs_loss = Integer.parseInt(rhs_loss_string);
         String rhs_string = (String) rhs.get("score");
         Integer rhs_score = Integer.parseInt(rhs_string);
-        if(lhs_score == rhs_score){
+        if(lhs_score == rhs_score && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0){
                 return Integer.compare(lhs_win - lhs_loss, rhs_win - rhs_loss);
-        }else if(lhs_score == rhs_score && lhs_win - lhs_loss == rhs_win - rhs_loss){
+        }else if(lhs_score == rhs_score && lhs_win - lhs_loss == rhs_win - rhs_loss
+                && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0){
                 return Integer.compare(lhs_win, rhs_win);
         }else{
                 return Integer.compare(lhs_score, rhs_score);

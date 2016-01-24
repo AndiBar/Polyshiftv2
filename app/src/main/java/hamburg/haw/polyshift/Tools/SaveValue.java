@@ -1,4 +1,4 @@
-package hamburg.haw.polyshift.Menu;
+package hamburg.haw.polyshift.Tools;
 
 public class SaveValue {
 	
@@ -6,10 +6,6 @@ public class SaveValue {
 	
 	public static void setSelectedFriendName (String newName) {
 		selectedFriendName = newName;
-	}
-	
-	public static String getSelectedFriendName() {
-		return selectedFriendName;
 	}
 
 }

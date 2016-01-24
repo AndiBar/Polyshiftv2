@@ -42,9 +42,9 @@ public class ScoresActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scores);
-        setTitle("Bestenliste");
+        setTitle(getString(R.string.highscores));
 
-        dialog = ProgressDialog.show(ScoresActivity.this, "", "Statistiken werden geladen", true);
+        dialog = ProgressDialog.show(ScoresActivity.this, "", getString(R.string.scores_are_loading), true);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
@@ -123,7 +123,7 @@ public class ScoresActivity extends ListActivity {
                             @Override
                             public void run() {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                builder.setMessage("Beim Abrufen der Scores ist ein Fehler aufgetreten.");
+                                builder.setMessage(R.string.error_loading_scores);
                                 builder.setPositiveButton("OK",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
