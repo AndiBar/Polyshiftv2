@@ -1,17 +1,17 @@
 {
   "project_info": {
-    "project_id": "api-project-1076328225353",
-    "project_number": "1076328225353",
-    "name": "API Project"
+    "project_id": "polyshift-eaf94",
+    "project_number": "824705675468",
+    "name": "Polyshift"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1076328225353:android:0a75f4ae63b8a6e0",
-        "client_id": "android:hamburg.haw.polyshift",
+        "mobilesdk_app_id": "1:824705675468:android:25bc7caacad3ac47",
+        "client_id": "android:de.polyshift.polyshift",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "hamburg.haw.polyshift"
+          "package_name": "de.polyshift.polyshift"
         }
       },
       "oauth_client": [],
@@ -24,7 +24,7 @@
           }
         },
         "cloud_messaging_service": {
-          "status": 1,
+          "status": 2,
           "apns_config": []
         },
         "appinvite_service": {

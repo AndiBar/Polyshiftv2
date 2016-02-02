@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="hamburg.haw.polyshift" >
+    package="de.polyshift.polyshift" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
     android:versionCode="1"
     android:versionName="1.0" >
@@ -18,17 +17,19 @@
     <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
 
     <application
-        android:name=".Analytics.AnalyticsApplication"
+        android:name="de.polyshift.polyshift.Analytics.AnalyticsApplication"
         android:theme="@style/MyTheme"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name" >
         <activity
-            android:name=".Game.GameActivity"
+            android:name="de.polyshift.polyshift.Game.GameActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Menu.WelcomeActivity"
+            android:name="de.polyshift.polyshift.Menu.WelcomeActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,27 +38,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Menu.SignupActivity"
+            android:name="de.polyshift.polyshift.Menu.SignupActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Game.PolyshiftActivity"
+            android:name="de.polyshift.polyshift.Game.PolyshiftActivity"
+            android:launchMode="singleTask"
             android:label="@string/title_poly_shift" >
         </activity>
         <activity
-            android:name=".Game.TrainingActivity"
+            android:name="de.polyshift.polyshift.Game.TrainingActivity"
+            android:launchMode="singleTask"
             android:label="@string/title_poly_shift" >
         </activity>
-        <activity android:name=".Menu.MainMenuActivity" />
-        <activity android:name=".Menu.ChooseOpponentActivity" />
-        <activity android:name=".Menu.NewOpponentActivity"
+        <activity android:name="de.polyshift.polyshift.Menu.MainMenuActivity"
+                  android:launchMode="singleTask" />
+        <activity android:name="de.polyshift.polyshift.Menu.ChooseOpponentActivity"
+                  android:launchMode="singleTask"/>
+        <activity android:name="de.polyshift.polyshift.Menu.NewOpponentActivity"
+                  android:launchMode="singleTask"
                   android:windowSoftInputMode="stateVisible"/>
-        <activity android:name=".Menu.OpponentsAttendingActivity" />
-        <activity android:name=".Menu.MyGamesActivity" />
-        <activity android:name=".Menu.GamesAttendingActivity" />
+        <activity android:name="de.polyshift.polyshift.Menu.OpponentsAttendingActivity"
+                  android:launchMode="singleTask"/>
+        <activity android:name="de.polyshift.polyshift.Menu.MyGamesActivity"
+                  android:launchMode="singleTask"/>
+        <activity android:name="de.polyshift.polyshift.Menu.GamesAttendingActivity"
+                  android:launchMode="singleTask"/>
+        <activity
+                  android:name="de.polyshift.polyshift.Menu.ScoresActivity"
+                  android:label="@string/title_activity_scores"
+                  android:launchMode="singleTask"/>
 
         <receiver
-            android:name=".Menu.GcmBroadcastReceiver"
+            android:name="de.polyshift.polyshift.Menu.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -66,13 +80,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Menu.GcmIntentService" />
-
-        <activity
-            android:name=".Menu.ScoresActivity"
-            android:label="@string/title_activity_scores" >
-        </activity>
-
+        <service android:name="de.polyshift.polyshift.Menu.GcmIntentService" />
 
     </application>
 

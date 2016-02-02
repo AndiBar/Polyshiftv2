@@ -6,11 +6,11 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "hamburg.haw.polyshift"
+        applicationId "de.polyshift.polyshift"
         minSdkVersion 19
         targetSdkVersion 20
-        versionCode 1
-        versionName "0.85"
+        versionCode 3
+        versionName "0.87"
     }
     buildTypes {
         release {
