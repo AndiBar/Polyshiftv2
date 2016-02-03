@@ -160,7 +160,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     Bundle error = new Bundle();
-                    error.putBoolean("error_occured", true);
+                    error.putBoolean("error_downloading_game", true);
                     intent.putExtras(error);
                     startActivity(intent);
                     PolyshiftActivity.this.finish();
@@ -247,6 +247,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             if(game_status.get("opponents_turn").equals("0")) {
                                                 updateScores(game_status.get("opponent_id"), false);
                                                 updateScores(game_status.get("user_id"), true);
+                                                updateGameStatus(false, game_status.get("opponent_id"), game_status.get("my_user_name"));
                                             }
                                         }
                                     });
@@ -278,6 +279,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             if(game_status.get("opponents_turn").equals("1")) {
                                                 updateScores(game_status.get("user_id"), false);
                                                 updateScores(game_status.get("opponent_id"), true);
+                                                updateGameStatus(true, game_status.get("user_id"), game_status.get("opponent_name"));
+
                                             }
                                         }
                                     });
@@ -481,6 +484,28 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             long waitMillis = 10000;
             while (update_scores_thread.isAlive()) {
                 update_scores_thread.join(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateGameStatus(final boolean PlayerOnesTurn, final String loserID, final String winnerName) {
+        class UpdateGameStatusThread extends Thread {
+            public void run() {
+                String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
+                GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+            }
+        }
+        Thread update_game_status_thread = new UpdateGameStatusThread();
+        update_game_status_thread.start();
+        try {
+            long waitMillis = 10000;
+            while (update_game_status_thread.isAlive()) {
+                update_game_status_thread.join(waitMillis);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

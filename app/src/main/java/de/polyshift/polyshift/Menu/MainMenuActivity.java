@@ -121,7 +121,22 @@ public class MainMenuActivity extends Activity {
                 @Override
                 public void run() {
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
-                    builder.setMessage(R.string.error_during_transmition);
+                    builder.setMessage(R.string.error_loading_game_status);
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    builder.show();
+                }
+            });
+        }else if(data != null && data.getBoolean("error_downloading_game")){
+            MainMenuActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
+                    builder.setMessage(R.string.error_downloading_game);
                     builder.setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

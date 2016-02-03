@@ -9,7 +9,7 @@ android {
         applicationId "de.polyshift.polyshift"
         minSdkVersion 19
         targetSdkVersion 20
-        versionCode 3
+        versionCode 4
         versionName "0.87"
     }
     buildTypes {
