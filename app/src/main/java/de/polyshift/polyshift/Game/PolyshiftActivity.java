@@ -245,9 +245,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
                                             if(game_status.get("opponents_turn").equals("0")) {
-                                                updateScores(game_status.get("opponent_id"), false);
-                                                updateScores(game_status.get("user_id"), true);
-                                                updateGameStatus(false, game_status.get("opponent_id"), game_status.get("my_user_name"));
+                                                updateScores(false, game_status.get("opponent_id"), game_status.get("user_id"), game_status.get("my_user_name"));
                                             }
                                         }
                                     });
@@ -277,10 +275,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
                                             if(game_status.get("opponents_turn").equals("1")) {
-                                                updateScores(game_status.get("user_id"), false);
-                                                updateScores(game_status.get("opponent_id"), true);
-                                                updateGameStatus(true, game_status.get("user_id"), game_status.get("opponent_name"));
-
+                                                updateScores(true, game_status.get("user_id"), game_status.get("opponent_id"), game_status.get("opponent_name"));
                                             }
                                         }
                                     });
@@ -468,14 +463,16 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             e.printStackTrace();
         }
     }
-    public void updateScores(final String user_id, final boolean isWinner){
+    public void updateScores(final boolean PlayerOnesTurn, final String loserID, final String winnerID, final String winnerName){
         class UpdateScoresThread extends Thread{
             public void run(){
-                String winnerString = isWinner ? "true" : "false";
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-                nameValuePairs.add(new BasicNameValuePair("user_id",user_id));
-                nameValuePairs.add(new BasicNameValuePair("winnerString",winnerString));
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                nameValuePairs.add(new BasicNameValuePair("loser_id",loserID));
+                nameValuePairs.add(new BasicNameValuePair("winner_id",winnerID));
                 PHPConnector.doRequest(nameValuePairs,"update_scores.php");
+                String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
+                GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
             }
         }
         Thread update_scores_thread = new UpdateScoresThread();
@@ -484,28 +481,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             long waitMillis = 10000;
             while (update_scores_thread.isAlive()) {
                 update_scores_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void updateGameStatus(final boolean PlayerOnesTurn, final String loserID, final String winnerName) {
-        class UpdateGameStatusThread extends Thread {
-            public void run() {
-                String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
-                GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                PHPConnector.doRequest(nameValuePairs, "update_game.php");
-            }
-        }
-        Thread update_game_status_thread = new UpdateGameStatusThread();
-        update_game_status_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (update_game_status_thread.isAlive()) {
-                update_game_status_thread.join(waitMillis);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
