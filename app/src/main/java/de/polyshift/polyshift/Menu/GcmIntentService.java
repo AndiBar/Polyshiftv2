@@ -111,9 +111,9 @@ public class GcmIntentService extends IntentService {
             contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
         }else if(className.equals(PolyshiftActivity.class.getName())){
             Intent intent = new Intent(this, PolyshiftActivity.class);
+            intent.putExtra("game_id", gameID);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            setGameID(gameID);
-            contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         }else{
             Intent intent = new Intent(this, MainMenuActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -132,25 +132,4 @@ public class GcmIntentService extends IntentService {
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
-
-    private void setGameID(final String gameID){
-        class Update_Game_Thread extends Thread {
-            public void run() {
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("game", gameID));
-                PHPConnector.doRequest(nameValuePairs, "update_game.php");
-            }
-        }
-        Thread update_game_thread = new Update_Game_Thread();
-        update_game_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (update_game_thread.isAlive()) {
-                update_game_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

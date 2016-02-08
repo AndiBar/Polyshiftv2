@@ -63,12 +63,11 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean isSaving = false;
     private Tracker mTracker = null;
     public static boolean isActive = false;
+    public String game_id = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
-
-        dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_data_is_loading), true);
 
         loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
         loginAdapter.handleSessionExpiration(this);
@@ -83,6 +82,20 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         setTitle("Polyshift");
 
         Log.d("Polyshift", "Polyshift Spiel erstellt");
+
+        dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_data_is_loading), true);
+
+        game_id = getIntent().getExtras().getString("game_id");
+
+        update_game_thread.start();
+        try {
+            long waitMillis = 10000;
+            while (update_game_thread.isAlive()) {
+                update_game_thread.join(waitMillis);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
@@ -100,6 +113,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     {
         super.onPause();
         isActive = false;
+        dialog.dismiss();
         Log.d( "Polyshift", "Polyshift pausiert" );
     }
 
@@ -110,7 +124,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         isActive = true;
         Log.d("Polyshift", "Polyshift wiederhergestellt");
 
-        mTracker.setScreenName("Image~" + getClass().getName());
+        mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
@@ -486,4 +500,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             e.printStackTrace();
         }
     }
+    class Update_Game_Thread extends Thread {
+        public void run() {
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("game", game_id));
+            PHPConnector.doRequest(nameValuePairs, "update_game.php");
+        }
+    }
+    Thread update_game_thread = new Update_Game_Thread();
 }

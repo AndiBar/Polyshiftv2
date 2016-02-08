@@ -168,24 +168,9 @@ public class MyGamesAdapter extends SimpleAdapter {
     }
     public void startGame(final int position, final ViewGroup parent) {
         dialog = ProgressDialog.show(parent.getContext(), "", "Spiel wird gestartet", true);
-        class Update_Game_Thread extends Thread {
-            public void run() {
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("game", data.get(position).get("game_id")));
-                PHPConnector.doRequest(nameValuePairs, "update_game.php");
-            }
-        }
-        Thread update_game_thread = new Update_Game_Thread();
-        update_game_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (update_game_thread.isAlive()) {
-                update_game_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
         final Intent intent = new Intent(context, PolyshiftActivity.class);
+        intent.putExtra("game_id", data.get(position).get("game_id"));
         context.startActivity(intent);
         Activity activity = (Activity) context;
         activity.finish();

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -58,6 +59,8 @@ public class SignupActivity extends Activity {
 
 		AnalyticsApplication application = (AnalyticsApplication) getApplication();
 		mTracker = application.getDefaultTracker();
+		mTracker.setScreenName(getClass().getName());
+		mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
 		signupButton = (Button)findViewById(R.id.SignupButton);
         editUsername = (EditText)findViewById(R.id.EditUsername);

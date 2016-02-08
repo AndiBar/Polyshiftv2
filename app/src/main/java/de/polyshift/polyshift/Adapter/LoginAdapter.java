@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.Menu.HandleSharedPreferences;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
+import de.polyshift.polyshift.Menu.MyGamesActivity;
 import de.polyshift.polyshift.Menu.WelcomeActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
@@ -94,14 +96,11 @@ public class LoginAdapter{
                 }
             });
             Intent intent;
-            if(activity instanceof WelcomeActivity){
+            if(activity instanceof WelcomeActivity) {
                 intent = new Intent(activity, MainMenuActivity.class);
-            }else {
-                intent = new Intent(activity, activity.getClass());
+                activity.startActivity(intent);
+                activity.finish();
             }
-            activity.startActivity(intent);
-            activity.finish();
-
         }
         else if(response.equalsIgnoreCase(username + " already logged in.")){
             activity.runOnUiThread(new Runnable() {

@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import de.polyshift.polyshift.Adapter.LoginAdapter;
@@ -50,6 +51,9 @@ public class NewOpponentActivity extends Activity {
         setTitle(R.string.new_opponent);
 		AnalyticsApplication application = (AnalyticsApplication) getApplication();
 		mTracker = application.getDefaultTracker();
+
+		mTracker.setScreenName(getClass().getName());
+		mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
 		Thread users_thread = new UsersThread();
 		users_thread.start();

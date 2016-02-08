@@ -26,13 +26,13 @@
     <string name="title_activity_scores">ScoresActivity</string>
     <string name="challenge">%1$s herausfordern?</string>
     <string name="yes">Ja</string>
-    <string name="challenged">Sie wurden herausgefordert!</string>
+    <string name="challenged">Du wurdest herausgefordert!</string>
     <string name="game_created">"Spiel wurde erstellt. Warte auf Bestätigung durch %1$s."</string>
     <string name="game_exists">"Du spielst bereits gegen %1$s."</string>
     <string name="OK">OK</string>
     <string name="game_could_not_be_created">Es ist ein Fehler aufgetreten. Das Spiel konnte nicht erstellt wertden.</string>
     <string name="No">Nein</string>
-    <string name="not_logged_in">Sie sind nicht eingeloggt.</string>
+    <string name="not_logged_in">Du bist nicht eingeloggt.</string>
     <string name="successfully_logged_in">%1$s wurde erfolgreich angemeldet.</string>
     <string name="already_logged_in">Du bist bereits angemeldet.</string>
     <string name="login_error">Der Benutzer wurde nicht gefunden oder das Passwort ist falsch.</string>
@@ -48,9 +48,9 @@
     <string name="rule_one">Bewege einen Spielstein, indem du ihn mit dem Finger berührst und verschiebst. Bewege anschließend den blauen Spieler.</string>
     <string name="rule_two">Jetzt ist Rot an der Reihe. Der Spielstein, der in der Runde zuvor bewegt wurde, kann jetzt nicht mehr bewegt werden.</string>
     <string name="rule_three">Du kannst entweder einen Spielstein oder direkt deinen Spieler bewegen. Sobald dein Spieler bewegt wurde, ist die Runde beendet.</string>
-    <string name="rule_four">Trifft ein Spieler auf eine Ecke, dann wird dieser entlang der Ecke reflektiert. Ziel ist es, auf diese Weise den anderen Spielfeldrand zu erreichen.</string>
+    <string name="rule_four">Trifft ein Spieler auf eine Ecke, dann wird seine Bewegung entlang der Ecke fortgesetzt. Eine Ecke kann aus einem oder mehreren Spielsteinen, einem Spielstein und einem Spieler oder dem Spielfeldrand bestehen. Ziel ist es, auf diese Weise den anderen Spielfeldrand zu erreichen.</string>
     <string name="rule_five">Trifft dein Spieler in gerader Bewegung auf den anderen Spieler, dann wird dieser angestoßen. Anschließend bist du noch einmal dran.</string>
-    <string name="rule_six">Das wars schon. Jetzt versuche das Spiel zu gewinnen, indem du einen Spieler zu einem Spielfeldrand mit identischer Farbe bewegst.</string>
+    <string name="rule_six">Das wars schon. Jetzt versuche das Spiel zu gewinnen, indem du einen Spieler zu dem Spielfeldrand mit der gleichen Farbe bewegst.</string>
     <string name="please_enter_email">bitte gib deine E-Mail Adresse ein.</string>
     <string name="email_address">E-Mail Adresse</string>
     <string name="email_title">Neues Passwort</string>
@@ -85,7 +85,7 @@
     <string name="successfully_registered">Registrierung erfolgreich.</string>
     <string name="username_already_exists">Der Benutzername ist bereits vergeben.</string>
     <string name="email_already_exists">Die E-Mail Adresse ist bereits vergeben.</string>
-    <string name="please_try_again_later">Bitte versuchen sie es später erneut.</string>
+    <string name="please_try_again_later">Bitte versuche es später erneut.</string>
     <string name="highscores">Bestenliste</string>
     <string name="scores_are_loading">Statistiken werden geladen</string>
     <string name="error_loading_scores">Beim Abrufen der Statistiken ist ein Fehler aufgetreten.</string>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import de.polyshift.polyshift.Analytics.AnalyticsApplication;
@@ -66,6 +67,9 @@ public class MainMenuActivity extends Activity {
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
+        mTracker.setScreenName(getClass().getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
         newGameButton = (Button) findViewById(R.id.new_game_button);
         myGamesButton = (Button) findViewById(R.id.my_games_button);
         scoresButton = (Button) findViewById(R.id.scores_button);
@@ -112,7 +116,8 @@ public class MainMenuActivity extends Activity {
         quitGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                android.os.Process.killProcess(android.os.Process.myPid());
+                finishAffinity();
+                System.exit(0);
             }
         });
 
