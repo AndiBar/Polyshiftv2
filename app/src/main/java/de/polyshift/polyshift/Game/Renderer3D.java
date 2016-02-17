@@ -159,11 +159,17 @@ public class Renderer3D extends Renderer {
 							
 							gl.glColor4f((51f/255f/1.5f),(77f/255/1.5f),(92f/255f/1.5f),1f);
 						}
+						else if(objects[i][j].isSelected){
+							gl.glColor4f((51f/255f*1.9f),(77f/255*1.9f),(92f/255f*1.9f),1f);
+						}
 					}else{
 						gl.glColor4f((223f/255f),(73f/255f),(73f/255f),1.0f);
 						if(objects[i][j].isLocked){
 							
 							gl.glColor4f((223f/255f/2.5f),(73f/255f/2.5f),(73f/255f/2.5f),1f);
+						}
+						else if(objects[i][j].isSelected){
+							gl.glColor4f((223f/255f*1.3f),(73f/255f*1.3f),(73f/255f*1.3f),1.0f);
 						}
 					}
 					if(objects[i][j].isMovingLeft){
@@ -293,8 +299,12 @@ public class Renderer3D extends Renderer {
                             polynomino.isRendered = true;
                         }
                     } else {
-                        gl.glColor4f(objects[i][j].colors[0], objects[i][j].colors[1], objects[i][j].colors[2], 0.5f);
-                        blockRenderer(gl, polynomino, polynomino.pixel_position.x, polynomino.pixel_position.y, polynomino.pixel_position.z);
+						if(polynomino.isSelected){
+							gl.glColor4f(objects[i][j].colors[0] * 1.5f, objects[i][j].colors[1] * 1.5f, objects[i][j].colors[2] * 1.5f, 0.5f);
+						}else {
+							gl.glColor4f(objects[i][j].colors[0], objects[i][j].colors[1], objects[i][j].colors[2], 0.5f);
+						}
+						blockRenderer(gl, polynomino, polynomino.pixel_position.x, polynomino.pixel_position.y, polynomino.pixel_position.z);
                         gl.glColor4f(1, 1, 1, 1);
                         if (!polynomino.isRendered) {
                             for (int k = 0; k < polynomino.border_list.size(); k++) {

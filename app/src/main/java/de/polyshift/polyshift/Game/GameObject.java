@@ -9,6 +9,7 @@ public class GameObject{
 	public boolean isMovingUp = false;
 	public boolean isMovingDown = false;
     public boolean isLocked = false;
+    public boolean isSelected = false;
     public boolean allLocked = false;
 	public String lastState = "";
 	public float movingVelocity = 0.15f;

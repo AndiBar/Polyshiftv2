@@ -21,8 +21,10 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 	private float deltaTime;
 	private long lastFrameStart;
 	private GameListener gameListener;
-	private float touchedX;
-	private float touchedY;
+	private float swipedX;
+	private float swipedY;
+	private float touchedX = 0;
+	private float touchedY = 0;
     public String swipedDirection;
 	private int width;
 	private int height;
@@ -93,8 +95,8 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            touchedX = e1.getX();
-            touchedY = e1.getY();
+            swipedX = e1.getX();
+            swipedY = e1.getY();
             float sensitvity_x = 50;
             float sensitvity_y = 50;
 
@@ -112,6 +114,13 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
             }
             return super.onFling(e1, e2, velocityX, velocityY);
         }
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e){
+			touchedX = e.getX();
+			touchedY = e.getY();
+			return super.onSingleTapConfirmed(e);
+		}
     };
 
 	@Override
@@ -130,10 +139,22 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 		//glsv.onResume();		
 	}
 	
+	public float getSwipedX() {
+		return swipedX;
+	}
+	
+	public float getSwipedY() {
+		return swipedY;
+	}
+
+	public void resetSwipe(){ this.swipedX = 0; this.swipedY = 0; }
+
+	public void resetTouch(){ this.touchedX = 0; this.touchedY = 0; }
+
 	public float getTouchedX() {
 		return touchedX;
 	}
-	
+
 	public float getTouchedY() {
 		return touchedY;
 	}

@@ -18,11 +18,15 @@ public class ScoreComparator implements Comparator<HashMap> {
         Integer rhs_loss = Integer.parseInt(rhs_loss_string);
         String rhs_string = (String) rhs.get("score");
         Integer rhs_score = Integer.parseInt(rhs_string);
-        if(lhs_score == rhs_score && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0){
+        if(lhs_score == rhs_score && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0 && lhs_win != 0 && rhs_win != 0){
                 return new Integer(lhs_win - lhs_loss).compareTo(rhs_win - rhs_loss);
         }else if(lhs_score == rhs_score && lhs_win - lhs_loss == rhs_win - rhs_loss
-                && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0){
+                && lhs_win + lhs_loss != 0 && rhs_win + rhs_loss != 0) {
                 return new Integer(lhs_win).compareTo(rhs_win);
+        }else if(lhs_score == 0 && rhs_score == 0 && lhs_loss != 0 && rhs_loss != 0 && lhs_win == 0 && rhs_win == 0) {
+                return new Integer(-lhs_loss).compareTo(-rhs_loss);
+        }else if(lhs_score == 0 && rhs_score == 0 && lhs_win == 0 && rhs_win == 0){
+                return new Integer(lhs_loss).compareTo(rhs_loss);
         }else{
                 return new Integer(lhs_score).compareTo(rhs_score);
         }

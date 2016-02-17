@@ -28,7 +28,8 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("com.google.android.c2dm.intent.RECEIVE")
             && (!PolyshiftActivity.isActive
-            || (!intent.getExtras().getString("class_name").equals(PolyshiftActivity.class.getName())))) {
+                || !intent.getExtras().getString("class_name").equals(PolyshiftActivity.class.getName())
+                || !intent.getExtras().get("game_id").equals(PolyshiftActivity.game_id))){
                 // Explicitly specify that GcmIntentService will handle the intent.
                 ComponentName comp = new ComponentName(context.getPackageName(),
                         GcmIntentService.class.getName());

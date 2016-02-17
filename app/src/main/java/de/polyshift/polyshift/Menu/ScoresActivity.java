@@ -88,13 +88,16 @@ public class ScoresActivity extends ListActivity {
                             data_map.put("username", data_array[1].split("=")[1]);
                             data_map.put("win", data_array[2].split("=")[1]);
                             data_map.put("loss", data_array[3].split("=")[1]);
-                            Integer win = Integer.parseInt(data_array[2].split("=")[1]);
-                            Integer loss = Integer.parseInt(data_array[3].split("=")[1]);
-                            Integer score = 0;
+                            double win = Double.parseDouble(data_array[2].split("=")[1]);
+                            double loss = Double.parseDouble(data_array[3].split("=")[1]);
+                            int score = 0;
                             if(loss != 0) {
-                                score = (win / loss) * (win - loss);
+                                score = (int) Math.round((win / loss) * (win - loss));
+                                if(score < 0){
+                                    score = 0;
+                                }
                             }else{
-                                score = win * (win + loss);
+                                score = (int) (win * (win + loss));
                             }
                             data_map.put("score", String.valueOf(score));
                             Log.d("Map", data_map.toString());

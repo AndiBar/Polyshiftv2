@@ -63,7 +63,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean isSaving = false;
     private Tracker mTracker = null;
     public static boolean isActive = false;
-    public String game_id = null;
+    public static String game_id = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,18 +85,19 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_data_is_loading), true);
 
-        game_id = getIntent().getExtras().getString("game_id");
+        if(getIntent().getExtras() != null) {
+            game_id = getIntent().getExtras().getString("game_id");
 
-        update_game_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (update_game_thread.isAlive()) {
-                update_game_thread.join(waitMillis);
+            update_game_thread.start();
+            try {
+                long waitMillis = 10000;
+                while (update_game_thread.isAlive()) {
+                    update_game_thread.join(waitMillis);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -337,15 +338,17 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if(!onBackPressed && (response.equals("error") || response.split(":").length == 1 || response == null || response.equals(""))){
-            Log.d("crashed","crashed while downloading game status. response: " + response);
-            final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            Bundle error = new Bundle();
-            error.putBoolean("error_occured", true);
-            intent.putExtras(error);
-            startActivity(intent);
-            PolyshiftActivity.this.finish();
+        if((response.equals("error") || response.split(":").length == 1 || response == null || response.equals(""))){
+            if(!onBackPressed) {
+                Log.d("crashed", "crashed while downloading game status. response: " + response);
+                final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Bundle error = new Bundle();
+                error.putBoolean("error_occured", true);
+                intent.putExtras(error);
+                startActivity(intent);
+                PolyshiftActivity.this.finish();
+            }
         }
         else {
             String[] game = response.split(":");
@@ -449,7 +452,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     notificationMessage = game_status.get("my_user_name");
                 }
             }
-        }else{
+        }else if(!onBackPressed){
             Log.d("crashed", "crashed while reading game status");
             final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

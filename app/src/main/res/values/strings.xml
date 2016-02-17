@@ -99,7 +99,7 @@
     <string name="game_are_loading">Spiele werden geladen</string>
     <string name="no">Nein</string>
     <string name="error_loading_game_status">Beim Laden des Spielstandes ist ein Fehler aufgetreten.</string>
-    <string name="error_downloading_game">Beim Laden des Spielfeldes ist ein Fehler aufgetreten.</string>
+    <string name="error_downloading_game">Beim Laden des Spielfeldes ist ein Fehler aufgetreten. Bitte prüfe, ob deine Version von Polyshift auf dem neuesten Stand ist.</string>
     <string name="crearing_game">Spiel wird erstellt</string>
     <string name="accepted_your_challenge">" hat deine Herausforderung angenommen"</string>
     <string name="challenge_accepted">Herausforderung wurde angenommen. Spiel wird gestartet.</string>

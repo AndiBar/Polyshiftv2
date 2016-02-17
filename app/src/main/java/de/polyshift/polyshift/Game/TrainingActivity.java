@@ -219,6 +219,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
+                            builder.show();
                         } else if (gameLoop.roundCount == 1) {
                             builder.setMessage(R.string.rule_two);
                             builder.setPositiveButton("OK",
@@ -227,6 +228,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
+                            builder.show();
                         } else if (gameLoop.roundCount == 2) {
                             builder.setMessage(R.string.rule_three);
                             builder.setPositiveButton("OK",
@@ -235,6 +237,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                         dialog.cancel();
                                     }
                                 });
+                            builder.show();
                         } else if (gameLoop.roundCount == 3) {
                             builder.setMessage(R.string.rule_four);
                             builder.setPositiveButton("OK",
@@ -243,6 +246,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
+                            builder.show();
                         } else if (gameLoop.roundCount == 4) {
                             builder.setMessage(R.string.rule_five);
                             builder.setPositiveButton("OK",
@@ -251,6 +255,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
+                            builder.show();
                         } else if (gameLoop.roundCount == 5) {
                             builder.setMessage(R.string.rule_six);
                             builder.setPositiveButton("OK",
@@ -259,8 +264,8 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
+                            builder.show();
                         }
-                        builder.show();
                     }
                 });
                 infoIsAnnounced = true;
