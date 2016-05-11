@@ -139,7 +139,7 @@ public class GameLoop{
                     game_status_thread.start();
                     if(!move_again) {
                         simulation.allLocked = true;
-                    //Es werden keine Obkjekte blockiert, da Spieler 1 noch einmal dran ist.
+                    //Es werden keine Obkjekte blockiert, da Spieler 1 noch einmal dran ist
                     //Als letztbewegtes Objekt wird ein Polynomino gesetzt, da Spieler 1 nur seinen Spieler noch einmal bewegen darf
                     }else{
                         move_again = false;
