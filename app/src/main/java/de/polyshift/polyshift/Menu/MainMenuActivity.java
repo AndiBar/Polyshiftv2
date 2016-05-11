@@ -166,6 +166,7 @@ public class MainMenuActivity extends Activity {
                 + MainMenuActivity.this.getString(R.string.privacypolicy) +
                         MainMenuActivity.this.getString(R.string.general_disclaimer) +
                         MainMenuActivity.this.getString(R.string.analytics_disclaimer) +
+                        MainMenuActivity.this.getString(R.string.adsense_disclaimer) +
                         MainMenuActivity.this.getString(R.string.end_disclaimer));
                 return false;
 

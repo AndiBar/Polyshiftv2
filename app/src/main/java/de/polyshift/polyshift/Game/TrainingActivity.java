@@ -16,7 +16,9 @@ import android.view.WindowManager;
 
 import com.google.android.gms.analytics.Tracker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -49,6 +51,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private boolean onBackPressed = false;
     public static ProgressDialog dialog = null;
     private Tracker mTracker = null;
+    private boolean show_rules = true;
 
 
     @Override
@@ -206,14 +209,22 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 winnerIsAnnounced = true;
             }
 
-            if(gameLoop.RoundFinished && !infoIsAnnounced){
+            if(gameLoop.RoundFinished && !infoIsAnnounced && show_rules){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
-                        if (gameLoop.roundCount == 0) {
+                        if (gameLoop.roundCount == 0 && show_rules) {
+                            show_rules = false;
                             builder.setMessage(R.string.rule_one);
-                            builder.setPositiveButton("OK",
+                            builder.setPositiveButton(getString(R.string.yes),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            show_rules = true;
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.setNegativeButton(getString(R.string.no),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.cancel();

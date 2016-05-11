@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -64,13 +66,25 @@ public class MyGamesActivity extends ListActivity {
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
-        games_list = new ArrayList<HashMap<String, String>>();
-        games_attending_list = new ArrayList<HashMap<String, String>>();
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
+
+        mTracker.setScreenName(getClass().getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
     public void onResume(){
         super.onResume();
+
+        games_list = new ArrayList<HashMap<String, String>>();
+        games_attending_list = new ArrayList<HashMap<String, String>>();
+
         dialog = ProgressDialog.show(MyGamesActivity.this, "", getString(R.string.game_are_loading), true);
 
         if(my_games_thread == null || !my_games_thread.isAlive()) {
@@ -85,9 +99,6 @@ public class MyGamesActivity extends ListActivity {
                 e.printStackTrace();
             }
         }
-
-        mTracker.setScreenName(getClass().getName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
     }
 
@@ -172,6 +183,8 @@ public class MyGamesActivity extends ListActivity {
     }
 
     public void onBackPressed() {
+        my_games_thread.interrupt();
+        dialog.dismiss();
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         this.finish();

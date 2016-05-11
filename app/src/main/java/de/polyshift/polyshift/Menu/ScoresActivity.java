@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -33,6 +35,7 @@ public class ScoresActivity extends ListActivity {
     public static ArrayList<HashMap<String, String>> scores_list = new ArrayList<HashMap<String,String>>();
     public static ProgressDialog dialog = null;
     private Tracker mTracker = null;
+    private Thread scores_thread;
 
     public ScoresActivity(){
         activity = this;
@@ -51,7 +54,15 @@ public class ScoresActivity extends ListActivity {
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-        Thread scores_thread = new ScoresThread();
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
+
+        scores_thread = new ScoresThread();
         scores_thread.start();
     }
 
@@ -68,6 +79,8 @@ public class ScoresActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
     public void onBackPressed() {
+        scores_thread.interrupt();
+        dialog.dismiss();
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         this.finish();
@@ -92,12 +105,12 @@ public class ScoresActivity extends ListActivity {
                             double loss = Double.parseDouble(data_array[3].split("=")[1]);
                             int score = 0;
                             if(loss != 0) {
-                                score = (int) Math.round((win / loss) * (win - loss));
+                                score = (int) (Math.round((win / loss) * (win - loss)) + win);
                                 if(score < 0){
                                     score = 0;
                                 }
                             }else{
-                                score = (int) (win * (win + loss));
+                                score = (int) ((win * (win + loss)) + win);
                             }
                             data_map.put("score", String.valueOf(score));
                             Log.d("Map", data_map.toString());

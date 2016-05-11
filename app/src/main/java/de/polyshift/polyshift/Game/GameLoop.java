@@ -126,12 +126,13 @@ public class GameLoop{
                     PolyshiftActivity.statusUpdated = false;
                     class GameStatusThread extends Thread{
                         public void run(){
-                            GameSync.uploadSimulation(simulation);
-                            String msg = opponentName + mContext.getString(R.string.has_done_a_move);
-                            GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
-                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                            nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                            PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                            if(GameSync.uploadSimulation(simulation).equals("playground uploaded.")) {
+                                String msg = opponentName + mContext.getString(R.string.has_done_a_move);
+                                GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
+                                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                            }
                         }
                     }
                     game_status_thread = new GameStatusThread();

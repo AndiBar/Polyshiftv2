@@ -7,6 +7,7 @@ import android.view.Window;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 import de.polyshift.polyshift.R;
 
@@ -88,26 +89,41 @@ public class Simulation implements Serializable{
                         boolean canGoLeft = true;
                         boolean canGoUp = true;
                         boolean canGoDown = true;
+                        int max_count = 0;
                         while(currentPolynomioSize < POLYNOMIO_SIZE &&
+                                max_count <= 10 &&
                                 canGoRight &&
                                 canGoLeft &&
                                 canGoUp &&
                                 canGoDown){
+                            max_count++;
                             boolean free = true;
                             lastX = currentX;
                             lastY = currentY;
-                            int newBlockDirection =   (int)(Math.random()*4+1);
-                            if(newBlockDirection == 1 && (currentX < (PLAYGROUND_MAX_X/2)+(PLAYGROUND_POPULATE/2))){
-                                currentX++;
+                            int newBlockDirection = (int) (Math.random() * 4 + 1);
+                            if (newBlockDirection == 1 && (currentX < (PLAYGROUND_MAX_X / 2) + (PLAYGROUND_POPULATE / 2))) {
+                                if ((currentY + 1 <= PLAYGROUND_MAX_Y && currentY - 1 >= 0 && !(objects[currentX + 1][currentY + 1] instanceof GameObject) && !(objects[currentX + 1][currentY - 1] instanceof GameObject))) {
+                                    currentX++;
+                                } else if(currentY == PLAYGROUND_MAX_Y || currentY == 0){
+                                    currentX++;
+                                }
                             }
-                            else if(newBlockDirection == 2 && (currentX > (PLAYGROUND_MAX_X/2)-(PLAYGROUND_POPULATE/2))){
-                                currentX--;
+                            else if (newBlockDirection == 2 && (currentX > (PLAYGROUND_MAX_X / 2) - (PLAYGROUND_POPULATE / 2))) {
+                                if ((currentY + 1 <= PLAYGROUND_MAX_Y && currentY - 1 >= 0 && !(objects[currentX - 1][currentY + 1] instanceof GameObject) && !(objects[currentX - 1][currentY - 1] instanceof GameObject))) {
+                                    currentX--;
+                                } else if(currentY == PLAYGROUND_MAX_Y || currentY == 0){
+                                    currentX--;
+                                }
                             }
-                            else if(newBlockDirection == 3 && (currentY < PLAYGROUND_MAX_Y)){
-                                currentY++;
+                            else if (newBlockDirection == 3 && (currentY < PLAYGROUND_MAX_Y)) {
+                                if ((currentX + 1 <= PLAYGROUND_MAX_X && currentX - 1 >= 0 && !(objects[currentX + 1][currentY + 1] instanceof GameObject) && !(objects[currentX - 1][currentY + 1] instanceof GameObject))) {
+                                    currentY++;
+                                }
                             }
-                            else if(newBlockDirection == 4 && (currentY > PLAYGROUND_MIN_Y)){
-                                currentY--;
+                            else if (newBlockDirection == 4 && (currentY > PLAYGROUND_MIN_Y)) {
+                                if ((currentX + 1 <= PLAYGROUND_MAX_X && currentX - 1 >= 0 && !(objects[currentX + 1][currentY - 1] instanceof GameObject) && !(objects[currentX - 1][currentY - 1] instanceof GameObject))) {
+                                    currentY--;
+                                }
                             }
                             if(!(objects[currentX][currentY] instanceof GameObject)){
                                 for(int i = 0; i < polynomino.size; i++){
@@ -535,6 +551,7 @@ public class Simulation implements Serializable{
     }
 
     public void checkPlayerPosition(GameActivity activity){
+        gameObjectSelected = false;
         for(int i = 0; i < objects.length; i++){
             for(int j = 0; j < objects[0].length; j++){
                 if(objects[i][j] != null) {

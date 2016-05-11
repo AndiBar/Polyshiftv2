@@ -114,6 +114,18 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                             });
                                     builder.show();
                                 }
+                                else if(response.equals("game limit reached"))
+                                {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setMessage(R.string.game_limit_reached);
+                                    builder.setPositiveButton(context.getString(R.string.OK),
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    builder.show();
+                                }
                                 else
                                 {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(context);

@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -45,6 +47,7 @@ public class ChooseOpponentActivity extends ListActivity {
     public static ProgressDialog dialog = null;
     private Menu menu;
     private Tracker mTracker = null;
+    private Thread friends_thread;
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -63,12 +66,26 @@ public class ChooseOpponentActivity extends ListActivity {
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);
+
         friends_list = new ArrayList<HashMap<String,String>>();
         friends_attending_list = new ArrayList<HashMap<String,String>>();
 
-        Thread friends_thread = new FriendsThread();
+        friends_thread = new FriendsThread();
         friends_thread.start();
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+    }
+
     // Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
@@ -153,6 +170,8 @@ public class ChooseOpponentActivity extends ListActivity {
         }
     }
     public void onBackPressed() {
+        friends_thread.interrupt();
+        dialog.dismiss();
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         ChooseOpponentActivity.this.finish();

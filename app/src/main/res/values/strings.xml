@@ -30,7 +30,7 @@
     <string name="game_created">"Spiel wurde erstellt. Warte auf Bestätigung durch %1$s."</string>
     <string name="game_exists">"Du spielst bereits gegen %1$s."</string>
     <string name="OK">OK</string>
-    <string name="game_could_not_be_created">Es ist ein Fehler aufgetreten. Das Spiel konnte nicht erstellt wertden.</string>
+    <string name="game_could_not_be_created">Es ist ein Fehler aufgetreten. Das Spiel konnte nicht erstellt werden.</string>
     <string name="No">Nein</string>
     <string name="not_logged_in">Du bist nicht eingeloggt.</string>
     <string name="successfully_logged_in">%1$s wurde erfolgreich angemeldet.</string>
@@ -45,7 +45,7 @@
     <string name="hours">"Std"</string>
     <string name="minutes">"Min"</string>
     <string name="seconds">"Sek"</string>
-    <string name="rule_one">Bewege einen Spielstein, indem du ihn mit dem Finger berührst und verschiebst. Bewege anschließend den blauen Spieler.</string>
+    <string name="rule_one">Bewege einen Spielstein, indem du ihn mit dem Finger berührst und verschiebst. Du kannst den Spielstein auch durch vorheriges Antippen markieren. Bewege anschließend den blauen Spieler. Sollen weitere Regeln angezeigt werden?</string>
     <string name="rule_two">Jetzt ist Rot an der Reihe. Der Spielstein, der in der Runde zuvor bewegt wurde, kann jetzt nicht mehr bewegt werden.</string>
     <string name="rule_three">Du kannst entweder einen Spielstein oder direkt deinen Spieler bewegen. Sobald dein Spieler bewegt wurde, ist die Runde beendet.</string>
     <string name="rule_four">Trifft ein Spieler auf eine Ecke, dann wird seine Bewegung entlang der Ecke fortgesetzt. Eine Ecke kann aus einem oder mehreren Spielsteinen, einem Spielstein und einem Spieler oder dem Spielfeldrand bestehen. Ziel ist es, auf diese Weise den anderen Spielfeldrand zu erreichen.</string>
@@ -119,7 +119,7 @@
     <string name="red">Rot</string>
     <string name="blue">Blau</string>
     <string name="has_done_a_move">" hat einen Spielzug gemacht."</string>
-    <string name="privacypolicy">"Datenschutzerklärung: "</string>
+    <string name="privacypolicy">"Datenschutzerklärung\n\n"</string>
     <string name="general_disclaimer">"Polyshift erhebt personenbezogene Daten und speichert diese übe einen unbefristeten Zeitraum. Dabei handelt es sich um die E-Mail Adresse des Nutzers. Diese wird gespeichert, um dem Nutzer im Bedarfsfall ein neues Passwort zukommen zu lassen. Die E-Mail Adresse wird lediglich zu diesem Zweck gespeichert und nicht an Dritte weitergegeben. Wünscht der Nutzer die Löschung seiner Daten, kann dies über eine E-Mail an service@polyshift.de angefordert werden.\n\n"</string>
     <string name="analytics_disclaimer">Polyshift benutzt Google Analytics, einen Webanalysedienst der Google Inc. („Google“).
                   Google Analytics verwendet sog. „Cookies“, Textdateien, die auf Ihrem Computer gespeichert werden
@@ -134,10 +134,12 @@
                   mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen gegenüber dem Appbetreiber
                   zu erbringen. Die im Rahmen von Google Analytics von Ihrem Browser übermittelte IP-Adresse wird nicht mit
                   anderen Daten von Google zusammengeführt."</string>
-    <string name="end_disclaimer">"\n\nDiese Datenschutzerklärung wurde am 30.01.2016 verfasst."</string>
+    <string name="adsense_disclaimer">"\n\nPolyshift verwendet Google AdSense. Dies ist ein Dienst der Google Inc., 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, mit dem Werbeanzeigen auf Internetseiten und in Apps eingebunden werden können. Google AdSense verwendet sogenannte Cookies. Durch die Speicherung der Cookies auf Ihrem Smartphone kann Google Ihre Benutzung dieser App analysieren. Bei Google AdSense werden zudem auch sogenannte Web Beacons verwendet. Das sind nicht sichtbare Grafiken, mit denen Google Informationen, wie z.B. die Klicks oder den Verkehr in dieser App, analysiert. Die genannten Informationen, Ihre IP-Adresse und die Auslieferung von Werbeformaten werden an die Google-Server in den USA übermittelt und von diesen gespeichert. Diese gesamten Informationen wird Google möglicherweise an Dritte weitergeben, wenn dies vom Gesetz gefordert ist oder für den Fall, dass Dritte von Google beauftragt werden, die Datenverarbeitung vorzunehmen. Keinesfalls wird Google jedoch Ihre IP-Adresse mit anderen Daten von Google verknüpfen."</string>
+<string name="end_disclaimer">"\n\nDiese Datenschutzerklärung wurde am 27.03.2016 verfasst."</string>
     <string name="contact">\n\nKontakt: service@polyshift.de\n\n</string>
     <string name="about_polyshift">Über Polyshift</string>
     <string name="version">"Version: "</string>
+    <string name="game_limit_reached">Das Spielelimit wurde erreicht. Du musst erst ein Spiel beenden, bevor du ein neues erstellen kannst.</string>
 
 
 </resources>

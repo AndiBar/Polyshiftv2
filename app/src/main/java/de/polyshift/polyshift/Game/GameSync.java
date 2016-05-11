@@ -20,8 +20,9 @@ public class GameSync {
 
     static Simulation simulation;
 
-    public static void uploadSimulation(final Simulation simulation){
+    public static String uploadSimulation(final Simulation simulation){
         class UploadSimulationThread extends Thread{
+            private String response = "";
             public void run(){
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 String serializedObjects = "";
@@ -35,10 +36,13 @@ public class GameSync {
                 } catch (Exception e) {
                 }
                 nameValuePairs.add(new BasicNameValuePair("objects", serializedObjects));
-                PHPConnector.doRequest(nameValuePairs, "update_playground.php");
+                response = PHPConnector.doRequest(nameValuePairs, "update_playground.php");
+            }
+            public String getResponse(){
+                return response;
             }
         }
-        Thread upload_simulation_thread = new UploadSimulationThread();
+        UploadSimulationThread upload_simulation_thread = new UploadSimulationThread();
         upload_simulation_thread.start();
         try {
             long waitMillis = 10000;
@@ -48,6 +52,7 @@ public class GameSync {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return upload_simulation_thread.getResponse();
     }
     public static Simulation downloadSimulation() {
         Thread download_playground_thread = new DownloadSimulationThread();

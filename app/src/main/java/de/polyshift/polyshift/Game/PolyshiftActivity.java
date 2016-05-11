@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -64,6 +66,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private Tracker mTracker = null;
     public static boolean isActive = false;
     public static String game_id = null;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,9 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-7602758333991442/2350962417");
+
     }
 
     public void onSaveInstanceState( Bundle outState )
@@ -127,6 +133,11 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -221,6 +232,9 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        }
                         MenuItem item = menu.findItem(R.id.action_game_status);
                         item.setTitle(R.string.game_is_saving);
                         isSaving = true;
