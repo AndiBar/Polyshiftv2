@@ -23,9 +23,9 @@ import android.widget.EditText;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
-import de.polyshift.polyshift.Game.GameSync;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -33,7 +33,7 @@ public class NewOpponentActivity extends Activity {
 	
 	private String username;
     private Context context;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     private String response;
 	private ArrayList users_list;
 	private boolean sending_success;
@@ -44,8 +44,8 @@ public class NewOpponentActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
-		loginAdapter = new LoginAdapter(context, NewOpponentActivity.this);
-        loginAdapter.handleSessionExpiration(this);
+		loginTool = new LoginTool(context, NewOpponentActivity.this);
+        loginTool.handleSessionExpiration(this);
 		sending_success = false;
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);

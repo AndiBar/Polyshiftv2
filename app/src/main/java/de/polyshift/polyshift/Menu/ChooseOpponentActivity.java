@@ -26,9 +26,9 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.polyshift.polyshift.Adapter.ChooseOpponentAdapter;
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Menu.Adapter.ChooseOpponentAdapter;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -43,7 +43,7 @@ public class ChooseOpponentActivity extends ListActivity {
     private int bell_number = 0;
     public static Activity activity;
     private static Context context;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     public static ProgressDialog dialog = null;
     private Menu menu;
     private Tracker mTracker = null;
@@ -183,8 +183,8 @@ public class ChooseOpponentActivity extends ListActivity {
             if(!stringResponse.equals("no opponents found")) {
                 if(stringResponse.equals("not logged in.") || stringResponse == null) {
                     context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
+                    loginTool = new LoginTool(context, ChooseOpponentActivity.this);
+                    loginTool.userLoginStoredCredentials();
                 } else {
                     String[] data_unformatted = stringResponse.split(",");
                     friends_list = new ArrayList<HashMap<String, String>>();
@@ -220,8 +220,8 @@ public class ChooseOpponentActivity extends ListActivity {
             if(!stringResponse.equals("no opponents found")) {
                 if(stringResponse.equals("not logged in.") || stringResponse == null){
                     context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, ChooseOpponentActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
+                    loginTool = new LoginTool(context, ChooseOpponentActivity.this);
+                    loginTool.userLoginStoredCredentials();
                 } else {
                     String[] data_unformatted = stringResponse.split(",");
                     data_unformatted = stringResponse.split(",");

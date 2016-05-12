@@ -28,10 +28,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Adapter.MyGamesAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Menu.Adapter.MyGamesAdapter;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.Game.PolyshiftActivity;
+import de.polyshift.polyshift.Menu.Comparators.GameComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -46,7 +47,7 @@ public class MyGamesActivity extends ListActivity {
     private int bell_number = 0;
     public static Activity activity;
     private Context context;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     public static ProgressDialog dialog = null;
     private Menu menu;
     private Thread my_games_thread;
@@ -214,8 +215,8 @@ public class MyGamesActivity extends ListActivity {
                     }
                 } else if(stringResponse.equals("not logged in.")) {
                     context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
+                    loginTool = new LoginTool(context, MyGamesActivity.this);
+                    loginTool.userLoginStoredCredentials();
 
                 }else if(stringResponse.equals("no games found")) {
 
@@ -255,8 +256,8 @@ public class MyGamesActivity extends ListActivity {
                     }
                 } else if(stringResponse.equals("not logged in.")){
                     context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, MyGamesActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
+                    loginTool = new LoginTool(context, MyGamesActivity.this);
+                    loginTool.userLoginStoredCredentials();
 
                 }else if(stringResponse.equals("no games found")) {
 

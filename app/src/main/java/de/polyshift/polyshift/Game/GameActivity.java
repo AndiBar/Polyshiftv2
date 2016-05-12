@@ -13,6 +13,9 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import de.polyshift.polyshift.Game.Interfaces.GameListener;
+import de.polyshift.polyshift.Game.Logic.Simulation;
+
 public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 	
 	private GLSurfaceView glsv;

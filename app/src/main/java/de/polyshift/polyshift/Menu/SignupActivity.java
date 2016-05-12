@@ -27,10 +27,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
+import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import de.polyshift.polyshift.Tools.PasswordHash;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -116,7 +117,7 @@ public class SignupActivity extends Activity {
                 });
                 final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
                 final String newGCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
-                LoginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), this,newGCMregId);
+                LoginTool.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), this,newGCMregId);
                 this.finish();
             }else if(response.equalsIgnoreCase("Error: Username already exists.")){
                 AlertDialogs.showAlert(this, "Fehler", getString(R.string.username_already_exists));

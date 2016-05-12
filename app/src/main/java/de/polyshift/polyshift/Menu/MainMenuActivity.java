@@ -15,11 +15,12 @@ import android.widget.ImageView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.BuildConfig;
 import de.polyshift.polyshift.Game.TrainingActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
+import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 
 /**
  * Created by Andi on 12.03.2015.

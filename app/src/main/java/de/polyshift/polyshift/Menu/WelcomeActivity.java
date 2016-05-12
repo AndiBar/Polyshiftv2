@@ -35,9 +35,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.R;
+import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import de.polyshift.polyshift.Tools.PasswordHash;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -55,7 +56,7 @@ public class WelcomeActivity extends Activity {
     public static ProgressDialog dialog = null;
     private static Context context;
     private static Activity activity;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -89,7 +90,7 @@ public class WelcomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		context=getApplicationContext();
         activity=this;
-        this.loginAdapter = new LoginAdapter(context,WelcomeActivity.this);
+        this.loginTool = new LoginTool(context,WelcomeActivity.this);
 		setContentView(R.layout.activity_welcome);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
@@ -125,7 +126,7 @@ public class WelcomeActivity extends Activity {
                 new Thread(
                         new Runnable(){
                             public void run(){
-                                loginAdapter.userLoginStoredCredentials();
+                                loginTool.userLoginStoredCredentials();
                             }
                         }
                 ).start();
@@ -146,7 +147,7 @@ public class WelcomeActivity extends Activity {
                     new Thread(
 	                		new Runnable(){
 	                			public void run(){
-	                				loginAdapter.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), WelcomeActivity.this, regid);
+	                				loginTool.newUserLogin(editUsername.getText().toString().trim(), PasswordHash.toHash(editPassword.getText().toString().trim()), WelcomeActivity.this, regid);
 	                			}
 	                		}
 	                ).start();
@@ -171,7 +172,7 @@ public class WelcomeActivity extends Activity {
                                 new Thread(
                                         new Runnable() {
                                             public void run() {
-                                                LoginAdapter.validateEmail(email, WelcomeActivity.this);
+                                                LoginTool.validateEmail(email, WelcomeActivity.this);
                                             }
                                         }
                                 ).start();

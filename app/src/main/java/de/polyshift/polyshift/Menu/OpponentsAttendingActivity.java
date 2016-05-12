@@ -6,10 +6,10 @@ import java.util.HashMap;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import de.polyshift.polyshift.Adapter.AcceptOpponentAdapter;
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
-import de.polyshift.polyshift.Game.GameSync;
+import de.polyshift.polyshift.Menu.Adapter.AcceptOpponentAdapter;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.PHPConnector;
@@ -41,7 +41,7 @@ public class OpponentsAttendingActivity extends ListActivity {
     public static ProgressDialog dialog = null;
     public String response = "";
     private Context context;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     private Tracker mTracker = null;
 
 
@@ -50,8 +50,8 @@ public class OpponentsAttendingActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
    	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        loginAdapter = new LoginAdapter(context,OpponentsAttendingActivity.this);
-        loginAdapter.handleSessionExpiration(this);
+        loginTool = new LoginTool(context,OpponentsAttendingActivity.this);
+        loginTool.handleSessionExpiration(this);
 
         setContentView(R.layout.activity_opponents_attending);
         setTitle(R.string.opponents_attending_title);

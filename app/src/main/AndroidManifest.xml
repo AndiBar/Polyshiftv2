@@ -17,7 +17,7 @@
     <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
 
     <application
-        android:name="de.polyshift.polyshift.Analytics.AnalyticsApplication"
+        android:name=".Tools.Analytics.AnalyticsApplication"
         android:theme="@style/MyTheme"
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -71,7 +71,7 @@
                   android:launchMode="singleTask"/>
 
         <receiver
-            android:name="de.polyshift.polyshift.Menu.GcmBroadcastReceiver"
+            android:name=".Tools.GCM.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -80,7 +80,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="de.polyshift.polyshift.Menu.GcmIntentService" />
+        <service android:name=".Tools.GCM.GcmIntentService" />
 
     </application>
 

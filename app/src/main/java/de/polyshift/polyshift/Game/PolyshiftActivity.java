@@ -21,9 +21,17 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Game.Interfaces.GameListener;
+import de.polyshift.polyshift.Game.Logic.GameLoop;
+import de.polyshift.polyshift.Game.Logic.Simulation;
+import de.polyshift.polyshift.Game.Objects.Player;
+import de.polyshift.polyshift.Game.Objects.Polynomino;
+import de.polyshift.polyshift.Game.Renderer.Renderer;
+import de.polyshift.polyshift.Game.Renderer.Renderer3D;
+import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -58,7 +66,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private String notificationMessage = "";
     private String notificationGameID =  "";
     private Context context;
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     private boolean onBackPressed = false;
     private boolean onDestroyed = false;
     public static ProgressDialog dialog = null;
@@ -72,8 +80,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
 
-        loginAdapter = new LoginAdapter(context,PolyshiftActivity.this);
-        loginAdapter.handleSessionExpiration(this);
+        loginTool = new LoginTool(context,PolyshiftActivity.this);
+        loginTool.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);

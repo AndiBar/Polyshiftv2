@@ -6,11 +6,11 @@ import java.util.HashMap;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import de.polyshift.polyshift.Adapter.AcceptGameAdapter;
+import de.polyshift.polyshift.Menu.Adapter.AcceptGameAdapter;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
-import de.polyshift.polyshift.Game.GameSync;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
@@ -45,7 +45,7 @@ public class GamesAttendingActivity extends ListActivity {
     private static Context context;
     private static String opponentId  = "";
     private static String opponentName = "";
-    private LoginAdapter loginAdapter;
+    private LoginTool loginTool;
     private Tracker mTracker = null;
 
 	/** Called when the activity is first created. */
@@ -53,8 +53,8 @@ public class GamesAttendingActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 	   super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        loginAdapter = new LoginAdapter(context,GamesAttendingActivity.this);
-        loginAdapter.handleSessionExpiration(this);
+        loginTool = new LoginTool(context,GamesAttendingActivity.this);
+        loginTool.handleSessionExpiration(this);
 
 
        setContentView(R.layout.activity_opponents_attending);
@@ -224,8 +224,8 @@ public class GamesAttendingActivity extends ListActivity {
                     }
                 } else if (stringResponse.equals("not logged in.")) {
                     context = getApplicationContext();
-                    loginAdapter = new LoginAdapter(context, GamesAttendingActivity.this);
-                    loginAdapter.userLoginStoredCredentials();
+                    loginTool = new LoginTool(context, GamesAttendingActivity.this);
+                    loginTool.userLoginStoredCredentials();
 
                 } else if (stringResponse.equals("no games found")) {
 

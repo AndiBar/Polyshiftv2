@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import de.polyshift.polyshift.Adapter.LoginAdapter;
-import de.polyshift.polyshift.Adapter.ScoresAdapter;
-import de.polyshift.polyshift.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.LoginTool;
+import de.polyshift.polyshift.Menu.Adapter.ScoresAdapter;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Menu.Comparators.ScoreComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
@@ -156,8 +157,8 @@ public class ScoresActivity extends ListActivity {
                 }
             }else{
                 Context context = getApplicationContext();
-                LoginAdapter loginAdapter = new LoginAdapter(context, ScoresActivity.this);
-                loginAdapter.userLoginStoredCredentials();
+                LoginTool loginTool = new LoginTool(context, ScoresActivity.this);
+                loginTool.userLoginStoredCredentials();
             }
         }
     }
