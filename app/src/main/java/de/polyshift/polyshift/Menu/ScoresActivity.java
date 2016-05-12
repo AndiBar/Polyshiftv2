@@ -29,6 +29,13 @@ import de.polyshift.polyshift.Menu.Comparators.ScoreComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
+/**
+ * Zeigt die aktuelle Bestenliste mit Spielstatistik und Punkten an.
+ *
+ * @author helmsa
+ *
+ */
+
 public class ScoresActivity extends ListActivity {
 
     public static ScoresAdapter mAdapter;

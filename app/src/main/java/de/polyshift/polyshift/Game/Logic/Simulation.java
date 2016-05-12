@@ -16,20 +16,20 @@ import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.Game.Renderer.Vector;
 import de.polyshift.polyshift.Game.Sync.GameSync;
 
+/**
+ * Erstellt und speichert das Spielfeld und simuliert das Verhalten der Spieler und Spielsteine
+ * bei Touch-Eingaben.
+ *
+ * @author helmsa
+ *
+ */
 
 public class Simulation implements Serializable{
 
-    final int PLAYGROUND_MAX_X = 16;
-    final int PLAYGROUND_MIN_X = 0;
-    final int PLAYGROUND_MAX_Y = 8;
-    final int PLAYGROUND_MIN_Y = 0;
-    final int PLAYGROUND_POPULATE = 8;
-    final int POLYNOMIO_SIZE = 4;
     public final static String RIGHT = "right";
     public final static String LEFT = "left";
     public final static String UP = "up";
     public final static String DOWN = "down";
-
     public boolean hasWinner =  false;
     public Player player;
     public Player player2;
@@ -37,7 +37,12 @@ public class Simulation implements Serializable{
     public boolean allLocked = false;
     public boolean loop_detected = false;
     public boolean bump_detected = false;
-
+    final int PLAYGROUND_MAX_X = 16;
+    final int PLAYGROUND_MIN_X = 0;
+    final int PLAYGROUND_MAX_Y = 8;
+    final int PLAYGROUND_MIN_Y = 0;
+    final int PLAYGROUND_POPULATE = 8;
+    final int POLYNOMIO_SIZE = 4;
     private int touchedX = 0;
     private int touchedY = 0;
     private float swipeX = 0;

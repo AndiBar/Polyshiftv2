@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import android.util.FloatMath;
 
+/**
+ * Hilfsklasse zum Durchführen von mathematischen Operationen an Vektoren.
+ *
+ *
+ */
+
 public class Vector implements Serializable
 {
         public float x, y, z;

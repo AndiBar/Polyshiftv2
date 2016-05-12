@@ -43,9 +43,22 @@ import de.polyshift.polyshift.Tools.PHPConnector;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Diese Klasse ist für die Umsetzung des Multiplayer-Spiels zuständig. Sie verbindet die
+ * Klassen Renderer, Simulation und GameLoop. Sie rendert das in der Simulation gespeicherte
+ * Spielfeld und stellt den aktuellen Spielstatus anhand des GameLoops dar.
+ *
+ * @author helmsa
+ *
+ */
 
 public class PolyshiftActivity extends GameActivity implements GameListener {
 
+    public static boolean statusUpdated = true;
+    public boolean gameUpdated = false;
+    public static ProgressDialog dialog = null;
+    public static boolean isActive = false;
+    public static String game_id = null;
     Player player;
     Player player2;
     Polynomino poly;
@@ -59,8 +72,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean downloaded = false;
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
-    public static boolean statusUpdated = true;
-    public boolean gameUpdated = false;
     private Thread game_status_thread = new GameStatusThread();
     private String notificationReceiver = "";
     private String notificationMessage = "";
@@ -69,11 +80,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private LoginTool loginTool;
     private boolean onBackPressed = false;
     private boolean onDestroyed = false;
-    public static ProgressDialog dialog = null;
     private boolean isSaving = false;
     private Tracker mTracker = null;
-    public static boolean isActive = false;
-    public static String game_id = null;
     private InterstitialAd mInterstitialAd;
 
     @Override

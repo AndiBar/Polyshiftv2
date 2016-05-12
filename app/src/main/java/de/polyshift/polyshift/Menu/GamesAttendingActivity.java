@@ -15,7 +15,6 @@ import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.PHPConnector;
-import de.polyshift.polyshift.Tools.SaveValue;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -93,7 +92,6 @@ public class GamesAttendingActivity extends ListActivity {
        listView.setFocusable(false);
        listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SaveValue.setSelectedFriendName(MyGamesActivity.games_attending_list.get(position).get("opponent_name"));
                 Intent intent = new Intent(GamesAttendingActivity.this, MyGamesActivity.class);
                 startActivity(intent);
                 GamesAttendingActivity.this.finish();

@@ -5,6 +5,13 @@ import java.io.Serializable;
 import de.polyshift.polyshift.Game.Renderer.Mesh;
 import de.polyshift.polyshift.Game.Renderer.Vector;
 
+/**
+ * Speichert die Position, das Mesh und andere Eigenschaften eines Spielers
+ *
+ * @author helmsa
+ *
+ */
+
 public class Player extends GameObject implements Serializable {
 
     public Vector block_position;

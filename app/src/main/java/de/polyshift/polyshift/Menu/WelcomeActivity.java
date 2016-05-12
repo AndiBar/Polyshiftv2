@@ -42,6 +42,13 @@ import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import de.polyshift.polyshift.Tools.PasswordHash;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
+/**
+ * Login-Menü mit Möglichkeiten zum Einloggen, Registrieren oder Anfordern eines neuen Passworts.
+ *
+ * @author helmsa
+ *
+ */
+
 public class WelcomeActivity extends Activity {
 	
 	Button loginButton;

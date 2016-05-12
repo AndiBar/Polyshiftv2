@@ -7,6 +7,13 @@ import javax.microedition.khronos.opengles.GL10;
 import de.polyshift.polyshift.Game.GameActivity;
 import de.polyshift.polyshift.Game.Objects.GameObject;
 
+/**
+ * Diese Klasse stellt eine Schnittstelle zur Implementierung von Renderern zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public abstract class Renderer {
 	
 	float block_width;

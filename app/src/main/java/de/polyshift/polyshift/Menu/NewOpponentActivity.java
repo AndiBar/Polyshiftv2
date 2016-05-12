@@ -29,6 +29,13 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
+/**
+ * Menü zum Suchen und Hinzufügen eines neuen Gegners.
+ *
+ * @author helmsa
+ *
+ */
+
 public class NewOpponentActivity extends Activity {
 	
 	private String username;

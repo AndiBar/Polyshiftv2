@@ -37,8 +37,12 @@ import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
 /**
- * Created by Andi on 12.03.2015.
+ * Zeigt die aktuellen Spiele an und gibt dem Spieler die Möglichkeit ein Spiel zu starten.
+ *
+ * @author helmsa
+ *
  */
+
 public class MyGamesActivity extends ListActivity {
     public static ArrayList<HashMap<String, String>> games_list = new ArrayList<HashMap<String, String>>();
     public static ArrayList<HashMap<String, String>> games_attending_list = new ArrayList<HashMap<String, String>>();

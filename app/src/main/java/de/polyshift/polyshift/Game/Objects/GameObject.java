@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import de.polyshift.polyshift.Game.Renderer.Mesh;
 import de.polyshift.polyshift.Game.Renderer.Vector;
 
+/**
+ * Speichert die allgemeinen Eigenschaften eines Spielobjekts auf dem Spielfeld
+ *
+ * @author helmsa
+ *
+ */
+
 public class GameObject{
 	
 	public boolean isMovingLeft = false;

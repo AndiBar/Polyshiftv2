@@ -18,6 +18,14 @@ import de.polyshift.polyshift.Game.Objects.Polynomino;
 import de.polyshift.polyshift.Game.Renderer.Mesh.PrimitiveType;
 import de.polyshift.polyshift.Game.Logic.Simulation;
 
+/**
+ * Diese Klasse rendert das in der Simulation enthaltene Spielfeld und stellt es dreidimesional
+ * dar.
+ *
+ * @author helmsa
+ *
+ */
+
 public class Renderer3D extends Renderer {
 	
 	float object_depth;

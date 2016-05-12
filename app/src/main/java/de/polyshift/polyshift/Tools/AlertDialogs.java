@@ -5,6 +5,13 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.DialogInterface;
 
+/**
+ * Stellt eine Methode zum Erstellen eines Info-Dialogs zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class AlertDialogs {
 
     public Activity activity;

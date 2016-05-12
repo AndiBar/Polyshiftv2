@@ -23,17 +23,21 @@ import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 
 /**
- * Created by Andi on 12.03.2015.
+ * Hauptmenü
+ *
+ * @author helmsa
+ *
  */
+
 public class MainMenuActivity extends Activity {
 
+    public static ProgressDialog dialog = null;
     Button newGameButton;
     Button myGamesButton;
     Button scoresButton;
     Button tutorialButton;
     Button quitGameButton;
     ImageView backgroundLogo;
-    public static ProgressDialog dialog = null;
     private Tracker mTracker = null;
 
     @Override

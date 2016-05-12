@@ -4,6 +4,13 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.HashMap;
 
+/**
+ * Stellt eine Methode zum Sortieren von Spielen anhand der Inaktivitätszeit zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class GameComparator implements Comparator<HashMap> {
 
 	public int compare(HashMap lhs, HashMap rhs) {

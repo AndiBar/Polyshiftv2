@@ -18,6 +18,13 @@ import org.apache.http.util.EntityUtils;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * Stellt Methoden zum Datenaustausch mit dem Server über HTTP-Requests zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class PHPConnector {
 	
 	public static String stringResponse;

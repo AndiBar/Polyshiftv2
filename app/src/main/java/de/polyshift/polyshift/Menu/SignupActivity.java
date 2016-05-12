@@ -35,6 +35,13 @@ import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import de.polyshift.polyshift.Tools.PasswordHash;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
+/**
+ * Registierungs-Menü zum Registrieren eines neuen Spielers.
+ *
+ * @author helmsa
+ *
+ */
+
 public class SignupActivity extends Activity {
 	
 	Button signupButton;

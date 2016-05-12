@@ -4,6 +4,13 @@ import java.util.Random;
 
 import de.polyshift.polyshift.Game.TrainingActivity;
 
+/**
+ * Aktualisiert und speichert den aktuellen Status des Spiels bei Spieler-Aktionen.
+ *
+ * @author helmsa
+ *
+ */
+
 public class OfflineGameLoop{
 
     public boolean PlayerOnesTurn;

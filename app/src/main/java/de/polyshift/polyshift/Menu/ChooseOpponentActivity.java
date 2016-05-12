@@ -33,18 +33,24 @@ import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 
 /**
- * Created by Andi on 12.03.2015.
+ * Menü zum Auswählen eines Spielers aus der Gegner-Liste und zum Starten eines
+ * neuen Spiels.
+ *
+ * @author helmsa
+ *
  */
+
 public class ChooseOpponentActivity extends ListActivity {
+
     public static ArrayList<HashMap<String, String>> friends_list;
     public static ArrayList<HashMap<String, String>> friends_attending_list;
-    private ListView settings;
     public static ChooseOpponentAdapter mAdapter;
-    private int bell_number = 0;
     public static Activity activity;
+    public static ProgressDialog dialog = null;
+    private ListView settings;
+    private int bell_number = 0;
     private static Context context;
     private LoginTool loginTool;
-    public static ProgressDialog dialog = null;
     private Menu menu;
     private Tracker mTracker = null;
     private Thread friends_thread;

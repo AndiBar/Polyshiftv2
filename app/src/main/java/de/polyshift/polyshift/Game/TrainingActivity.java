@@ -33,9 +33,20 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.R;
 
+/**
+ * Diese Klasse ist für die Umsetzung des Tutorial-Spiels zuständig. Sie verbindet die
+ * Klassen Renderer, Simulation und GameLoop. Sie rendert das in der Simulation gespeicherte
+ * Spielfeld und stellt den aktuellen Spielstatus anhand des GameLoops dar.
+ *
+ * @author helmsa
+ *
+ */
 
 public class TrainingActivity extends GameActivity implements GameListener {
 
+    public static boolean statusUpdated = true;
+    public boolean gameUpdated = false;
+    public static ProgressDialog dialog = null;
     Player player;
     Player player2;
     Polynomino poly;
@@ -50,15 +61,11 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
     private boolean infoIsAnnounced = false;
-    public static boolean statusUpdated = true;
-    public boolean gameUpdated = false;
     private Context context;
     private LoginTool loginTool;
     private boolean onBackPressed = false;
-    public static ProgressDialog dialog = null;
     private Tracker mTracker = null;
     private boolean show_rules = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

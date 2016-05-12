@@ -13,7 +13,6 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.PHPConnector;
-import de.polyshift.polyshift.Tools.SaveValue;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -33,6 +32,13 @@ import android.widget.ListView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+/**
+ * Zeigt unbestätigte Gegner an und gibt dem Spieler die Möglichkeit diese zu Bestätigen oder
+ * abzulehnen.
+ *
+ * @author helmsa
+ *
+ */
 
 public class OpponentsAttendingActivity extends ListActivity {
 	
@@ -82,7 +88,6 @@ public class OpponentsAttendingActivity extends ListActivity {
 	       listView.setFocusable(false);
 	       listView.setOnItemClickListener(new OnItemClickListener() {
 	            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	            	SaveValue.setSelectedFriendName(opponents_attending_list.get(position).get("title"));
 	            	
 	            	Intent intent = new Intent(OpponentsAttendingActivity.this, MainMenuActivity.class);
 		        	int selected = 3;

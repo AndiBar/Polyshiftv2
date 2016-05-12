@@ -3,6 +3,13 @@ package de.polyshift.polyshift.Tools;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Stellt eine Methode zum Erstellen des Passwort-Hashs zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class PasswordHash 
 {
     public static String toHash(String passwordToHash){

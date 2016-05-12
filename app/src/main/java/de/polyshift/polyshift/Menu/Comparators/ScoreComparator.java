@@ -3,6 +3,13 @@ package de.polyshift.polyshift.Menu.Comparators;
 import java.util.Comparator;
 import java.util.HashMap;
 
+/**
+ * Stellt eine Methode zum Sortieren von Spielerstatistiken zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class ScoreComparator implements Comparator<HashMap> {
 
 	public int compare(HashMap lhs, HashMap rhs) {

@@ -16,6 +16,14 @@ import de.polyshift.polyshift.Game.Objects.Polynomino;
 import de.polyshift.polyshift.Game.Renderer.Mesh.PrimitiveType;
 import de.polyshift.polyshift.Game.Logic.Simulation;
 
+/**
+ * Diese Klasse rendert das in der Simulation enthaltene Spielfeld und stellt es zweidimesional
+ * dar (Momentan nicht in Verwendung)
+ *
+ * @author helmsa
+ *
+ */
+
 public class Renderer2D extends Renderer {
 
 	public Renderer2D(GameActivity activity, GL10 gl, GameObject[][] objects){

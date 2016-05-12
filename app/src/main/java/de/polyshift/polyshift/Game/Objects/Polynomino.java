@@ -7,6 +7,14 @@ import java.util.Collections;
 import de.polyshift.polyshift.Game.Renderer.Mesh;
 import de.polyshift.polyshift.Game.Renderer.Vector;
 
+/**
+ * Speichert die Form, die Farbe, das Mesh und andere Eigenschaften eines Polynominos
+ * (eines Spielsteins)
+ *
+ * @author helmsa
+ *
+ */
+
 public class Polynomino extends GameObject implements Serializable{
 	
 	public ArrayList<Block>blocks = new ArrayList<Block>();

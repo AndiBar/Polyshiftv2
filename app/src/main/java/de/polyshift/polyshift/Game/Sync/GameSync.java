@@ -20,6 +20,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+/**
+ * Diese Klasse ist für die Synchronisierung des Spielfeldes zuständig. Sie serialisiert das
+ * Spielfeld und sendet es an den Server bzw. empfängt das Spielfeld vom Server und
+ * deserialisiert es.
+ *
+ * @author helmsa
+ *
+ */
+
 public class GameSync {
 
     static Simulation simulation;

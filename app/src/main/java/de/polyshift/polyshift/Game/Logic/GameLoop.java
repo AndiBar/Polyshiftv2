@@ -13,6 +13,14 @@ import de.polyshift.polyshift.Tools.PHPConnector;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+/**
+ * Aktualisiert und speichert den aktuellen Status des Spiels bei Spieler-Aktionen und
+ * synchronisiert diese mit dem Server.
+ *
+ * @author helmsa
+ *
+ */
+
 public class GameLoop{
 
     public boolean PlayerOnesTurn;

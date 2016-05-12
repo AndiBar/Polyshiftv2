@@ -16,8 +16,26 @@ import android.view.MotionEvent;
 import de.polyshift.polyshift.Game.Interfaces.GameListener;
 import de.polyshift.polyshift.Game.Logic.Simulation;
 
+/**
+ * Diese Klasse implementiert den OpenGL-Renderer. Außerdem reagiert sie auf
+ * Touch-Eingaben und stellt diese der Simulation zur Verfügung.
+ *
+ * @author helmsa
+ *
+ */
+
 public class GameActivity extends Activity implements GLSurfaceView.Renderer {
-	
+
+	public String swipedDirection;
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
 	private GLSurfaceView glsv;
 	private int x;
 	private int y;
@@ -28,19 +46,10 @@ public class GameActivity extends Activity implements GLSurfaceView.Renderer {
 	private float swipedY;
 	private float touchedX = 0;
 	private float touchedY = 0;
-    public String swipedDirection;
 	private int width;
 	private int height;
     private GestureDetectorCompat mDetector;
 
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-	
 	public void setGameListener(GameListener gameListener){
 		this.gameListener = gameListener;
 	}

@@ -20,9 +20,12 @@ import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.Menu.WelcomeActivity;
 import de.polyshift.polyshift.R;
 
-
 /**
- * Created by Nicolas on 16.05.2015.
+ * Führt die Benutzerauthentifizierung durch und stellt eine Methode zum Generieren eines
+ * neuen Passworts zur Verfügung.
+ *
+ * @author nicolas
+ *
  */
 public class LoginTool {
 

@@ -5,6 +5,12 @@ import javax.microedition.khronos.opengles.GL10;
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
 
+/**
+ * Hilfsklasse zum Laden von Texturen.
+ *
+ *
+ */
+
 public class Texture {
 	/**
 	 * Texture filter enum featuring the 3 most used filters
