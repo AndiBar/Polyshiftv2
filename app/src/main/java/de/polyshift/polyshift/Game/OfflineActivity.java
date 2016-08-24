@@ -20,9 +20,6 @@ import java.util.HashMap;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import de.polyshift.polyshift.Game.Logic.AiGameLoop;
-import de.polyshift.polyshift.Tools.LoginTool;
-import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.Game.Interfaces.GameListener;
 import de.polyshift.polyshift.Game.Logic.OfflineGameLoop;
 import de.polyshift.polyshift.Game.Logic.Simulation;
@@ -33,6 +30,8 @@ import de.polyshift.polyshift.Game.Renderer.Renderer3D;
 import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.R;
+import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
+import de.polyshift.polyshift.Tools.LoginTool;
 
 /**
  * Diese Klasse ist für die Umsetzung des Tutorial-Spiels zuständig. Sie verbindet die
@@ -43,7 +42,7 @@ import de.polyshift.polyshift.R;
  *
  */
 
-public class TrainingActivity extends GameActivity implements GameListener {
+public class OfflineActivity extends GameActivity implements GameListener {
 
     public static boolean statusUpdated = true;
     public boolean gameUpdated = false;
@@ -53,7 +52,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     Polynomino poly;
     Renderer renderer;
     Simulation simulation;
-    AiGameLoop gameLoop;
+    OfflineGameLoop gameLoop;
     private String response = "";
     private Menu menu;
     private HashMap<String,String> game_status;
@@ -71,7 +70,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
-        loginTool = new LoginTool(context,TrainingActivity.this);
+        loginTool = new LoginTool(context,OfflineActivity.this);
         loginTool.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -79,7 +78,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
         super.onCreate(savedInstanceState);
 
-        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_data_is_loading), true);
+        dialog = ProgressDialog.show(OfflineActivity.this, "", getString(R.string.game_data_is_loading), true);
 
         setGameListener(this);
 
@@ -124,7 +123,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
-        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
+        dialog = ProgressDialog.show(OfflineActivity.this, "", getString(R.string.game_is_closing), true);
         onBackPressed = true;
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
@@ -142,9 +141,9 @@ public class TrainingActivity extends GameActivity implements GameListener {
             game_status.put("my_game", "yes");
             game_status.put("my_user_name", getString(R.string.blue));
 
-            simulation = new Simulation(activity);
+            gameLoop = new OfflineGameLoop("yes");
 
-            gameLoop = new AiGameLoop("yes");
+            simulation = new Simulation(activity);
 
             for(int i = 0; i < simulation.objects.length; i++) {
                 for (int j = 0; j < simulation.objects[0].length; j++) {
@@ -192,16 +191,16 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(OfflineActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
                             builder.setMessage(game_status.get("my_user_name") + getString(R.string.has_won));
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
-                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
+                                            dialog = ProgressDialog.show(OfflineActivity.this, "", getString(R.string.game_is_closing), true);
+                                            final Intent intent = new Intent(OfflineActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
-                                            TrainingActivity.this.finish();
+                                            OfflineActivity.this.finish();
                                             dialog.cancel();
                                         }
                                     });
@@ -210,9 +209,9 @@ public class TrainingActivity extends GameActivity implements GameListener {
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
+                                            final Intent intent = new Intent(OfflineActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
-                                            TrainingActivity.this.finish();
+                                            OfflineActivity.this.finish();
                                             dialog.cancel();
                                         }
                                     });
@@ -227,7 +226,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(OfflineActivity.this);
                         if (gameLoop.roundCount == 0 && show_rules) {
                             show_rules = false;
                             builder.setMessage(R.string.rule_one);

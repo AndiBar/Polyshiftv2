@@ -81,6 +81,7 @@ public class Simulation implements Serializable{
         setGameObject(player, PLAYGROUND_MIN_X, PLAYGROUND_MAX_Y / 2);
         player2 = new Player(false);
         player2.start_position = new Vector(PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2,0);
+        player2.block_position = player2.start_position;
         setGameObject(player2, PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2);
 
         int a = 0;
@@ -485,6 +486,7 @@ public class Simulation implements Serializable{
             }
             //Move player if no loop was detected, else break
             if(direction.equals(RIGHT)){
+                player.block_position = new Vector(x+1,y,0);
                 if(x+1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x+1, y, direction).equals(player.start_direction)) {
                     loop_detected = true;
                 }else{
@@ -492,6 +494,7 @@ public class Simulation implements Serializable{
                 }
             }
             else if(direction.equals(LEFT)){
+                player.block_position = new Vector(x-1,y,0);
                 if(x-1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x-1, y, direction).equals(player.start_direction)){
                     loop_detected = true;
                 }else{
@@ -499,6 +502,7 @@ public class Simulation implements Serializable{
                 }
             }
             else if(direction.equals(UP)){
+                player.block_position = new Vector(x,y+1,0);
                 if(y+1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y + 1, direction).equals(player.start_direction)){
                     loop_detected = true;
                 }else {
@@ -506,6 +510,7 @@ public class Simulation implements Serializable{
                 }
             }
             else if(direction.equals(DOWN)){
+                player.block_position = new Vector(x,y-1,0);
                 if(y-1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y-1 ,direction).equals(player.start_direction)){
                     loop_detected = true;
                 }else {
