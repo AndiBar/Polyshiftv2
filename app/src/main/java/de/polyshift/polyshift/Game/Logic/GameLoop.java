@@ -44,7 +44,7 @@ public class GameLoop{
         }
     }
 
-    public void setRandomPlayer(){
+    public boolean setRandomPlayer(){
         Random random = new Random();
         PlayerOnesTurn = random.nextBoolean();
         class GameStatusThread extends Thread{
@@ -64,6 +64,7 @@ public class GameLoop{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return PlayerOnesTurn;
     }
 
     public void update(final Simulation simulation, final String opponentID,final String opponentName,final String notificationGameID){
@@ -89,20 +90,20 @@ public class GameLoop{
                     }
                     simulation.player.isLockedIn = false;
                     PolyshiftActivity.statusUpdated = false;
-                    class GameStatusThread extends Thread{
-                        public void run(){
-                            GameSync.uploadSimulation(simulation);
-                            String msg = opponentName + mContext.getString(R.string.has_done_a_move);
-                            GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
-                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                            nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                            PHPConnector.doRequest(nameValuePairs, "update_game.php");
-                        }
-                    }
-                    game_status_thread = new GameStatusThread();
-                    game_status_thread.start();
-                    if(!move_again) {
+                    if(!move_again || simulation.hasWinner) {
                         simulation.allLocked = true;
+                        class GameStatusThread extends Thread{
+                            public void run(){
+                                GameSync.uploadSimulation(simulation);
+                                String msg = opponentName + mContext.getString(R.string.has_done_a_move);
+                                GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
+                                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                            }
+                        }
+                        game_status_thread = new GameStatusThread();
+                        game_status_thread.start();
                     }else{
                     //Es werden keine Obkjekte blockiert, da Spieler 2 noch einmal dran ist.
                     //Als letztbewegtes Objekt wird ein Polynomino gesetzt, da Spieler 2 nur seinen Spieler noch einmal bewegen darf
@@ -134,21 +135,21 @@ public class GameLoop{
                     }
                     simulation.player2.isLockedIn = false;
                     PolyshiftActivity.statusUpdated = false;
-                    class GameStatusThread extends Thread{
-                        public void run(){
-                            if(GameSync.uploadSimulation(simulation).equals("playground uploaded.")) {
-                                String msg = opponentName + mContext.getString(R.string.has_done_a_move);
-                                GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
-                                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                                PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                    if(!move_again || simulation.hasWinner) {
+                        simulation.allLocked = true;
+                        class GameStatusThread extends Thread{
+                            public void run(){
+                                if(GameSync.uploadSimulation(simulation).equals("playground uploaded.")) {
+                                    String msg = opponentName + mContext.getString(R.string.has_done_a_move);
+                                    GameSync.SendChangeNotification(opponentID, msg, notificationGameID, PolyshiftActivity.class.getName());
+                                    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                                    nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+                                    PHPConnector.doRequest(nameValuePairs, "update_game.php");
+                                }
                             }
                         }
-                    }
-                    game_status_thread = new GameStatusThread();
-                    game_status_thread.start();
-                    if(!move_again) {
-                        simulation.allLocked = true;
+                        game_status_thread = new GameStatusThread();
+                        game_status_thread.start();
                     //Es werden keine Obkjekte blockiert, da Spieler 1 noch einmal dran ist
                     //Als letztbewegtes Objekt wird ein Polynomino gesetzt, da Spieler 1 nur seinen Spieler noch einmal bewegen darf
                     }else{

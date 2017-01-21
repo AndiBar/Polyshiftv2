@@ -39,6 +39,10 @@ import org.apache.http.message.BasicNameValuePair;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Menu.MyGamesActivity;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.SingleSubscriber;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +76,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean downloaded = false;
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
-    private Thread game_status_thread = new GameStatusThread();
     private String notificationReceiver = "";
     private String notificationMessage = "";
     private String notificationGameID =  "";
@@ -107,15 +110,26 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         if(getIntent().getExtras() != null) {
             game_id = getIntent().getExtras().getString("game_id");
 
-            update_game_thread.start();
-            try {
-                long waitMillis = 10000;
-                while (update_game_thread.isAlive()) {
-                    update_game_thread.join(waitMillis);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("game", game_id));
+            PHPConnector.doObservableRequest(nameValuePairs, "update_game.php")
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+
+                        }
+                    });
         }
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
@@ -192,7 +206,12 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
                 if (game_status.get("new_game").equals("1")) {
                     simulation = new Simulation(activity);
-                    gameLoop.setRandomPlayer();
+                    boolean playerOnesTurn = gameLoop.setRandomPlayer();
+                    if(game_status.get("my_game").equals("yes")){
+                        game_status.put("opponents_turn", String.valueOf((!playerOnesTurn) ? 1 : 0));
+                    }else{
+                        game_status.put("opponents_turn", String.valueOf((playerOnesTurn) ? 1 : 0));
+                    }
                     GameSync.uploadSimulation(simulation);
                 }
 
@@ -289,8 +308,13 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("0")) {
-                                                updateScores(false, game_status.get("opponent_id"), game_status.get("user_id"), game_status.get("my_user_name"));
+                                            if(game_status.get("opponents_turn").equals("0")){
+                                                updateScores(false,
+                                                        game_status.get("opponent_id"),
+                                                        game_status.get("user_id"),
+                                                        game_status.get("my_user_name"),
+                                                        game_status.get("scores_updated"),
+                                                        game_id);
                                             }
                                         }
                                     });
@@ -304,7 +328,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("1")) {
+                                            //updateGameStatus(true);
+                                            if(game_status.get("opponents_turn").equals("1") && game_status.get("scores_updated").equals("1")) {
                                                 deleteGame();
                                             }
                                         }
@@ -319,8 +344,13 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("1")) {
-                                                updateScores(true, game_status.get("user_id"), game_status.get("opponent_id"), game_status.get("opponent_name"));
+                                            if(game_status.get("opponents_turn").equals("1")){
+                                                updateScores(true,
+                                                        game_status.get("user_id"),
+                                                        game_status.get("opponent_id"),
+                                                        game_status.get("opponent_name"),
+                                                        game_status.get("scores_updated"),
+                                                        game_id);
                                             }
                                         }
                                     });
@@ -334,7 +364,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                                             startActivity(intent);
                                             PolyshiftActivity.this.finish();
                                             dialog.cancel();
-                                            if (game_status.get("opponents_turn").equals("0")) {
+                                            //updateGameStatus(false);
+                                            if (game_status.get("opponents_turn").equals("0") && game_status.get("scores_updated").equals("1")) {
                                                 deleteGame();
                                             }
                                         }
@@ -351,23 +382,25 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         }
     }
 
-    private class GameStatusThread extends Thread{
-        public void run(){
-            response = PHPConnector.doRequest("get_game_status.php");
-        }
-    }
     private HashMap<String,String> getGameStatus(){
         HashMap<String,String> game_status = new HashMap<String, String>();
-        game_status_thread = new GameStatusThread();
-        game_status_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (game_status_thread.isAlive()) {
-                game_status_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        PHPConnector.doObservableRequest("get_game_status.php")
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        response = s;
+                    }
+        });
         if((response.equals("error") || response.split(":").length == 1 || response == null || response.equals(""))){
             if(!onBackPressed) {
                 Log.d("crashed", "crashed while downloading game status. response: " + response);
@@ -392,6 +425,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             game_status.put("challenger_name", game[7].split("=")[1]);
             game_status.put("user_id", game[8].split("=")[1]);
             game_status.put("my_user_name", game[9].split("=")[1]);
+            game_status.put("scores_updated", game[10].split("=")[1]);
         }
         notificationGameID = game_status.get("game_id");
         return game_status;
@@ -510,35 +544,50 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             e.printStackTrace();
         }
     }
-    public void updateScores(final boolean PlayerOnesTurn, final String loserID, final String winnerID, final String winnerName){
-        class UpdateScoresThread extends Thread{
-            public void run(){
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-                nameValuePairs.add(new BasicNameValuePair("loser_id",loserID));
-                nameValuePairs.add(new BasicNameValuePair("winner_id",winnerID));
-                PHPConnector.doRequest(nameValuePairs,"update_scores.php");
-                String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
-                GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
-            }
-        }
-        Thread update_scores_thread = new UpdateScoresThread();
-        update_scores_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (update_scores_thread.isAlive()) {
-                update_scores_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void updateScores(final boolean PlayerOnesTurn, final String loserID, final String winnerID, final String winnerName, final String scoresUpdated, final String game_id){
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+        nameValuePairs.add(new BasicNameValuePair("loser_id",loserID));
+        nameValuePairs.add(new BasicNameValuePair("winner_id",winnerID));
+        nameValuePairs.add(new BasicNameValuePair("scoresUpdated",scoresUpdated));
+        nameValuePairs.add(new BasicNameValuePair("game_id",game_id));
+        PHPConnector.doSingleRequest(nameValuePairs ,"update_scores.php")
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleSubscriber<String>() {
+                    @Override
+                    public void onSuccess(String value) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+
+                    }
+                });
+        String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
+        GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
     }
-    class Update_Game_Thread extends Thread {
-        public void run() {
-            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("game", game_id));
-            PHPConnector.doRequest(nameValuePairs, "update_game.php");
-        }
+    public void updateGameStatus(boolean PlayerOnesTurn){
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("game", game_id));
+        nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
+        PHPConnector.doObservableRequest(nameValuePairs, "update_game.php")
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+
+                    }
+                });
     }
-    Thread update_game_thread = new Update_Game_Thread();
 }

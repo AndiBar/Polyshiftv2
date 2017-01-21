@@ -24,7 +24,6 @@ import de.polyshift.polyshift.Game.Logic.AiGameLoop;
 import de.polyshift.polyshift.Tools.LoginTool;
 import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.Game.Interfaces.GameListener;
-import de.polyshift.polyshift.Game.Logic.OfflineGameLoop;
 import de.polyshift.polyshift.Game.Logic.Simulation;
 import de.polyshift.polyshift.Game.Objects.Player;
 import de.polyshift.polyshift.Game.Objects.Polynomino;
@@ -223,7 +222,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 winnerIsAnnounced = true;
             }
 
-            if(gameLoop.RoundFinished && !infoIsAnnounced && show_rules){
+            if(gameLoop.RoundFinished && !infoIsAnnounced && show_rules && gameLoop.PlayerOnesTurn){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -306,14 +305,24 @@ public class TrainingActivity extends GameActivity implements GameListener {
     public void updateGame(final GameActivity game_activity, final GL10 game_gl){
 
         if(game_status != null && game_status.get("opponents_turn") != null && game_status.get("my_game") != null) {
-            if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("yes")) {  // my turn & my game
+            if(gameLoop.aiRunning){
+                runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                      MenuItem item = menu.findItem(R.id.action_game_status);
+                      item.setTitle(getString(R.string.please_wait));
+                  }
+              });
+            }else if (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("yes")) {  // my turn & my game
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (menu != null) {
                             MenuItem item = menu.findItem(R.id.action_game_status);
-                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals(getString(R.string.move_token_or_player)) || !item.getTitle().equals(getString(R.string.move_player))) || simulation.lastMovedObject == null) {
-                                item.setTitle(R.string.blues_turn);
+                            if (simulation.lastMovedObject instanceof Player && (!item.getTitle().equals(getString(R.string.move_token_or_player)) || !item.getTitle().equals("Bewege deinen Spieler.")) || simulation.lastMovedObject == null) {
+                                item.setTitle(getString(R.string.move_token_or_player));
+                            } else if (simulation.lastMovedObject instanceof Polynomino) {
+                                item.setTitle(R.string.move_player);
                             }
                         }
                     }

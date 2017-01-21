@@ -156,9 +156,19 @@ public class MyGamesAdapter extends SimpleAdapter {
                     }
                 }
             };
+
+            View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    return false;
+                }
+            };
             status_view.setOnClickListener(onClickListener);
             time_view.setOnClickListener(onClickListener);
             opponent_view.setOnClickListener(onClickListener);
+            status_view.setOnLongClickListener(onLongClickListener);
+            time_view.setOnLongClickListener(onLongClickListener);
+            opponent_view.setOnLongClickListener(onLongClickListener);
         }
 	    return convertView; 
     }

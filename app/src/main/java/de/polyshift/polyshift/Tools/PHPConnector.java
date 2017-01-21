@@ -18,6 +18,11 @@ import org.apache.http.util.EntityUtils;
 import android.content.Context;
 import android.util.Log;
 
+import rx.Observable;
+import rx.Single;
+import rx.SingleSubscriber;
+import rx.Subscriber;
+
 /**
  * Stellt Methoden zum Datenaustausch mit dem Server über HTTP-Requests zur Verfügung.
  *
@@ -73,6 +78,96 @@ public class PHPConnector {
             e.printStackTrace();
         }
 		return "error";
+	}
+
+	public static Observable<String> doObservableRequest(final ArrayList<NameValuePair> args, final String url){
+		return Observable.create(new Observable.OnSubscribe<String>() {
+			@Override
+			public void call(Subscriber<? super String> subscriber) {
+				httppost = new HttpPost(server + url);
+				try {
+					httppost.setEntity(new UrlEncodedFormEntity(args));
+					httpResponse = httpclient.execute(httppost);
+					entity = httpResponse.getEntity();
+					stringResponse = EntityUtils.toString(entity,"UTF-8");
+					entity.consumeContent();
+					Log.d(tag+url, stringResponse);
+					subscriber.onNext(stringResponse);
+				} catch (ParseException e) {
+					subscriber.onError(e);
+				} catch (IOException e) {
+					subscriber.onError(e);
+				} finally {
+					subscriber.onCompleted();
+				}
+			}
+		});
+	}
+
+	public static Single<String> doSingleRequest(final ArrayList<NameValuePair> args, final String url){
+		return Single.create(new Single.OnSubscribe<String>() {
+			@Override
+			public void call(SingleSubscriber<? super String> subscriber) {
+				httppost = new HttpPost(server + url);
+				try {
+					httppost.setEntity(new UrlEncodedFormEntity(args));
+					httpResponse = httpclient.execute(httppost);
+					entity = httpResponse.getEntity();
+					stringResponse = EntityUtils.toString(entity,"UTF-8");
+					entity.consumeContent();
+					Log.d(tag+url, stringResponse);
+					subscriber.onSuccess(stringResponse);
+				} catch (ParseException e) {
+					subscriber.onError(e);
+				} catch (IOException e) {
+					subscriber.onError(e);
+				}
+			}
+		});
+	}
+
+	public static Observable<String> doObservableRequest(final String url){
+		return Observable.create(new Observable.OnSubscribe<String>() {
+			@Override
+			public void call(Subscriber<? super String> subscriber) {
+				httppost = new HttpPost(server + url);
+				try {
+					httpResponse = httpclient.execute(httppost);
+					entity = httpResponse.getEntity();
+					stringResponse = EntityUtils.toString(entity,"UTF-8");
+					entity.consumeContent();
+					Log.d(tag+url, stringResponse);
+					subscriber.onNext(stringResponse);
+				} catch (ParseException e) {
+					subscriber.onError(e);
+				} catch (IOException e) {
+					subscriber.onError(e);
+				} finally {
+					subscriber.onCompleted();
+				}
+			}
+		});
+	}
+
+	public static Single<String> doSingleRequest(final String url){
+		return Single.create(new Single.OnSubscribe<String>() {
+			@Override
+			public void call(SingleSubscriber<? super String> subscriber) {
+				httppost = new HttpPost(server + url);
+				try {
+					httpResponse = httpclient.execute(httppost);
+					entity = httpResponse.getEntity();
+					stringResponse = EntityUtils.toString(entity,"UTF-8");
+					entity.consumeContent();
+					Log.d(tag+url, stringResponse);
+					subscriber.onSuccess(stringResponse);
+				} catch (ParseException e) {
+					subscriber.onError(e);
+				} catch (IOException e) {
+					subscriber.onError(e);
+				}
+			}
+		});
 	}
 
 

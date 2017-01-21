@@ -197,10 +197,14 @@ public class ChooseOpponentActivity extends ListActivity {
                     for (String item : data_unformatted) {
                         HashMap<String, String> data_map = new HashMap<String, String>();
                         String[] data_array = item.split(":");
-                        if(item.split(":").length != 1){
+                        if(item.split(":").length != 1) {
                             data_map.put("ID", data_array[0]);
                             data_map.put("title", data_array[1]);
                             friends_list.add(data_map);
+                        }else if(item.split(":").length == 1) {
+                            data_map = friends_list.get(friends_list.size() - 1);
+                            data_map.put("challenger", data_array[0]);
+                            friends_list.set(friends_list.size() - 1, data_map);
                         }else if(stringResponse.equals("no opponents found")) {
 
                         } else {

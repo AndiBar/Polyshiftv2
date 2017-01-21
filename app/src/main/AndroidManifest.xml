@@ -23,7 +23,7 @@
         android:icon="@drawable/logo"
         android:label="@string/app_name" >
         <activity
-            android:name="de.polyshift.polyshift.Game.GameActivity"
+            android:name=".Game.GameActivity"
             android:launchMode="singleTask"
             android:label="@string/app_name" >
         </activity>

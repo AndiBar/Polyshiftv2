@@ -6,6 +6,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import de.polyshift.polyshift.Game.GameActivity;
 import de.polyshift.polyshift.Game.Objects.GameObject;
+import de.polyshift.polyshift.Game.Renderer.Mesh;
+import de.polyshift.polyshift.Game.Renderer.Texture;
 
 /**
  * Diese Klasse stellt eine Schnittstelle zur Implementierung von Renderern zur Verfügung.

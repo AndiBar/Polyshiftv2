@@ -26,10 +26,17 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 
 public class Simulation implements Serializable{
 
+    final int PLAYGROUND_MAX_X = 16;
+    final int PLAYGROUND_MIN_X = 0;
+    final int PLAYGROUND_MAX_Y = 8;
+    final int PLAYGROUND_MIN_Y = 0;
+    final int PLAYGROUND_POPULATE = 8;
+    final int POLYNOMIO_SIZE = 4;
     public final static String RIGHT = "right";
     public final static String LEFT = "left";
     public final static String UP = "up";
     public final static String DOWN = "down";
+
     public boolean hasWinner =  false;
     public Player player;
     public Player player2;
@@ -37,12 +44,7 @@ public class Simulation implements Serializable{
     public boolean allLocked = false;
     public boolean loop_detected = false;
     public boolean bump_detected = false;
-    final int PLAYGROUND_MAX_X = 16;
-    final int PLAYGROUND_MIN_X = 0;
-    final int PLAYGROUND_MAX_Y = 8;
-    final int PLAYGROUND_MIN_Y = 0;
-    final int PLAYGROUND_POPULATE = 8;
-    final int POLYNOMIO_SIZE = 4;
+
     private int touchedX = 0;
     private int touchedY = 0;
     private float swipeX = 0;
@@ -83,6 +85,11 @@ public class Simulation implements Serializable{
         player2.start_position = new Vector(PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2,0);
         player2.block_position = player2.start_position;
         setGameObject(player2, PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2);
+
+        ArrayList<Integer> intArr = new ArrayList<Integer>();
+        for(int i = 0; i < PLAYGROUND_MAX_Y+1; i++){
+            intArr.add(0);
+        }
 
         int a = 0;
         while(a<10){
@@ -169,9 +176,14 @@ public class Simulation implements Serializable{
                         }
                         if (polynomino.size == POLYNOMIO_SIZE){
                             polynominos.add(polynomino);
+                            int tempY = -1;
                             for(int j = 0; j< polynomino.blocks.size();j++){
                                 Block block = polynomino.blocks.get(j);
                                 setGameObject(polynomino, block.x, block.y);
+                                if(tempY != block.y) {
+                                    intArr.set(block.y, intArr.get(block.y) + 1);
+                                    tempY = block.y;
+                                }
                             }
                         }
                     }
@@ -179,6 +191,16 @@ public class Simulation implements Serializable{
             }
             a++;
         }
+
+        //check if there are at least 2 Polynominos in a row, otherwise repopuate.
+        for(int count : intArr){
+            Log.d("String", "count: "+  count);
+            if(count < 2){
+                populate();
+                break;
+            }
+        }
+
     }
 
     public void setGameObject(GameObject object, int x, int y){

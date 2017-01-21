@@ -91,7 +91,7 @@ public class ChooseOpponentAdapter extends SimpleAdapter {
                                     builder.setPositiveButton(context.getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged),"", GamesAttendingActivity.class.getName());
+                                                    GameSync.SendChangeNotification(data.get(position).get("ID"),context.getString(R.string.challenged, data.get(data.size() - 1).get("challenger")),"", GamesAttendingActivity.class.getName());
                                                     dialog.cancel();
                                                     Intent intent = new Intent(context, MyGamesActivity.class);
                                                     context.startActivity(intent);
