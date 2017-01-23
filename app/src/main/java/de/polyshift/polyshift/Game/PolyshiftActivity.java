@@ -63,11 +63,10 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     public static ProgressDialog dialog = null;
     public static boolean isActive = false;
     public static String game_id = null;
-    Player player;
-    Player player2;
     Polynomino poly;
     Renderer renderer;
     Simulation simulation;
+    ArrayList<Simulation> simulations = new ArrayList<>();
     GameLoop gameLoop;
     private String response = "";
     private Menu menu;
@@ -202,7 +201,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
             if(game_status.size() > 0) {
 
                 gameLoop = new GameLoop(game_status.get("my_game"),activity);
-                Object syncObj = new Object();
 
                 if (game_status.get("new_game").equals("1")) {
                     simulation = new Simulation(activity);
@@ -215,8 +213,9 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     GameSync.uploadSimulation(simulation);
                 }
 
-                simulation = GameSync.downloadSimulation();
-                if (simulation == null) {
+                simulations = GameSync.downloadSimulations();
+                Log.d("tes","simulations: " + simulations.size());
+                if (simulations.size() < 1) {
                     Log.d("crashed", "crashed while downloading simulation");
                     final Intent intent = new Intent(PolyshiftActivity.this, MainMenuActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -226,12 +225,11 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     startActivity(intent);
                     PolyshiftActivity.this.finish();
                 }else{
+                    simulation = simulations.get(0);
                     renderer = new Renderer3D(activity, gl, simulation.objects);
                     renderer.enableCoordinates(gl, simulation.objects);
                     simulation.player.isLocked = true;
                     simulation.player2.isLocked = true;
-
-                    updateGame(activity, gl);
 
                     dialog.dismiss();
                 }
@@ -257,129 +255,150 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         if(!onBackPressed && !onDestroyed && game_status.size() > 0 && simulation != null) {
 
-            renderer.setPerspective(activity, gl);
-            renderer.renderLight(gl);
-            renderer.renderObjects(activity, gl, simulation.objects);
-            simulation.update(activity);
-            gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
-
-            if (gameLoop.game_status_thread.isAlive() && !isSaving && !simulation.hasWinner) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        }
-                        MenuItem item = menu.findItem(R.id.action_game_status);
-                        item.setTitle(R.string.game_is_saving);
-                        isSaving = true;
-                    }
-                });
-            }
-            if (simulation.winner == null && !gameLoop.game_status_thread.isAlive()) {
-                if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
-                    if (!statusUpdated || System.nanoTime() - start > 1000000000) {
-                        statusDownloaded = true;
-                        statusUpdated = true;
-                        gameUpdated = false;
-                        game_status = getGameStatus();
-                        updateGame(activity, gl);
-                        start = System.nanoTime();
-                        isSaving = false;
-                    }
+            Log.d("tes","simulationsMain: " + simulations.size());
+            if(simulations.size() > 1){
+                if(!gameUpdated){
+                    updateGame(activity, gl);
                 }
-            }else if(!winnerIsAnnounced && !gameLoop.game_status_thread.isAlive()){
-                game_status = getGameStatus();
+                Log.d("tes","simulationsMain: " + simulations.get(0).toString());
+                renderer.setPerspective(activity, gl);
+                renderer.renderLight(gl);
+                renderer.renderObjects(activity, gl, simulation.objects);
+                simulation.update(activity);
+                gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
+                simulations.remove(0);
             }
 
-            if (simulation.hasWinner && !winnerIsAnnounced) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
-                        if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(getString(R.string.you_won));
-                            builder.setCancelable(false);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
-                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            PolyshiftActivity.this.finish();
-                                            dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("0")){
-                                                updateScores(false,
-                                                        game_status.get("opponent_id"),
-                                                        game_status.get("user_id"),
-                                                        game_status.get("my_user_name"),
-                                                        game_status.get("scores_updated"),
-                                                        game_id);
-                                            }
-                                        }
-                                    });
-                        } else if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage(game_status.get("challenger_name") + getString(R.string.has_won));
-                            builder.setCancelable(false);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            PolyshiftActivity.this.finish();
-                                            dialog.cancel();
-                                            //updateGameStatus(true);
-                                            if(game_status.get("opponents_turn").equals("1") && game_status.get("scores_updated").equals("1")) {
-                                                deleteGame();
-                                            }
-                                        }
-                                    });
-                        } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
-                            builder.setMessage(R.string.you_won);
-                            builder.setCancelable(false);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            PolyshiftActivity.this.finish();
-                                            dialog.cancel();
-                                            if(game_status.get("opponents_turn").equals("1")){
-                                                updateScores(true,
-                                                        game_status.get("user_id"),
-                                                        game_status.get("opponent_id"),
-                                                        game_status.get("opponent_name"),
-                                                        game_status.get("scores_updated"),
-                                                        game_id);
-                                            }
-                                        }
-                                    });
-                        } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
-                            builder.setCancelable(false);
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
-                                            startActivity(intent);
-                                            PolyshiftActivity.this.finish();
-                                            dialog.cancel();
-                                            //updateGameStatus(false);
-                                            if (game_status.get("opponents_turn").equals("0") && game_status.get("scores_updated").equals("1")) {
-                                                deleteGame();
-                                            }
-                                        }
-                                    });
+            if(simulations.size() < 1){
+                if(!gameUpdated){
+                    updateGame(activity, gl);
+                }
+
+                renderer.setPerspective(activity, gl);
+                renderer.renderLight(gl);
+                renderer.renderObjects(activity, gl, simulation.objects);
+                simulation.update(activity);
+                gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
+
+                if (gameLoop.game_status_thread.isAlive() && !isSaving && !simulation.hasWinner) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
+                            }
+                            MenuItem item = menu.findItem(R.id.action_game_status);
+                            item.setTitle(R.string.game_is_saving);
+                            isSaving = true;
                         }
-                        builder.show();
+                    });
+                }
+                if (simulation.winner == null && !gameLoop.game_status_thread.isAlive()) {
+                    if (!statusUpdated || (game_status.get("opponents_turn").equals("1") && game_status.get("my_game").equals("yes")) || (game_status.get("opponents_turn").equals("0") && game_status.get("my_game").equals("no"))) {
+                        if (!statusUpdated || System.nanoTime() - start > 1000000000) {
+                            statusDownloaded = true;
+                            statusUpdated = true;
+                            gameUpdated = false;
+                            game_status = getGameStatus();
+                            updateGame(activity, gl);
+                            start = System.nanoTime();
+                            isSaving = false;
+                        }
                     }
-                });
-                winnerIsAnnounced = true;
-            }
+                }else if(!winnerIsAnnounced && !gameLoop.game_status_thread.isAlive()){
+                    game_status = getGameStatus();
+                }
 
+                if (simulation.hasWinner && !winnerIsAnnounced) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
+                            if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
+                                builder.setMessage(getString(R.string.you_won));
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog = ProgressDialog.show(PolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
+                                                final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                                startActivity(intent);
+                                                PolyshiftActivity.this.finish();
+                                                dialog.cancel();
+                                                if(game_status.get("opponents_turn").equals("0")){
+                                                    updateScores(false,
+                                                            game_status.get("opponent_id"),
+                                                            game_status.get("user_id"),
+                                                            game_status.get("my_user_name"),
+                                                            game_status.get("scores_updated"),
+                                                            game_id);
+                                                }
+                                            }
+                                        });
+                            } else if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
+                                builder.setMessage(game_status.get("challenger_name") + getString(R.string.has_won));
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                                startActivity(intent);
+                                                PolyshiftActivity.this.finish();
+                                                dialog.cancel();
+                                                //updateGameStatus(true);
+                                                if(game_status.get("opponents_turn").equals("1") && game_status.get("scores_updated").equals("1")) {
+                                                    deleteGame();
+                                                }
+                                            }
+                                        });
+                            } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("no")) {
+                                builder.setMessage(R.string.you_won);
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                                startActivity(intent);
+                                                PolyshiftActivity.this.finish();
+                                                dialog.cancel();
+                                                if(game_status.get("opponents_turn").equals("1")){
+                                                    updateScores(true,
+                                                            game_status.get("user_id"),
+                                                            game_status.get("opponent_id"),
+                                                            game_status.get("opponent_name"),
+                                                            game_status.get("scores_updated"),
+                                                            game_id);
+                                                }
+                                            }
+                                        });
+                            } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
+                                builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                final Intent intent = new Intent(PolyshiftActivity.this, MyGamesActivity.class);
+                                                startActivity(intent);
+                                                PolyshiftActivity.this.finish();
+                                                dialog.cancel();
+                                                //updateGameStatus(false);
+                                                if (game_status.get("opponents_turn").equals("0") && game_status.get("scores_updated").equals("1")) {
+                                                    deleteGame();
+                                                }
+                                            }
+                                        });
+                            }
+                            builder.show();
+                        }
+                    });
+                    winnerIsAnnounced = true;
+                }
+
+            }
 
             frames++;
         }
+
     }
 
     private HashMap<String,String> getGameStatus(){
@@ -451,7 +470,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 gameUpdated = true;
                 if (!downloaded) {
                     Log.d("download", "court is being downloaded");
-                    simulation = GameSync.downloadSimulation();
+                    simulations = GameSync.downloadSimulations();
+                    simulation = simulations.get(simulations.size()-1);
                     simulation.allLocked = false;
                     renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
                     renderer.enableCoordinates(game_gl, simulation.objects);
@@ -506,8 +526,8 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 gameLoop.PlayerOnesTurn = false;
                 gameUpdated = true;
                 if (!downloaded) {
-                    simulation = GameSync.downloadSimulation();
-                    //simulation.player2.isLocked = true;
+                    simulations = GameSync.downloadSimulations();
+                    simulation = simulations.get(simulations.size()-1);
                     simulation.allLocked = false;
                     renderer = new Renderer3D(game_activity, game_gl, simulation.objects);
                     renderer.enableCoordinates(game_gl, simulation.objects);
