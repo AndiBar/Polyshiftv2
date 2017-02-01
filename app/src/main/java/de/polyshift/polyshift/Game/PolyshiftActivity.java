@@ -255,21 +255,26 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
         if(!onBackPressed && !onDestroyed && game_status.size() > 0 && simulation != null) {
 
-            Log.d("tes","simulationsMain: " + simulations.size());
-            if(simulations.size() > 1){
-                if(!gameUpdated){
-                    updateGame(activity, gl);
+            if(simulations.size() >= 1){
+
+                if(simulations.get(0) != simulation && System.nanoTime() - start > 10000000000.0f) {
+                    simulation = simulations.get(0);
+                    start = System.nanoTime();
+
+                    renderer = new Renderer3D(this, gl, simulation.objects);
+                    renderer.enableCoordinates(gl, simulation.objects);
+                }else {
+                    renderer.setPerspective(activity, gl);
+                    renderer.renderLight(gl);
+                    renderer.renderObjects(activity, gl, simulation.objects);
                 }
-                Log.d("tes","simulationsMain: " + simulations.get(0).toString());
-                renderer.setPerspective(activity, gl);
-                renderer.renderLight(gl);
-                renderer.renderObjects(activity, gl, simulation.objects);
-                simulation.update(activity);
-                gameLoop.update(simulation, notificationReceiver, notificationMessage, notificationGameID);
-                simulations.remove(0);
+
+                if(simulations.size() > 1) {
+                    simulations.remove(0);
+                }
             }
 
-            if(simulations.size() < 1){
+            if (simulations.size() <= 1){
                 if(!gameUpdated){
                     updateGame(activity, gl);
                 }
