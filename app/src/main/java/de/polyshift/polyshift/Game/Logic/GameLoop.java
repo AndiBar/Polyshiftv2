@@ -31,7 +31,7 @@ public class GameLoop{
     private Activity mContext;
     private boolean initialSaveDone = false;
     private boolean intermediateSaveDone = false;
-    private ArrayList<String> savedSimulations;
+    private ArrayList<Simulation> savedSimulations;
 
     public GameLoop(String PlayerOnesGame, Activity activity){
         mContext = activity;
@@ -73,14 +73,14 @@ public class GameLoop{
         if(PlayerOnesTurn){
             if(!initialSaveDone){
                 savedSimulations.clear();
-                //savedSimulations.add(GameSync.serializeSimulation(simulation));
+                savedSimulations.add(simulation);
                 initialSaveDone = true;
             }
             simulation.player2.isLocked = true;
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
                 RoundFinished = false;
             }else if(!intermediateSaveDone){
-                //savedSimulations.add(GameSync.serializeSimulation(simulation));
+                savedSimulations.add(simulation);
                 intermediateSaveDone = true;
             }
             //Wurde ein Anstoßen eines anderen Spielers festgestellt, ist dieser and der Reihe, ohne dass die Runde von Spieler 1 beendet wird
@@ -102,7 +102,6 @@ public class GameLoop{
                     simulation.player.isLockedIn = false;
                     PolyshiftActivity.statusUpdated = false;
                     if(!move_again || simulation.hasWinner) {
-                        savedSimulations.add(GameSync.serializeSimulation(simulation));
                         simulation.allLocked = true;
                         class GameStatusThread extends Thread{
                             public void run(){
@@ -129,14 +128,14 @@ public class GameLoop{
         if(!PlayerOnesTurn){
             if(!initialSaveDone){
                 savedSimulations.clear();
-                //savedSimulations.add(GameSync.serializeSimulation(simulation));
+                savedSimulations.add(simulation);
                 initialSaveDone = true;
             }
             simulation.player.isLocked = true;
             if(simulation.player2.isMovingRight || simulation.player2.isMovingLeft || simulation.player2.isMovingUp || simulation.player2.isMovingDown){
                 RoundFinished = false;
             }else if(!intermediateSaveDone){
-                //savedSimulations.add(GameSync.serializeSimulation(simulation));
+                savedSimulations.add(simulation);
                 intermediateSaveDone = true;
             }
             //Wurde ein Anstoßen eines anderen Spielers festgestellt, ist dieser and der Reihe, ohne dass die Runde von Spieler 2 beendet wird
@@ -158,7 +157,6 @@ public class GameLoop{
                     simulation.player2.isLockedIn = false;
                     PolyshiftActivity.statusUpdated = false;
                     if(!move_again || simulation.hasWinner) {
-                        savedSimulations.add(GameSync.serializeSimulation(simulation));
                         simulation.allLocked = true;
                         class GameStatusThread extends Thread{
                             public void run(){

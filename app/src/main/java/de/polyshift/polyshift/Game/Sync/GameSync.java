@@ -70,25 +70,19 @@ public class GameSync {
         return upload_simulation_thread.getResponse();
     }
 
-    public static String serializeSimulation(Simulation simulation){
-        String serializedSimulation = "";
-        try {
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            ObjectOutputStream so = new ObjectOutputStream(bo);
-            so.writeObject(simulation);
-            so.flush();
-
-            serializedSimulation = Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT);
-        } catch (Exception e) {
-        }
-        return serializedSimulation;
-    }
-
-    public static String uploadSimulations(final ArrayList<String> simulations){
+    public static String uploadSimulations(final ArrayList<Simulation> simulations){
         String simulationsString = "";
         for(int i = 0; i < simulations.size(); i++){
-            String serializedSimulation = simulations.get(0);
+            String serializedSimulation = "";
+            try {
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                ObjectOutputStream so = new ObjectOutputStream(bo);
+                so.writeObject(simulations.get(i));
+                so.flush();
 
+                serializedSimulation = Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT);
+            } catch (Exception e) {
+            }
             if(!simulationsString.equals("")){
                 simulationsString = simulationsString + ";" + serializedSimulation;
             }else{
