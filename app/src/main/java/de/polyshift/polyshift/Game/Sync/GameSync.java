@@ -19,7 +19,6 @@ import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Diese Klasse ist für die Synchronisierung des Spielfeldes zuständig. Sie serialisiert das
@@ -33,7 +32,6 @@ import java.util.Iterator;
 public class GameSync {
 
     static Simulation simulation;
-    static ArrayList<Simulation> simulations;
 
     public static String uploadSimulation(final Simulation simulation){
         class UploadSimulationThread extends Thread{
@@ -69,52 +67,6 @@ public class GameSync {
         }
         return upload_simulation_thread.getResponse();
     }
-
-    public static String uploadSimulations(final ArrayList<Simulation> simulations){
-        String simulationsString = "";
-        for(int i = 0; i < simulations.size(); i++){
-            String serializedSimulation = "";
-            try {
-                ByteArrayOutputStream bo = new ByteArrayOutputStream();
-                ObjectOutputStream so = new ObjectOutputStream(bo);
-                so.writeObject(simulations.get(i));
-                so.flush();
-
-                serializedSimulation = Base64.encodeToString(bo.toByteArray(), Base64.DEFAULT);
-            } catch (Exception e) {
-            }
-            if(!simulationsString.equals("")){
-                simulationsString = simulationsString + ";" + serializedSimulation;
-            }else{
-                simulationsString = serializedSimulation;
-            }
-
-        }
-        final String serializedSimulations = simulationsString;
-        class UploadSimulationThread extends Thread{
-            private String response = "";
-            public void run(){
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("objects", serializedSimulations));
-                response = PHPConnector.doRequest(nameValuePairs, "update_playground.php");
-            }
-            public String getResponse(){
-                return response;
-            }
-        }
-        UploadSimulationThread upload_simulation_thread = new UploadSimulationThread();
-        upload_simulation_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (upload_simulation_thread.isAlive()) {
-                upload_simulation_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return upload_simulation_thread.getResponse();
-    }
-
     public static Simulation downloadSimulation() {
         Thread download_playground_thread = new DownloadSimulationThread();
         download_playground_thread.start();
@@ -127,20 +79,6 @@ public class GameSync {
             e.printStackTrace();
         }
         return simulation;
-    }
-
-    public static ArrayList<Simulation> downloadSimulations() {
-        Thread download_playgrounds_thread = new DownloadSimulationsThread();
-        download_playgrounds_thread.start();
-        try {
-            long waitMillis = 10000;
-            while (download_playgrounds_thread.isAlive()) {
-                download_playgrounds_thread.join(waitMillis);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return simulations;
     }
 
     public static class DownloadSimulationThread extends Thread{
@@ -178,53 +116,8 @@ public class GameSync {
                 System.out.println(e);
             }
         }
+
     }
-
-    public static class DownloadSimulationsThread extends Thread {
-        ArrayList<Simulation> simulationsList = new ArrayList<>();
-
-        public void run() {
-            String serializedObjects = PHPConnector.doRequest("update_playground.php");
-
-            String[] simulationsArray = serializedObjects.split(";");
-            for (int l = 0; l < simulationsArray.length; l++) {
-                Log.d("test",simulationsArray[l]);
-                try {
-                    byte b[] = Base64.decode(simulationsArray[l], Base64.DEFAULT);
-                    ByteArrayInputStream bi = new ByteArrayInputStream(b);
-                    ObjectInputStream si = new ObjectInputStream(bi);
-                    Simulation simulation =(Simulation) si.readObject();
-                    simulationsList.add(simulation);
-                    for (int i = 0; i < simulation.objects.length; i++) {
-                        for (int j = 0; j < simulation.objects[0].length; j++) {
-                            if (simulation.objects[i][j] instanceof Player) {
-                                if (simulation.player == simulation.objects[i][j]) {
-                                    simulation.objects[i][j].isPlayerOne = true;
-                                }
-                            }
-                            if (simulation.objects[i][j] instanceof Polynomino) {
-                                simulation.objects[i][j].colors = recreateColor();
-                                Polynomino polynomino = (Polynomino) simulation.objects[i][j];
-                                polynomino.border_pixel_position = new Vector(0, 0, 0);
-                                polynomino.isRendered = true;
-                                simulation.objects[i][j] = polynomino;
-                            }
-                        }
-                    }
-                    for (int k = 0; k < simulation.lastMovedPolynomino.blocks.size(); k++) {
-                        simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y].isLocked = true;
-                        Polynomino polynomino = (Polynomino) simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y];
-                        polynomino.isRendered = true;
-                        simulation.objects[simulation.lastMovedPolynomino.blocks.get(k).x][simulation.lastMovedPolynomino.blocks.get(k).y] = polynomino;
-                    }
-                } catch (Exception e) {
-
-                }
-            }
-            simulations = simulationsList;
-        }
-    }
-
     public static float[] recreateColor(){
         ArrayList<float[]> colors = new ArrayList<float[]>();
         float[] color1 = {(51f/255f),(77f/255),(92f/255f),1f};

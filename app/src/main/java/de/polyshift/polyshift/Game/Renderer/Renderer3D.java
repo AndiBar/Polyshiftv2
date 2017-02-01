@@ -29,9 +29,13 @@ import de.polyshift.polyshift.Game.Renderer.Mesh.PrimitiveType;
 public class Renderer3D extends Renderer {
 	
 	float object_depth;
+	float added_depth;
 	float width;
 	float height;
 	ArrayList<Mesh> finish_list;
+	int count;
+    Texture border_vertical;
+
 
 	public Renderer3D(final GameActivity activity, GL10 gl, GameObject[][] objects){
 
@@ -52,6 +56,8 @@ public class Renderer3D extends Renderer {
 		object_depth = -0.5f;
 
 		finish_list = new ArrayList<Mesh>();
+
+        Bitmap bitmap_border_vertical = null;
 
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
