@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -70,15 +71,16 @@ public class MyGamesAdapter extends SimpleAdapter {
             final LinearLayout item_layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
             java.util.Date date= new java.util.Date();
             Timestamp current_time = new Timestamp(date.getTime());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             try {
                 sdf.parse(data.get(position).get("timestamp"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-            Log.d("test","Uhr:" + sdf.getCalendar().toString());
-            long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - TimeUnit.MILLISECONDS.toHours(sdf.getCalendar().getTimeInMillis());
+
+            int diff = sdf.getTimeZone().getOffset(sdf.getCalendar().getTimeInMillis());
+            sdf.getCalendar().setTimeInMillis(sdf.getCalendar().getTimeInMillis() + diff);
+            long diff_h = TimeUnit.MILLISECONDS.toHours(current_time.getTime()) - (TimeUnit.MILLISECONDS.toHours(sdf.getCalendar().getTimeInMillis()));
             long diff_min = (TimeUnit.MILLISECONDS.toMinutes(current_time.getTime()) - TimeUnit.MILLISECONDS.toMinutes(sdf.getCalendar().getTimeInMillis()));
             long diff_sec = (TimeUnit.MILLISECONDS.toSeconds(current_time.getTime()) - TimeUnit.MILLISECONDS.toSeconds(sdf.getCalendar().getTimeInMillis()));
             if(diff_h > 24){
