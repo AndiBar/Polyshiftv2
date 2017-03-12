@@ -81,8 +81,10 @@ public class AiGameLoop {
                     @Override
                     public void run() {
                         if(!checkIfPlayerWins(threadSim)) {
+                            Log.d("test","player does not win");
                             doPolynominoAndPlayerMovement(threadSim);
                         }else{
+                            Log.d("test","player wins");
                             if(!doPolinominoMovement(threadSim)){
                                 doPolynominoAndPlayerMovement(threadSim);
                             }else{
@@ -166,7 +168,7 @@ public class AiGameLoop {
 
     public Simulation doPolynominoAndPlayerMovement(Simulation simulation){
         String serializedSimulation = serializeSimulation(simulation);
-        Simulation ai_simulation = null;
+        Simulation ai_simulation;
         GameObject lastGameObject = null;
         int temp_diff = simulation.PLAYGROUND_MAX_X;
         String polynomino_dir = "";
@@ -181,8 +183,8 @@ public class AiGameLoop {
                 if(simulation.objects[i][j] instanceof Polynomino && !simulation.objects[i][j].isLocked && simulation.objects[i][j] != lastGameObject) {
                     lastGameObject = simulation.objects[i][j];
                     Random random = new Random();
-                    String direction = Simulation.LEFT;
-                    for (int m = 1; m < 5; m++) {
+                    String direction = null;
+                    for (int m = 1; m < 6; m++) {
                         switch (m) {
                             case (1):
                                 direction = Simulation.LEFT;
@@ -196,9 +198,9 @@ public class AiGameLoop {
                             case (4):
                                 direction = Simulation.DOWN;
                                 break;
+                            case (5):
+                                break;
                         }
-                        Polynomino polynomino = (Polynomino) simulation.objects[i][j];
-
                             if (simulation.objects[(int) simulation.player2.block_position.x][(int) simulation.player2.block_position.y] != null) {
                                 for (int l = 1; l < 5; l++) {
                                     String playerDirection = "";
@@ -219,22 +221,23 @@ public class AiGameLoop {
                                     ai_simulation = deserializeSimulation(serializedSimulation);
                                     int x = (int) ai_simulation.player2.block_position.x;
                                     int y = (int) ai_simulation.player2.block_position.y;
-                                    ai_simulation.movePolynomio(i, j, direction);
-                                    ai_simulation.movePlayer(x, y, playerDirection);
-                                    int countCheck = 0;
-                                    while (countCheck < 10) {
-                                        checkPlayerPosition(ai_simulation);
-                                        Log.d("player", "playerx: " + ai_simulation.player2.block_position.x);
-                                        Log.d("player", "playery: " + ai_simulation.player2.block_position.y);
-                                        countCheck++;
+                                    Log.d("poly_x", "player_x: " + x);
+                                    Log.d("poly_x", "player_y: " + y);
+                                    if(direction != null) {
+                                        ai_simulation.movePolynomio(i, j, direction);
                                     }
+                                    ai_simulation.movePlayer(x, y, playerDirection);
+                                    for(int z = 0; z < 10; z++){
+                                        checkPlayerPosition(ai_simulation);
+                                    }
+
                                     int diff = (int) ai_simulation.player2.block_position.x;
                                     Log.d("diff:", "diff:" + diff);
                                     Log.d("dir:", "player_dir:" + playerDirection);
                                     Log.d("dir:", "poly_dir:" + direction);
                                     Log.d("poly_x", "poly_x: " + i);
                                     Log.d("poly_x", "poly_y: " + j);
-                                    if (diff <= temp_diff) {
+                                    if (diff < temp_diff) {
                                         temp_diff = diff;
                                         polynomino_x = i;
                                         polynomino_y = j;
@@ -250,6 +253,10 @@ public class AiGameLoop {
                 }
             }
         }
+        Log.d("dir:", "player_dir:" + player_dir);
+        Log.d("dir:", "poly_dir:" + polynomino_dir);
+        Log.d("poly_x", "poly_x: " + polynomino_x);
+        Log.d("poly_x", "poly_y: " + polynomino_y);
         simulation.movePolynomio(polynomino_x, polynomino_y, polynomino_dir);
         if(simulation.predictCollision(player_x,player_y,player_dir)){
             doRandomPlayerMovement(simulation);
@@ -261,34 +268,53 @@ public class AiGameLoop {
         return simulation;
     }
 
-    public void checkPlayerPosition(Simulation simulation){
+    private void checkPlayerPosition(Simulation simulation){
         for(int i = 0; i < simulation.objects.length; i++){
             for(int j = 0; j < simulation.objects[0].length; j++){
                 if(simulation.objects[i][j] instanceof Player) {
+                    Player player = (Player) simulation.objects[i][j];
+                    Log.d("test", "player " + (player.isPlayerOne ? "1" : "2") + " found:" + "x: " + i + "y :" + j);
+                    Log.d("test", "x: " + player.block_position.x);
                     //Check if Player is locked in. If true, skip his turn
-                    if(!simulation.loop_detected && ((simulation.predictCollision(i, j, Simulation.UP) && simulation.objects[i][j].lastState.equals(Simulation.UP)) || (simulation.predictCollision(i, j, Simulation.DOWN) && simulation.objects[i][j].lastState.equals(Simulation.DOWN)))) {
+                    if (!simulation.loop_detected && ((simulation.predictCollision(i, j, Simulation.UP)) || (simulation.predictCollision(i, j, Simulation.DOWN)))) {
                         if (j + 1 < simulation.objects[0].length && simulation.objects[i][j + 1] instanceof Player && !simulation.predictCollision(i, j + 1, Simulation.UP)) {
                             simulation.movePlayer(i, j + 1, Simulation.UP);
                             simulation.bump_detected = true;
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (j - 1 >= 0 && simulation.objects[i][j - 1] instanceof Player && !simulation.predictCollision(i, j - 1, Simulation.DOWN)) {
                             simulation.movePlayer(i, j - 1, Simulation.DOWN);
                             simulation.bump_detected = true;
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (!simulation.predictCollision(i, j, Simulation.RIGHT) && simulation.predictCollision(i, j, Simulation.LEFT)) {
                             simulation.movePlayer(i, j, Simulation.RIGHT);
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (simulation.predictCollision(i, j, Simulation.RIGHT) && !simulation.predictCollision(i, j, Simulation.LEFT)) {
                             simulation.movePlayer(i, j, Simulation.LEFT);
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         }
-                    } else if (!simulation.loop_detected && ((simulation.predictCollision(i, j, Simulation.RIGHT) && simulation.objects[i][j].lastState.equals(Simulation.RIGHT)) || (simulation.predictCollision(i, j, Simulation.LEFT) && simulation.objects[i][j].lastState.equals(Simulation.LEFT)))) {
-                        if (i + 1 < simulation.objects.length && simulation.objects[i + 1][j] instanceof Player && !simulation.predictCollision(i + 1, j, Simulation.RIGHT)){
+                    } else if (!simulation.loop_detected && ((simulation.predictCollision(i, j, Simulation.RIGHT)) || (simulation.predictCollision(i, j, Simulation.LEFT)))) {
+                        if (i + 1 < simulation.objects.length && simulation.objects[i + 1][j] instanceof Player && !simulation.predictCollision(i + 1, j, Simulation.RIGHT)) {
                             simulation.movePlayer(i + 1, j, Simulation.RIGHT);
                             simulation.bump_detected = true;
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (i - 1 >= 0 && simulation.objects[i - 1][j] instanceof Player && !simulation.predictCollision(i - 1, j, Simulation.LEFT)) {
                             simulation.movePlayer(i - 1, j, Simulation.LEFT);
                             simulation.bump_detected = true;
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (!simulation.predictCollision(i, j, Simulation.UP) && simulation.predictCollision(i, j, Simulation.DOWN)) {
                             simulation.movePlayer(i, j, Simulation.UP);
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         } else if (simulation.predictCollision(i, j, Simulation.UP) && !simulation.predictCollision(i, j, Simulation.DOWN)) {
                             simulation.movePlayer(i, j, Simulation.DOWN);
+                            simulation.objects[i][j] = null;
+                            Log.d("bla","blabla");
                         }
                     }
                 }
@@ -307,9 +333,9 @@ public class AiGameLoop {
                     lastGameObject = simulation.objects[i][j];
                     Random random = new Random();
                     int randomNo = random.nextInt(4) + 1;
-                    String direction = Simulation.LEFT;
+                    String direction = null;
                     boolean collision = false;
-                    for (int m = 1; m < 5; m++) {
+                    for (int m = 1; m < 6; m++) {
                         collision = false;
                         switch (m) {
                             case (1):
@@ -323,6 +349,8 @@ public class AiGameLoop {
                                 break;
                             case (4):
                                 direction = Simulation.DOWN;
+                                break;
+                            case (5):
                                 break;
                         }
                         Polynomino polynomino = (Polynomino) simulation.objects[i][j];
@@ -352,13 +380,13 @@ public class AiGameLoop {
                                     ai_simulation = deserializeSimulation(serializedSimulation);
                                     int x = (int) ai_simulation.player.block_position.x;
                                     int y = (int) ai_simulation.player.block_position.y;
-                                    ai_simulation.movePolynomio(i, j, direction);
-                                    ai_simulation.movePlayer(x, y, playerDirection);
-                                    int countCheck = 0;
-                                    while (countCheck < 10) {
-                                        checkPlayerPosition(ai_simulation);
-                                        countCheck++;
+                                    if(direction != null){
+                                        ai_simulation.movePolynomio(i, j, direction);
                                     }
+                                    ai_simulation.movePlayer(x, y, playerDirection);
+
+                                    checkPlayerPosition(ai_simulation);
+
                                     Log.d("dir:", "player_dir:" + playerDirection);
                                     Log.d("dir:", "poly_dir:" + direction);
                                     Log.d("poly_x", "poly_x: " + i);
@@ -378,7 +406,7 @@ public class AiGameLoop {
 
     public boolean doPolinominoMovement(Simulation simulation){
         String serializedSimulation = serializeSimulation(simulation);
-        Simulation ai_simulation = null;
+        Simulation ai_simulation;
         GameObject lastGameObject = null;
         int min_x = 0;
         for(int i = min_x; i < simulation.objects.length; i++) {
@@ -386,13 +414,8 @@ public class AiGameLoop {
                 if (simulation.objects[i][j] instanceof Polynomino && !simulation.objects[i][j].isLocked && simulation.objects[i][j] != lastGameObject) {
                     lastGameObject = simulation.objects[i][j];
                     Random random = new Random();
-                    int randomNo = random.nextInt(4) + 1;
                     String direction = Simulation.LEFT;
-                    boolean left = false;
-                    boolean right = false;
-                    boolean up = false;
-                    boolean down = false;
-                    boolean collision = false;
+                    boolean collision;
                     for (int m = 1; m < 5; m++) {
                         collision = false;
                         switch (m) {
