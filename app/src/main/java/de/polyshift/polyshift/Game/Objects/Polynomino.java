@@ -22,7 +22,7 @@ public class Polynomino extends GameObject implements Serializable{
 	public float movingVelocity = 0.02f;
     public Vector pixel_position = new Vector(0,0,0);
     public Vector border_pixel_position = new Vector(0,0,0);
-    public  float []colors = new float[4];
+    public float []colors = new float[4];
 	public boolean isRendered = false;
     private Mesh mesh;
 

@@ -165,7 +165,8 @@ public class Renderer3D extends Renderer {
 		for(int i = 0; i < objects.length; i++){
 			for(int j = 0; j < objects[i].length; j++){
 				if(objects[i][j] instanceof Player){
-					if(objects[i][j].isPlayerOne){
+					Player player = (Player) objects[i][j];
+					if(player.isPlayerOne){
 						gl.glColor4f((51f/255f*1.5f),(77f/255*1.5f),(100f/255f*1.5f),1f);
 						if(objects[i][j].isLocked){
 							

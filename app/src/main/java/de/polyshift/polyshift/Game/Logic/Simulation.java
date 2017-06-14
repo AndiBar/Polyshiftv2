@@ -26,12 +26,12 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 
 public class Simulation implements Serializable{
 
-    final int PLAYGROUND_MAX_X = 16;
-    final int PLAYGROUND_MIN_X = 0;
-    final int PLAYGROUND_MAX_Y = 8;
-    final int PLAYGROUND_MIN_Y = 0;
-    final int PLAYGROUND_POPULATE = 8;
-    final int POLYNOMIO_SIZE = 4;
+    final static int PLAYGROUND_MAX_X = 16;
+    final static int PLAYGROUND_MIN_X = 0;
+    final static int PLAYGROUND_MAX_Y = 8;
+    final static int PLAYGROUND_MIN_Y = 0;
+    final static int PLAYGROUND_POPULATE = 8;
+    final static int POLYNOMIO_SIZE = 4;
     public final static String RIGHT = "right";
     public final static String LEFT = "left";
     public final static String UP = "up";
@@ -609,12 +609,13 @@ public class Simulation implements Serializable{
                     }
                 }
                 if(objects[i][j] instanceof Player) {
+                    Player player = (Player) objects[i][j];
                     //Check if Player is locked in. If true, skip his turn
                     if (!objects[i][j].isLocked  && lastMovedObject instanceof Polynomino && (predictCollision(i, j, RIGHT) && predictCollision(i, j, LEFT) && predictCollision(i, j, UP) && predictCollision(i, j, DOWN))) {
-                        if (objects[i][j].isPlayerOne) {
+                        if (player.isPlayerOne) {
                             player.isLockedIn = true;
                             lastMovedObject = player;
-                        } else if (!objects[i][j].isPlayerOne) {
+                        } else if (!player.isPlayerOne) {
                             player2.isLockedIn = true;
                             lastMovedObject = player2;
                         }
@@ -622,9 +623,9 @@ public class Simulation implements Serializable{
                         //Check if player has stopped moving
                         if (!objects[i][j].isMovingRight && !objects[i][j].isMovingLeft && !objects[i][j].isMovingUp && !objects[i][j].isMovingDown) {
                             //Check if a player has won the game
-                            if (objects[i][j].isPlayerOne && i == PLAYGROUND_MAX_X) {
+                            if (player.isPlayerOne && i == PLAYGROUND_MAX_X) {
                                 setWinner((Player) objects[i][j]);
-                            } else if (!objects[i][j].isPlayerOne && i == PLAYGROUND_MIN_X) {
+                            } else if (!player.isPlayerOne && i == PLAYGROUND_MIN_X) {
                                 setWinner((Player) objects[i][j]);
                             //Check if player collides while moving. If true, change moving direction
                             } else if (!loop_detected && ((predictCollision(i, j, UP) && objects[i][j].lastState.equals(UP)) || (predictCollision(i, j, DOWN) && objects[i][j].lastState.equals(DOWN)))) {

@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     useLibrary  'org.apache.http.legacy'
 
     defaultConfig {
@@ -12,6 +12,14 @@ android {
         targetSdkVersion 25
         versionCode 14
         versionName "0.932"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        jackOptions {
+            enabled true
+        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
     buildTypes {
         release {
@@ -21,24 +29,27 @@ android {
         debug {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.debug
-            testCoverageEnabled true
+            //testCoverageEnabled true
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     compile 'com.google.android.gms:play-services-ads:8.3.0'
-    compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     compile 'io.reactivex:rxandroid:1.2.1'
-// Because RxAndroid releases are few and far between, it is recommended you also
-// explicitly depend on RxJava's latest version for bug fixes and new features.
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile 'io.reactivex:rxjava:1.1.6'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile "org.mockito:mockito-core:2.0.57-beta"
     testCompile 'org.assertj:assertj-core:3.6.2'
-    testCompile "org.robolectric:robolectric:3.3.1"
+    testCompile 'org.robolectric:robolectric:3.3.1'
 }

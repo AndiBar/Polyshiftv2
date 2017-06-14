@@ -72,7 +72,7 @@ public class Renderer2D extends Renderer {
 			        mesh.texCoord(0f, 0f);
 			        mesh.vertex( i*block_width, j*block_height + object_height, 0 );
 			        
-			        if(objects[i][j].isPlayerOne){
+			        if(((Player) objects[i][j]).isPlayerOne){
 			        	texturePlayerOne = new Texture(gl, bitmapPlayerOne, Texture.TextureFilter.Linear, Texture.TextureFilter.Linear, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 			        	texturePlayerOneLock = new Texture(gl, bitmapPlayerOneLock, Texture.TextureFilter.Linear, Texture.TextureFilter.Linear, Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 			        }else{
@@ -148,7 +148,7 @@ public class Renderer2D extends Renderer {
 		for(int i = 0; i < objects.length; i++){
 			for(int j = 0; j < objects[i].length; j++){
 				if(objects[i][j] instanceof Player){
-					if(objects[i][j].isPlayerOne){
+					if(((Player) objects[i][j]).isPlayerOne){
 						if(objects[i][j].isLocked){
 							texturePlayerOneLock.bind();
 						}

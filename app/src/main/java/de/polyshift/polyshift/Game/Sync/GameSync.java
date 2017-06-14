@@ -94,7 +94,7 @@ public class GameSync {
                     for (int j = 0; j < simulation.objects[0].length; j++) {
                         if(simulation.objects[i][j] instanceof Player) {
                             if(simulation.player == simulation.objects[i][j]){
-                                simulation.objects[i][j].isPlayerOne = true;
+                                ((Player) simulation.objects[i][j]).isPlayerOne = true;
                             }
                         }
                         if(simulation.objects[i][j] instanceof Polynomino) {
