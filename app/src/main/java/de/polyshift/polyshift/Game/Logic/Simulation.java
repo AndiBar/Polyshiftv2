@@ -668,6 +668,5 @@ public class Simulation implements Serializable{
     public void update(GameActivity activity){
         getTouch(activity);
         checkPlayerPosition(activity);
-
     }
 }

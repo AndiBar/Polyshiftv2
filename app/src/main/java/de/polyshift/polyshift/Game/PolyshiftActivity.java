@@ -196,7 +196,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     @Override
     public void setup(GameActivity activity, GL10 gl) {
 
-        if((!(simulation instanceof Simulation)) && !onDestroyed){
+        if((simulation == null) && !onDestroyed){
             game_status = getGameStatus();
 
             if(game_status.size() > 0) {

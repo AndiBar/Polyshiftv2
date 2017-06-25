@@ -5,14 +5,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.Tracker;
 
@@ -133,7 +136,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
     @Override
     public void setup(GameActivity activity, GL10 gl) {
 
-        if(!(simulation instanceof Simulation)){
+        if(simulation == null){
 
             game_status = new HashMap<String,String>();
             game_status.put("opponent_name", getString(R.string.red));
@@ -142,6 +145,14 @@ public class TrainingActivity extends GameActivity implements GameListener {
             game_status.put("my_user_name", getString(R.string.blue));
 
             simulation = new Simulation(activity);
+
+            /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if(sharedPreferences.getString("simulation", "").isEmpty()){
+                String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
+                sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+            }else{
+                simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
+            }*/
 
             gameLoop = new AiGameLoop("yes");
 
