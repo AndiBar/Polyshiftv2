@@ -567,27 +567,4 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         String msg = winnerName + PolyshiftActivity.this.getString(R.string.has_won);
         GameSync.SendChangeNotification(loserID, msg, notificationGameID, PolyshiftActivity.class.getName());
     }
-    public void updateGameStatus(boolean PlayerOnesTurn){
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("game", game_id));
-        nameValuePairs.add(new BasicNameValuePair("playerOnesTurn", "" + ((PlayerOnesTurn) ? 1 : 0)));
-        PHPConnector.doObservableRequest(nameValuePairs, "update_game.php")
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-
-                    }
-                });
-    }
 }

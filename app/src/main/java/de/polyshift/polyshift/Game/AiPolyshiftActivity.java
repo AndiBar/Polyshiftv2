@@ -1,6 +1,7 @@
 package de.polyshift.polyshift.Game;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,11 +16,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.widget.EditText;
 
 import com.google.android.gms.analytics.Tracker;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -35,6 +41,10 @@ import de.polyshift.polyshift.Game.Renderer.Renderer3D;
 import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.R;
+import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.SingleSubscriber;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 /**
  * Diese Klasse ist für die Umsetzung des Tutorial-Spiels zuständig. Sie verbindet die
@@ -45,18 +55,14 @@ import de.polyshift.polyshift.R;
  *
  */
 
-public class TrainingActivity extends GameActivity implements GameListener {
+public class AiPolyshiftActivity extends GameActivity implements GameListener {
 
     public static boolean statusUpdated = true;
     public boolean gameUpdated = false;
     public static ProgressDialog dialog = null;
-    Player player;
-    Player player2;
-    Polynomino poly;
     Renderer renderer;
     Simulation simulation;
     AiGameLoop gameLoop;
-    private String response = "";
     private Menu menu;
     private HashMap<String,String> game_status;
     private Activity activity = this;
@@ -68,12 +74,13 @@ public class TrainingActivity extends GameActivity implements GameListener {
     private LoginTool loginTool;
     private boolean onBackPressed = false;
     private Tracker mTracker = null;
-    private boolean show_rules = true;
+    private boolean tutorial = true;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
-        loginTool = new LoginTool(context,TrainingActivity.this);
+        loginTool = new LoginTool(context,AiPolyshiftActivity.this);
         loginTool.handleSessionExpiration(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -81,7 +88,8 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
         super.onCreate(savedInstanceState);
 
-        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_data_is_loading), true);
+        alertDialog = new AlertDialog.Builder(this).create();
+        dialog = ProgressDialog.show(AiPolyshiftActivity.this, "", getString(R.string.game_data_is_loading), true);
 
         setGameListener(this);
 
@@ -91,6 +99,9 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
+
+        Intent intent = getIntent();
+        tutorial = intent.getBooleanExtra("tutorial", true);
     }
 
     public void onSaveInstanceState( Bundle outState )
@@ -126,7 +137,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
-        dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
+        dialog = ProgressDialog.show(AiPolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
         onBackPressed = true;
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
@@ -140,19 +151,21 @@ public class TrainingActivity extends GameActivity implements GameListener {
 
             game_status = new HashMap<String,String>();
             game_status.put("opponent_name", getString(R.string.red));
-            game_status.put("opponents_turn", "0");
+            if(tutorial) {
+                game_status.put("opponents_turn", "0");
+            }
             game_status.put("my_game", "yes");
             game_status.put("my_user_name", getString(R.string.blue));
 
             simulation = new Simulation(activity);
 
-            /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             if(sharedPreferences.getString("simulation", "").isEmpty()){
                 String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
                 sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
             }else{
                 simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
-            }*/
+            }
 
             gameLoop = new AiGameLoop("yes");
 
@@ -198,53 +211,103 @@ public class TrainingActivity extends GameActivity implements GameListener {
                 updateGame(activity, gl);
             }
 
-            if (simulation.hasWinner && !winnerIsAnnounced) {
+            if (simulation.hasWinner && !winnerIsAnnounced && !alertDialog.isShowing()) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AiPolyshiftActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(game_status.get("my_user_name") + getString(R.string.has_won));
-                            builder.setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog = ProgressDialog.show(TrainingActivity.this, "", getString(R.string.game_is_closing), true);
-                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
-                                            startActivity(intent);
-                                            TrainingActivity.this.finish();
-                                            dialog.cancel();
+                            if(tutorial || (LoginTool.username != null && !LoginTool.username.isEmpty())) {
+                                builder.setMessage(getString(R.string.you_won));
+
+                                builder.setPositiveButton("OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog = ProgressDialog.show(AiPolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
+                                                final Intent intent = new Intent(AiPolyshiftActivity.this, MainMenuActivity.class);
+                                                startActivity(intent);
+                                                AiPolyshiftActivity.this.finish();
+                                                dialog.cancel();
+                                            }
+                                        });
+                            }else{
+                                builder.setMessage(getString(R.string.you_won) + "\n" + getString(R.string.add_user_name));
+                                final EditText input = new EditText(AiPolyshiftActivity.this);
+                                builder.setView(input);
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String username  = input.getText().toString();
+                                        if(!username.isEmpty()){
+                                            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                                            nameValuePairs.add(new BasicNameValuePair("username", username));
+                                            PHPConnector.doObservableRequest(nameValuePairs, "update_user.php")
+                                                    .subscribeOn(Schedulers.io())
+                                                    .subscribe(new Subscriber<String>() {
+                                                        @Override
+                                                        public void onCompleted() {
+                                                        }
+
+                                                        @Override
+                                                        public void onError(Throwable e) {
+
+                                                        }
+
+                                                        @Override
+                                                        public void onNext(String s) {
+
+                                                        }
+                                                    });
                                         }
-                                    });
+                                        final Intent intent = new Intent(AiPolyshiftActivity.this, MainMenuActivity.class);
+                                        startActivity(intent);
+                                        AiPolyshiftActivity.this.finish();
+                                        dialog.cancel();
+                                    }
+                                });
+                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog = ProgressDialog.show(AiPolyshiftActivity.this, "", getString(R.string.game_is_closing), true);
+                                        final Intent intent = new Intent(AiPolyshiftActivity.this, MainMenuActivity.class);
+                                        startActivity(intent);
+                                        AiPolyshiftActivity.this.finish();
+                                        dialog.cancel();
+                                    }
+                                });
+                            }
+                            updateScores(true);
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
                             builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            final Intent intent = new Intent(TrainingActivity.this, MainMenuActivity.class);
+                                            final Intent intent = new Intent(AiPolyshiftActivity.this, MainMenuActivity.class);
                                             startActivity(intent);
-                                            TrainingActivity.this.finish();
+                                            AiPolyshiftActivity.this.finish();
                                             dialog.cancel();
                                         }
                                     });
+                            updateScores(false);
                         }
-                        builder.show();
+                        alertDialog = builder.show();
                     }
                 });
                 winnerIsAnnounced = true;
             }
 
-            if(gameLoop.RoundFinished && !infoIsAnnounced && show_rules && gameLoop.PlayerOnesTurn){
+            if(gameLoop.RoundFinished && !infoIsAnnounced && tutorial && gameLoop.PlayerOnesTurn && !alertDialog.isShowing()){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TrainingActivity.this);
-                        if (gameLoop.roundCount == 0 && show_rules) {
-                            show_rules = false;
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AiPolyshiftActivity.this);
+                        if (gameLoop.roundCount == 0 && tutorial && !alertDialog.isShowing()) {
+                            tutorial = false;
                             builder.setMessage(R.string.rule_one);
                             builder.setPositiveButton(getString(R.string.yes),
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            show_rules = true;
+                                            tutorial = true;
                                             dialog.cancel();
                                         }
                                     });
@@ -254,7 +317,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            builder.show();
+                            alertDialog = builder.show();
                         } else if (gameLoop.roundCount == 1) {
                             builder.setMessage(R.string.rule_two);
                             builder.setPositiveButton("OK",
@@ -263,7 +326,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            builder.show();
+                            alertDialog = builder.show();
                         } else if (gameLoop.roundCount == 2) {
                             builder.setMessage(R.string.rule_three);
                             builder.setPositiveButton("OK",
@@ -272,7 +335,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                         dialog.cancel();
                                     }
                                 });
-                            builder.show();
+                            alertDialog = builder.show();
                         } else if (gameLoop.roundCount == 3) {
                             builder.setMessage(R.string.rule_four);
                             builder.setPositiveButton("OK",
@@ -281,7 +344,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            builder.show();
+                            alertDialog = builder.show();
                         } else if (gameLoop.roundCount == 4) {
                             builder.setMessage(R.string.rule_five);
                             builder.setPositiveButton("OK",
@@ -290,7 +353,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            builder.show();
+                            alertDialog = builder.show();
                         } else if (gameLoop.roundCount == 5) {
                             builder.setMessage(R.string.rule_six);
                             builder.setPositiveButton("OK",
@@ -299,7 +362,7 @@ public class TrainingActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            builder.show();
+                            alertDialog = builder.show();
                         }
                     }
                 });
@@ -311,6 +374,24 @@ public class TrainingActivity extends GameActivity implements GameListener {
             }
             frames++;
         }
+    }
+
+    private void updateScores(boolean winner) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("winner", winner ? "true" : "false"));
+        PHPConnector.doSingleRequest(nameValuePairs ,"update_ai_scores.php")
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleSubscriber<String>() {
+                    @Override
+                    public void onSuccess(String value) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+
+                    }
+                });
     }
 
     public void updateGame(final GameActivity game_activity, final GL10 game_gl){

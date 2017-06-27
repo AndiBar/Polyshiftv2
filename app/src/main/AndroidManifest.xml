@@ -31,11 +31,6 @@
             android:name="de.polyshift.polyshift.Menu.WelcomeActivity"
             android:launchMode="singleTask"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="de.polyshift.polyshift.Menu.SignupActivity"
@@ -48,12 +43,18 @@
             android:label="@string/title_poly_shift" >
         </activity>
         <activity
-            android:name="de.polyshift.polyshift.Game.TrainingActivity"
+            android:name="de.polyshift.polyshift.Game.AiPolyshiftActivity"
             android:launchMode="singleTask"
             android:label="@string/title_poly_shift" >
         </activity>
         <activity android:name="de.polyshift.polyshift.Menu.MainMenuActivity"
-                  android:launchMode="singleTask" />
+                  android:launchMode="singleTask">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name="de.polyshift.polyshift.Menu.ChooseOpponentActivity"
                   android:launchMode="singleTask"/>
         <activity android:name="de.polyshift.polyshift.Menu.NewOpponentActivity"

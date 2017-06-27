@@ -108,6 +108,7 @@
     <string name="my_opponents">Meine Gegner</string>
     <string name="opponents_are_loading">Gegner werden geladen</string>
     <string name="you_won">Glückwunsch! Du hast das Spiel gewonnen!</string>
+    <string name="add_user_name">Wenn du in der Bestenliste erscheinen möchtest, gib hier deinen Namen ein:</string>
     <string name="has_won">" hat das Spiel gewonnen."</string>
     <string name="move_token_or_player">Bewege einen Spielstein oder deinen Spieler.</string>
     <string name="move_player">Bewege deinen Spieler.</string>

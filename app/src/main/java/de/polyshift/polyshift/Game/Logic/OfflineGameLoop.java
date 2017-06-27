@@ -2,7 +2,7 @@ package de.polyshift.polyshift.Game.Logic;
 
 import java.util.Random;
 
-import de.polyshift.polyshift.Game.TrainingActivity;
+import de.polyshift.polyshift.Game.AiPolyshiftActivity;
 
 /**
  * Aktualisiert und speichert den aktuellen Status des Spiels bei Spieler-Aktionen.
@@ -53,7 +53,7 @@ public class OfflineGameLoop{
                     simulation.player.isLocked = true;
                     simulation.player2.isLocked = false;
                     simulation.player.isLockedIn = false;
-                    TrainingActivity.statusUpdated = false;
+                    AiPolyshiftActivity.statusUpdated = false;
                     roundCount++;
                 }
             }
@@ -73,7 +73,7 @@ public class OfflineGameLoop{
                     simulation.player2.isLocked = true;
                     simulation.player.isLocked = false;
                     simulation.player2.isLockedIn = false;
-                    TrainingActivity.statusUpdated = false;
+                    AiPolyshiftActivity.statusUpdated = false;
                     roundCount++;
                 }
             }

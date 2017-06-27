@@ -23,4 +23,24 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="Button.Green" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">#47B09C</item>
+    </style>
+
+    <style name="Button.Yellow" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">#EFC94C</item>
+    </style>
+
+    <style name="Button.Orange" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">#E27A41</item>
+    </style>
+
+    <style name="Button.Blue" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">#334D5C</item>
+    </style>
+
+    <style name="Button.Red" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">#DF4949</item>
+    </style>
+
 </resources>

@@ -52,64 +52,73 @@
 
                     <Button
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
+                        android:layout_height="40dp"
                         android:text="Neues Spiel"
                         android:id="@+id/new_game_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"
-                        android:background="#47B09C" />
+                        style="@style/Widget.AppCompat.Button"
+                        android:theme="@style/Button.Green" />
 
                     <Space
                         android:layout_width="20px"
-                        android:layout_height="10dp" />
+                        android:layout_height="5dp" />
 
                     <Button
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
+                        android:layout_height="40dp"
                         android:text="Meine Spiele"
                         android:id="@+id/my_games_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"
-                        android:background="#EFC94C"/>
+                        style="@style/Widget.AppCompat.Button"
+                        android:theme="@style/Button.Yellow"/>
 
                     <Space
                         android:layout_width="20px"
-                        android:layout_height="10dp" />
+                        android:layout_height="5dp" />
 
                     <Button
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
+                        android:layout_height="40dp"
                         android:text="Bestenliste"
                         android:id="@+id/scores_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"
-                        android:background="#E27A41"/>
+                        style="@style/Widget.AppCompat.Button"
+                        android:theme="@style/Button.Orange"/>
 
                     <Space
                         android:layout_width="20px"
-                        android:layout_height="10dp" />
+                        android:layout_height="5dp" />
 
                     <Button
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
+                        android:layout_height="40dp"
                         android:text="Tutorial"
                         android:id="@+id/tutorial_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"
-                        android:background="#334D5C"/>
+                        style="@style/Widget.AppCompat.Button"
+                        android:theme="@style/Button.Blue"/>
 
                     <Space
                         android:layout_width="20px"
-                        android:layout_height="10dp" />
+                        android:layout_height="5dp" />
 
                     <Button
                         android:layout_width="match_parent"
-                        android:layout_height="28dp"
+                        android:layout_height="40dp"
                         android:text="Beenden"
                         android:id="@+id/quit_game_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"
-                        android:background="#DF4949"/>
+                        style="@style/Widget.AppCompat.Button"
+                        android:theme="@style/Button.Red"/>
+
+                    <Space
+                        android:layout_width="20px"
+                        android:layout_height="5dp" />
 
                 </LinearLayout>
 

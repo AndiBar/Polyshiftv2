@@ -136,7 +136,7 @@ public class Renderer3D extends Renderer {
 	
 	public void setPerspective(GameActivity activity, GL10 gl){    
         gl.glViewport( 0, 0, activity.getViewportWidth(), activity.getViewportHeight() );
-        gl.glClearColor( 238f/255f, 233f/255f, 192f/255f, 0.0f );
+        gl.glClearColor(209f/255f, 223f/255f, 230f/255f, 0f);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT  | GL10.GL_DEPTH_BUFFER_BIT);
 		
 		gl.glMatrixMode( GL10.GL_PROJECTION );

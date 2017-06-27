@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import de.polyshift.polyshift.Menu.AuthManager;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.Menu.WelcomeActivity;
@@ -30,7 +31,7 @@ import de.polyshift.polyshift.R;
 public class LoginTool {
 
     static private String encryptedPassword;
-    static private String username;
+    public static String username;
     static private String GCMregId;
     final private Context context;
     static private Activity activity;
@@ -38,8 +39,6 @@ public class LoginTool {
     public LoginTool(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
-        this.username = HandleSharedPreferences.getUserCredentials(context, "user_name");
-        this.encryptedPassword = HandleSharedPreferences.getUserCredentials(context, "password");
         final SharedPreferences prefs = HandleSharedPreferences.getGcmPreferences(context);
         this.GCMregId = prefs.getString(HandleSharedPreferences.PROPERTY_REG_ID, "");
     }
@@ -50,9 +49,10 @@ public class LoginTool {
                 String response = PHPConnector.doRequest("test_session.php");
                 if (response.equalsIgnoreCase("not logged in") && (!encryptedPassword.equals("")) && (!username.equals(""))) {
                     Log.i("Status Login", "Not logged in... using stored credentials for login");
-                    userLoginStoredCredentials();
-                } else if (response.equalsIgnoreCase("logged in")) {
+                    AuthManager.checkIfDeviceKnown(activity);
+                } else if (response.endsWith("logged in")) {
                     Log.i("Status Login:", response);
+                    username = response.split(" ")[0];
                 } else {
                     activity.runOnUiThread(new Runnable() {
                         public void run() {
@@ -79,7 +79,7 @@ public class LoginTool {
 
 
     public static void userLoginStoredCredentials(){
-        Log.i("GCM REGID stored login",GCMregId);
+        /*Log.i("GCM REGID stored login",GCMregId);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username",username.toString().trim()));
         nameValuePairs.add(new BasicNameValuePair("password",encryptedPassword));
@@ -121,11 +121,11 @@ public class LoginTool {
         }else{
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(activity, activity.getString(R.string.login_error_title), activity.getString(R.string.connection_error));
-        }
+        }*/
     }
 
     public static void newUserLogin(final String newUsername, final String newEncryptedPassword, final Activity newActivity, String newGCMregId) {
-        Log.i("GCM REGID new login",newGCMregId);
+        /*Log.i("GCM REGID new login",newGCMregId);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username",newUsername.toString().trim()));
         nameValuePairs.add(new BasicNameValuePair("password",newEncryptedPassword));
@@ -158,11 +158,11 @@ public class LoginTool {
         }else{
             if(WelcomeActivity.dialog!=null){WelcomeActivity.dialog.dismiss();};
             AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.login_error_title), newActivity.getString(R.string.connection_error));
-        }
+        }*/
 
     }
     public static void validateEmail(String email, final Activity newActivity){
-        HashMap<String, String> user_map = new HashMap<String, String>();
+        /*HashMap<String, String> user_map = new HashMap<String, String>();
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         final String response = PHPConnector.doRequest(nameValuePairs, "validate_email.php");
@@ -190,22 +190,6 @@ public class LoginTool {
             }
         }else{
             AlertDialogs.showAlert(newActivity, newActivity.getString(R.string.error), newActivity.getString(R.string.no_user_found));
-        }
-    }
-
-    public static String generateRandomPassword(int password_length)
-    {
-        // Pick from some letters that won't be easily mistaken for each
-        // other. So, for example, omit o O and 0, 1 l and L.
-        String letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
-
-        Random RANDOM = new SecureRandom();
-        String pw = "";
-        for (int i=0; i < password_length; i++)
-        {
-            int index = (int)(RANDOM.nextDouble()*letters.length());
-            pw += letters.substring(index, index+1);
-        }
-        return pw;
+        }*/
     }
 }

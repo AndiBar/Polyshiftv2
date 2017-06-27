@@ -17,7 +17,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.BuildConfig;
-import de.polyshift.polyshift.Game.TrainingActivity;
+import de.polyshift.polyshift.Game.AiPolyshiftActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
@@ -48,13 +48,15 @@ public class MainMenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        AuthManager.checkIfDeviceKnown(this);
+
         if (HandleSharedPreferences.checkfirstStart(MainMenuActivity.this)) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainMenuActivity.this);
             builder.setMessage(R.string.first_time);
             builder = builder.setPositiveButton(MainMenuActivity.this.getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(MainMenuActivity.this, TrainingActivity.class);
+                            Intent intent = new Intent(MainMenuActivity.this, AiPolyshiftActivity.class);
                             startActivity(intent);
                             MainMenuActivity.this.finish();
                         }
@@ -85,7 +87,8 @@ public class MainMenuActivity extends Activity {
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ChooseOpponentActivity.class);
+                Intent intent = new Intent(v.getContext(), AiPolyshiftActivity.class);
+                intent.putExtra("tutorial", false);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
             }
@@ -112,7 +115,7 @@ public class MainMenuActivity extends Activity {
         tutorialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), TrainingActivity.class);
+                Intent intent = new Intent(v.getContext(), AiPolyshiftActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
             }

@@ -80,6 +80,7 @@ public class Simulation implements Serializable{
 
         player = new Player(true);
         player.start_position = new Vector(PLAYGROUND_MIN_X,PLAYGROUND_MAX_Y/2,0);
+        player.block_position = player.start_position;
         setGameObject(player, PLAYGROUND_MIN_X, PLAYGROUND_MAX_Y / 2);
         player2 = new Player(false);
         player2.start_position = new Vector(PLAYGROUND_MAX_X,PLAYGROUND_MAX_Y/2,0);
@@ -340,22 +341,22 @@ public class Simulation implements Serializable{
                 objects[x][y].isLocked = true;
             }
 
-            if(direction.equals(RIGHT)){
+            if(RIGHT.equals(direction)){
                 objects[x][y].isMovingRight = true;
                 objects[x+1][y] = objects[x][y];
                 objects[x][y] = null;
             }
-            if(direction.equals(LEFT)){
+            if(LEFT.equals(direction)){
                 objects[x][y].isMovingLeft = true;
                 objects[x-1][y] = objects[x][y];
                 objects[x][y] = null;
             }
-            if(direction.equals(UP)){
+            if(UP.equals(direction)){
                 objects[x][y].isMovingUp = true;
                 objects[x][y+1] = objects[x][y];
                 objects[x][y] = null;
             }
-            if(direction.equals(DOWN)){
+            if(DOWN.equals(direction)){
                 objects[x][y].isMovingDown = true;
                 objects[x][y-1] = objects[x][y];
                 objects[x][y] = null;
@@ -367,22 +368,22 @@ public class Simulation implements Serializable{
         boolean collision = false;
         if(x <= PLAYGROUND_MAX_X && x >= PLAYGROUND_MIN_X && y <= PLAYGROUND_MAX_Y && y >= PLAYGROUND_MIN_Y){
             if(objects[x][y] instanceof Player){
-                if(direction.equals(RIGHT)){
+                if(RIGHT.equals(direction)){
                     if((x+1 > PLAYGROUND_MAX_X || objects[x+1][y] != null)){
                         collision = true;
                     }
                 }
-                if(direction.equals(LEFT)){
+                if(LEFT.equals(direction)){
                     if((x-1 < PLAYGROUND_MIN_X || objects[x-1][y] != null)){
                         collision = true;
                     }
                 }
-                if(direction.equals(UP)){
+                if(UP.equals(direction)){
                     if((y+1 > PLAYGROUND_MAX_Y || objects[x][y+1] != null)){
                         collision = true;
                     }
                 }
-                if(direction.equals(DOWN)){
+                if(DOWN.equals(direction)){
                     if((y-1 < PLAYGROUND_MIN_Y || objects[x][y-1] != null)){
                         collision = true;
                     }
@@ -507,7 +508,7 @@ public class Simulation implements Serializable{
                 moving_started = false;
             }
             //Move player if no loop was detected, else break
-            if(direction.equals(RIGHT)){
+            if(RIGHT.equals(direction)){
                 player.block_position = new Vector(x+1,y,0);
                 if(x+1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x+1, y, direction).equals(player.start_direction)) {
                     loop_detected = true;
@@ -515,7 +516,7 @@ public class Simulation implements Serializable{
                     x++;
                 }
             }
-            else if(direction.equals(LEFT)){
+            else if(LEFT.equals(direction)){
                 player.block_position = new Vector(x-1,y,0);
                 if(x-1 == player.start_position.x && y == player.start_position.y && predictNextMovement(x-1, y, direction).equals(player.start_direction)){
                     loop_detected = true;
@@ -523,7 +524,7 @@ public class Simulation implements Serializable{
                     x--;
                 }
             }
-            else if(direction.equals(UP)){
+            else if(UP.equals(direction)){
                 player.block_position = new Vector(x,y+1,0);
                 if(y+1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y + 1, direction).equals(player.start_direction)){
                     loop_detected = true;
@@ -531,7 +532,7 @@ public class Simulation implements Serializable{
                     y++;
                 }
             }
-            else if(direction.equals(DOWN)){
+            else if(DOWN.equals(direction)){
                 player.block_position = new Vector(x,y-1,0);
                 if(y-1 == player.start_position.y && x == player.start_position.x && predictNextMovement(x, y-1 ,direction).equals(player.start_direction)){
                     loop_detected = true;
