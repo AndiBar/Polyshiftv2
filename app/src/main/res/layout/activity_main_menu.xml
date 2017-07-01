@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="#D1DFE6">
 
     <RelativeLayout
@@ -42,82 +43,72 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="0.5">
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
                     android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/new_game_button"
-                        style="@style/Widget.AppCompat.Button"
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Neues Spiel"
-                        android:textColor="#FFFFFF"
-                        android:theme="@style/Button.Green" />
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
 
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="15dp" />
+                        <Button
+                            android:id="@+id/new_game_button"
+                            style="@style/Widget.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Neues Spiel"
+                            android:textColor="#FFFFFF"
+                            android:theme="@style/Button.Green" />
 
-                    <Button
-                        android:id="@+id/my_games_button"
-                        style="@style/Widget.AppCompat.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Multiplayer"
-                        android:textColor="#FFFFFF"
-                        android:theme="@style/Button.Yellow" />
+                        <Space
+                            android:layout_width="20px"
+                            android:layout_height="15dp" />
 
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="15dp" />
+                        <Button
+                            android:id="@+id/my_games_button"
+                            style="@style/Widget.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Multiplayer"
+                            android:textColor="#FFFFFF"
+                            android:theme="@style/Button.Yellow" />
 
-                    <Button
-                        android:id="@+id/scores_button"
-                        style="@style/Widget.AppCompat.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Bestenliste"
-                        android:textColor="#FFFFFF"
-                        android:theme="@style/Button.Orange" />
+                        <Space
+                            android:layout_width="20px"
+                            android:layout_height="15dp" />
 
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="15dp" />
+                        <Button
+                            android:id="@+id/scores_button"
+                            style="@style/Widget.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Bestenliste"
+                            android:textColor="#FFFFFF"
+                            android:theme="@style/Button.Orange" />
 
-                    <Button
-                        android:id="@+id/tutorial_button"
-                        style="@style/Widget.AppCompat.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Tutorial"
-                        android:textColor="#FFFFFF"
-                        android:theme="@style/Button.Blue" />
+                        <Space
+                            android:layout_width="20px"
+                            android:layout_height="15dp" />
 
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="15dp" />
+                        <Button
+                            android:id="@+id/tutorial_button"
+                            style="@style/Widget.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_horizontal"
+                            android:text="Tutorial"
+                            android:textColor="#FFFFFF"
+                            android:theme="@style/Button.Blue" />
 
-                    <Button
-                        android:id="@+id/quit_game_button"
-                        style="@style/Widget.AppCompat.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:text="Beenden"
-                        android:textColor="#FFFFFF"
-                        android:theme="@style/Button.Red" />
-
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="15dp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 

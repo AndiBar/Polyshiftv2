@@ -25,6 +25,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -41,6 +42,7 @@ import de.polyshift.polyshift.Game.Renderer.Renderer3D;
 import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.Menu.MainMenuActivity;
 import de.polyshift.polyshift.R;
+import de.polyshift.polyshift.Tools.MapUtil;
 import de.polyshift.polyshift.Tools.PHPConnector;
 import rx.SingleSubscriber;
 import rx.Subscriber;
@@ -76,6 +78,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     private Tracker mTracker = null;
     private boolean tutorial = true;
     private AlertDialog alertDialog;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +105,8 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
 
         Intent intent = getIntent();
         tutorial = intent.getBooleanExtra("tutorial", true);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void onSaveInstanceState( Bundle outState )
@@ -113,6 +118,12 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     @Override
     public void onPause( )
     {
+        /*String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
+        sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+        if(game_status != null){
+            sharedPreferences.edit().putString("game_status", MapUtil.mapToString(game_status)).apply();
+        }*/
+
         super.onPause();
         Log.d( "Polyshift", "Polyshift pausiert" );
     }
@@ -121,6 +132,14 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     public void onResume( )
     {
         super.onResume();
+        /*if(!sharedPreferences.getString("simulation", "").isEmpty()) {
+            simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
+        }
+        String gamestatus = sharedPreferences.getString("game_status", "");
+        if(!gamestatus.isEmpty() && gamestatus.length() > 1) {
+            Log.d("test", "map: " + sharedPreferences.getString("game_status", ""));
+            game_status = MapUtil.stringToMap(sharedPreferences.getString("game_status", ""));
+        }*/
         Log.d( "Polyshift", "Polyshift wiederhergestellt" );
     }
 
@@ -134,6 +153,14 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_status, menu);
         this.menu = menu;
+        menu.findItem(R.id.action_game_status).setTitle(getString(R.string.please_wait));
+
+        MenuItem item = menu.findItem(R.id.action_game_status);
+        item.setOnMenuItemClickListener(menuItem -> {
+            sharedPreferences.edit().remove("simulation").apply();
+            return false;
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
     public void onBackPressed() {
@@ -159,13 +186,13 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
 
             simulation = new Simulation(activity);
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            if(sharedPreferences.getString("simulation", "").isEmpty()){
+
+            /*if(sharedPreferences.getString("simulation", "").isEmpty()){
                 String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
                 sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
             }else{
                 simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
-            }
+            }*/
 
             gameLoop = new AiGameLoop("yes");
 
@@ -276,7 +303,9 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                                     }
                                 });
                             }
-                            updateScores(true);
+                            if(!tutorial){
+                                updateScores(true);
+                            }
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
                             builder.setMessage(game_status.get("opponent_name") + getString(R.string.has_won));
                             builder.setPositiveButton("OK",
@@ -288,7 +317,9 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                                             dialog.cancel();
                                         }
                                     });
-                            updateScores(false);
+                            if(!tutorial){
+                                updateScores(false);
+                            }
                         }
                         alertDialog = builder.show();
                     }

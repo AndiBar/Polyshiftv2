@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F3DE">
+    android:background="#D1DFE6">
 
     <RelativeLayout
         android:layout_width="0dip"
@@ -19,7 +19,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:background="#F7F3DE"
+            android:background="#D1DFE6"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -95,7 +95,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:background="#F7F3DE"
+                        android:background="#D1DFE6"
                         android:orientation="horizontal"
                         tools:context=".SignupActivity" >
 

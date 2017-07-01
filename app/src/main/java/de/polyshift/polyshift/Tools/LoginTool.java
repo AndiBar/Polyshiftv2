@@ -7,18 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import de.polyshift.polyshift.Menu.AuthManager;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
-import de.polyshift.polyshift.Menu.MainMenuActivity;
-import de.polyshift.polyshift.Menu.WelcomeActivity;
 import de.polyshift.polyshift.R;
 
 /**
@@ -47,8 +36,8 @@ public class LoginTool {
         class TestSessionThread extends Thread {
             public void run() {
                 String response = PHPConnector.doRequest("test_session.php");
-                if (response.equalsIgnoreCase("not logged in") && (!encryptedPassword.equals("")) && (!username.equals(""))) {
-                    Log.i("Status Login", "Not logged in... using stored credentials for login");
+                if (response.equalsIgnoreCase("not logged in")) {
+                    Log.i("Status Login", "Not logged in... using device id for login");
                     AuthManager.checkIfDeviceKnown(activity);
                 } else if (response.endsWith("logged in")) {
                     Log.i("Status Login:", response);

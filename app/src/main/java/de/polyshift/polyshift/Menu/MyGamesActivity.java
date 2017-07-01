@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +25,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import de.polyshift.polyshift.Game.AiPolyshiftActivity;
 import de.polyshift.polyshift.Tools.LoginTool;
 import de.polyshift.polyshift.Menu.Adapter.MyGamesAdapter;
 import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
@@ -35,6 +40,8 @@ import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.Menu.Comparators.GameComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 /**
  * Zeigt die aktuellen Spiele an und gibt dem Spieler die Möglichkeit ein Spiel zu starten.
@@ -68,6 +75,13 @@ public class MyGamesActivity extends ListActivity {
         setTitle(getString(R.string.my_games));
         setContentView(R.layout.activity_my_games);
 
+        loginTool = new LoginTool(getApplicationContext(), MyGamesActivity.this);
+        loginTool.handleSessionExpiration(activity);
+
+        if(LoginTool.username == null || LoginTool.username.isEmpty()){
+            showEnterUserNameDialog();
+        }
+
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -81,6 +95,51 @@ public class MyGamesActivity extends ListActivity {
 
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    private void showEnterUserNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.enter_name);
+        final EditText input = new EditText(this);
+        builder.setView(input);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String username  = input.getText().toString();
+                if(!username.isEmpty()){
+                    ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                    nameValuePairs.add(new BasicNameValuePair("username", username));
+                    PHPConnector.doObservableRequest(nameValuePairs, "update_user.php")
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(new Subscriber<String>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onNext(String s) {
+
+                                }
+                            });
+                }
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final Intent intent = new Intent(MyGamesActivity.this, MainMenuActivity.class);
+                startActivity(intent);
+                MyGamesActivity.this.finish();
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -113,6 +172,16 @@ public class MyGamesActivity extends ListActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.new_game, menu);
         MenuItem bell_button = menu.findItem(R.id.action_attending_contacts);
+        MenuItem add_game_button = menu.findItem(R.id.action_new_game);
+        add_game_button.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent intent = new Intent(MyGamesActivity.this, ChooseOpponentActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
+        add_game_button.setVisible(true);
         bell_button.setVisible(false);
         this.menu = menu;
         return super.onCreateOptionsMenu(menu);

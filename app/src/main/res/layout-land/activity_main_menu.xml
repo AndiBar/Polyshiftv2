@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F3DE">
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:background="#D1DFE6">
 
     <RelativeLayout
         android:layout_width="0dip"
@@ -101,24 +102,6 @@
                         android:textColor="#FFFFFF"
                         style="@style/Widget.AppCompat.Button"
                         android:theme="@style/Button.Blue"/>
-
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="5dp" />
-
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:text="Beenden"
-                        android:id="@+id/quit_game_button"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="#FFFFFF"
-                        style="@style/Widget.AppCompat.Button"
-                        android:theme="@style/Button.Red"/>
-
-                    <Space
-                        android:layout_width="20px"
-                        android:layout_height="5dp" />
 
                 </LinearLayout>
 

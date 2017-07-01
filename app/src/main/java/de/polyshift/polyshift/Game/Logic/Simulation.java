@@ -607,6 +607,8 @@ public class Simulation implements Serializable{
                     polynomino.isRendered = false;
                     if(allLocked){
                         polynomino.allLocked = true;
+                    }else{
+                        polynomino.allLocked = false;
                     }
                 }
                 if(objects[i][j] instanceof Player) {

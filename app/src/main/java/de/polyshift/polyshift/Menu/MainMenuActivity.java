@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -20,6 +22,7 @@ import de.polyshift.polyshift.BuildConfig;
 import de.polyshift.polyshift.Game.AiPolyshiftActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
+import de.polyshift.polyshift.Tools.AuthManager;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 
 /**
@@ -77,11 +80,17 @@ public class MainMenuActivity extends Activity {
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+        /*AdView mAdView = (AdView) findViewById(R.id.adViewMain);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("5165043AE1F9BE9F733754564E7734B6")
+                .build();
+        // Start loading the ad in the background.
+        mAdView.loadAd(adRequest);*/
+
         newGameButton = (Button) findViewById(R.id.new_game_button);
         myGamesButton = (Button) findViewById(R.id.my_games_button);
         scoresButton = (Button) findViewById(R.id.scores_button);
         tutorialButton = (Button) findViewById(R.id.tutorial_button);
-        quitGameButton = (Button) findViewById(R.id.quit_game_button);
         backgroundLogo = (ImageView) findViewById(R.id.background_logo);
 
         newGameButton.setOnClickListener(new View.OnClickListener() {
@@ -118,14 +127,6 @@ public class MainMenuActivity extends Activity {
                 Intent intent = new Intent(v.getContext(), AiPolyshiftActivity.class);
                 startActivity(intent);
                 MainMenuActivity.this.finish();
-            }
-        });
-
-        quitGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishAffinity();
-                System.exit(0);
             }
         });
 

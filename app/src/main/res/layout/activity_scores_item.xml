@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="35sp"
         android:orientation="horizontal"
-        android:background="#F7F3DE" >
+        android:background="#D1DFE6" >
 
         <TextView
             android:id="@+id/position"

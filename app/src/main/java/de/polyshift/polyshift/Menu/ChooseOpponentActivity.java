@@ -72,13 +72,6 @@ public class ChooseOpponentActivity extends ListActivity {
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
-
         friends_list = new ArrayList<HashMap<String,String>>();
         friends_attending_list = new ArrayList<HashMap<String,String>>();
 

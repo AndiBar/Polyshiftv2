@@ -85,7 +85,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean onDestroyed = false;
     private boolean isSaving = false;
     private Tracker mTracker = null;
-    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +133,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-7602758333991442/2350962417");
-
     }
 
     public void onSaveInstanceState( Bundle outState )
@@ -167,7 +163,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
-        mInterstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -267,9 +262,6 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        }
                         MenuItem item = menu.findItem(R.id.action_game_status);
                         item.setTitle(R.string.game_is_saving);
                         isSaving = true;
@@ -298,7 +290,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PolyshiftActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            builder.setMessage(getString(R.string.you_won));
+                            builder.setMessage(R.string.you_won);
                             builder.setCancelable(false);
                             builder.setPositiveButton("OK",
                                     new DialogInterface.OnClickListener() {

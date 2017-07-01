@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F3DE">
+    android:background="#D1DFE6">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -63,9 +63,9 @@
                 android:id="@id/android:list"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:background="#F7F3DE"
+                android:background="#D1DFE6"
                 android:drawSelectorOnTop="false"
-            android:divider="#F7F3DE"
+            android:divider="#D1DFE6"
             android:dividerHeight="15dp">
 
         </ListView>
