@@ -41,8 +41,10 @@ import de.polyshift.polyshift.Menu.MyGamesActivity;
 import de.polyshift.polyshift.Tools.PHPConnector;
 import rx.SingleSubscriber;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,13 +87,14 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     private boolean onDestroyed = false;
     private boolean isSaving = false;
     private Tracker mTracker = null;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
 
         loginTool = new LoginTool(context,PolyshiftActivity.this);
-        loginTool.handleSessionExpiration(this);
+        loginTool.handleSessionExpirationBlocking(activity);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
@@ -170,6 +173,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
     {
         super.onDestroy();
         Log.d("Polyshift", "Polyshift beendet");
+        compositeSubscription.clear();
         onDestroyed = true;
     }
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -376,7 +380,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
 
     private HashMap<String,String> getGameStatus(){
         HashMap<String,String> game_status = new HashMap<String, String>();
-        PHPConnector.doObservableRequest("get_game_status.php")
+        compositeSubscription.add(PHPConnector.doObservableRequest("get_game_status.php")
                 .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
@@ -392,7 +396,7 @@ public class PolyshiftActivity extends GameActivity implements GameListener {
                     public void onNext(String s) {
                         response = s;
                     }
-        });
+        }));
         if((response.equals("error") || response.split(":").length == 1 || response == null || response.equals(""))){
             if(!onBackPressed) {
                 Log.d("crashed", "crashed while downloading game status. response: " + response);

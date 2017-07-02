@@ -15,6 +15,10 @@ import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -46,64 +50,86 @@ public class GamesAttendingActivity extends ListActivity {
     private static String opponentName = "";
     private LoginTool loginTool;
     private Tracker mTracker = null;
+    final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	   super.onCreate(savedInstanceState);
         context = getApplicationContext();
+
+        setContentView(R.layout.activity_opponents_attending);
+        setTitle(getString(R.string.new_game));
+
         loginTool = new LoginTool(context,GamesAttendingActivity.this);
-        loginTool.handleSessionExpiration(this);
+        compositeSubscription.add(loginTool.handleSessionExpiration(this)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        if (MyGamesActivity.games_attending_list == null || MyGamesActivity.games_attending_list.size() == 0) {
+                            Thread my_games_thread = new GamesAttendingThread();
+                            my_games_thread.start();
+                            try {
+                                long waitMillis = 10000;
+                                while (my_games_thread.isAlive()) {
+                                    my_games_thread.join(waitMillis);
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (PolyshiftActivity.dialog != null) {
+                            try {
+                                PolyshiftActivity.dialog.dismiss();
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
 
-       setContentView(R.layout.activity_opponents_attending);
-       setTitle(getString(R.string.new_game));
+                        mAdapter = new AcceptGameAdapter(GamesAttendingActivity.this,
+                                MyGamesActivity.games_attending_list,
+                                R.layout.activity_choose_opponent_item,
+                                new String[] {"opponent_name"},
+                                new int[] {R.id.title});
 
-       if (MyGamesActivity.games_attending_list == null || MyGamesActivity.games_attending_list.size() == 0) {
-           Thread my_games_thread = new GamesAttendingThread();
-           my_games_thread.start();
-           try {
-               long waitMillis = 10000;
-               while (my_games_thread.isAlive()) {
-                   my_games_thread.join(waitMillis);
-               }
-           } catch (InterruptedException e) {
-               e.printStackTrace();
-           }
-       }
-       if (PolyshiftActivity.dialog != null) {
-           try {
-               PolyshiftActivity.dialog.dismiss();
-           } catch (IllegalArgumentException e) {
-               e.printStackTrace();
-           }
-       }
+                        ListView listView = GamesAttendingActivity.this.getListView();
+                        setListAdapter(mAdapter);
+                        listView.setFocusableInTouchMode(false);
+                        listView.setFocusable(false);
+                        listView.setOnItemClickListener(new OnItemClickListener() {
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Intent intent = new Intent(GamesAttendingActivity.this, MyGamesActivity.class);
+                                startActivity(intent);
+                                GamesAttendingActivity.this.finish();
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
 
-       mAdapter = new AcceptGameAdapter(this,
-                MyGamesActivity.games_attending_list,
-                 R.layout.activity_choose_opponent_item,
-                 new String[] {"opponent_name"},
-                 new int[] {R.id.title});
+                    }
 
-       ListView listView = this.getListView();
-       setListAdapter(mAdapter);
-       listView.setFocusableInTouchMode(false);
-       listView.setFocusable(false);
-       listView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(GamesAttendingActivity.this, MyGamesActivity.class);
-                startActivity(intent);
-                GamesAttendingActivity.this.finish();
-            }
-        });
+                    @Override
+                    public void onNext(String s) {
 
+                    }
+                }));
 
-    AnalyticsApplication application = (AnalyticsApplication) getApplication();
-    mTracker = application.getDefaultTracker();
-    mTracker.setScreenName(getClass().getName());
-    mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName(getClass().getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 	}
+
+	@Override
+	protected void onDestroy(){
+        super.onDestroy();
+        compositeSubscription.clear();
+    }
 
 	// Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -223,7 +249,7 @@ public class GamesAttendingActivity extends ListActivity {
                 } else if (stringResponse.equals("not logged in.")) {
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, GamesAttendingActivity.this);
-                    loginTool.userLoginStoredCredentials();
+                    compositeSubscription.add(loginTool.handleSessionExpiration(GamesAttendingActivity.this).subscribe());
 
                 } else if (stringResponse.equals("no games found")) {
 

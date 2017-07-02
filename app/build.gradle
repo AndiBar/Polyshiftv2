@@ -10,8 +10,8 @@ android {
         applicationId "de.polyshift.polyshift"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 14
-        versionName "0.932"
+        versionCode 16
+        versionName "0.951"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         jackOptions {
             enabled true

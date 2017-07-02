@@ -13,6 +13,11 @@ import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.AlertDialogs;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -49,59 +54,84 @@ public class OpponentsAttendingActivity extends ListActivity {
     private Context context;
     private LoginTool loginTool;
     private Tracker mTracker = null;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
 
-	/** Called when the activity is first created. */
+    /** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
    	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        loginTool = new LoginTool(context,OpponentsAttendingActivity.this);
-        loginTool.handleSessionExpiration(this);
 
         setContentView(R.layout.activity_opponents_attending);
         setTitle(R.string.opponents_attending_title);
 
-        Thread friends_thread = new OpponentsThread();
-        friends_thread.start();
-        try {
-        	long waitMillis = 10000;
-        	while (friends_thread.isAlive()) {
-        	   friends_thread.join(waitMillis);
-        	}
-        } catch (InterruptedException e) {
-        	e.printStackTrace();
-        }
-        
-       if (opponents_attending_list != null && opponents_attending_list.size() != 0) {
-       
-	        mAdapter = new AcceptOpponentAdapter(this,
-                    opponents_attending_list,
-	        		 R.layout.activity_choose_opponent_item,
-	                 new String[] {"title"},
-	                 new int[] {R.id.title});
-	        
-	       ListView listView = this.getListView();
-	       setListAdapter(mAdapter);
-	       //listView.setClickable(true);
-	       listView.setFocusableInTouchMode(false);
-	       listView.setFocusable(false);
-	       listView.setOnItemClickListener(new OnItemClickListener() {
-	            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	            	
-	            	Intent intent = new Intent(OpponentsAttendingActivity.this, MainMenuActivity.class);
-		        	int selected = 3;
-		        	intent.putExtra("drawerPosition", selected);
-		            startActivity(intent);
-	            }
-	        });
-        
-       }
+        loginTool = new LoginTool(context,OpponentsAttendingActivity.this);
+        compositeSubscription.add(loginTool.handleSessionExpiration(this)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Thread friends_thread = new OpponentsThread();
+                        friends_thread.start();
+                        try {
+                            long waitMillis = 10000;
+                            while (friends_thread.isAlive()) {
+                                friends_thread.join(waitMillis);
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (opponents_attending_list != null && opponents_attending_list.size() != 0) {
+
+                            mAdapter = new AcceptOpponentAdapter(OpponentsAttendingActivity.this,
+                                    opponents_attending_list,
+                                    R.layout.activity_choose_opponent_item,
+                                    new String[] {"title"},
+                                    new int[] {R.id.title});
+
+                            ListView listView = OpponentsAttendingActivity.this.getListView();
+                            setListAdapter(mAdapter);
+                            //listView.setClickable(true);
+                            listView.setFocusableInTouchMode(false);
+                            listView.setFocusable(false);
+                            listView.setOnItemClickListener(new OnItemClickListener() {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                    Intent intent = new Intent(OpponentsAttendingActivity.this, MainMenuActivity.class);
+                                    int selected = 3;
+                                    intent.putExtra("drawerPosition", selected);
+                                    startActivity(intent);
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+
+                    }
+                }));
+
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName(getClass().getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 	}
+
+	@Override
+	protected void onDestroy(){
+        super.onDestroy();
+        compositeSubscription.clear();
+    }
 	
 	// Action Bar Button
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,7 +208,7 @@ public class OpponentsAttendingActivity extends ListActivity {
 
 
 	public class OpponentsThread extends Thread{
-	  	  public void run(){
+    	  	  public void run(){
 	  		String stringResponse = PHPConnector.doRequest("get_opponents_attending.php");
 			String[] data_unformatted = stringResponse.split(",");
             opponents_attending_list = new ArrayList<HashMap<String,String>>();

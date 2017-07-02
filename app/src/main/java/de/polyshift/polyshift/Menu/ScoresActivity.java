@@ -28,6 +28,8 @@ import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.Menu.Comparators.ScoreComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Zeigt die aktuelle Bestenliste mit Spielstatistik und Punkten an.
@@ -44,6 +46,7 @@ public class ScoresActivity extends ListActivity {
     public static ProgressDialog dialog = null;
     private Tracker mTracker = null;
     private Thread scores_thread;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public ScoresActivity(){
         activity = this;
@@ -92,6 +95,12 @@ public class ScoresActivity extends ListActivity {
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         this.finish();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        compositeSubscription.clear();
     }
 
     public class ScoresThread extends Thread{
@@ -165,7 +174,7 @@ public class ScoresActivity extends ListActivity {
             }else{
                 Context context = getApplicationContext();
                 LoginTool loginTool = new LoginTool(context, ScoresActivity.this);
-                loginTool.userLoginStoredCredentials();
+                compositeSubscription.add(loginTool.handleSessionExpiration(ScoresActivity.this).subscribe());
             }
         }
     }

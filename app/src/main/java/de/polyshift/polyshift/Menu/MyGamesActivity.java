@@ -41,7 +41,9 @@ import de.polyshift.polyshift.Menu.Comparators.GameComparator;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Zeigt die aktuellen Spiele an und gibt dem Spieler die Möglichkeit ein Spiel zu starten.
@@ -63,6 +65,7 @@ public class MyGamesActivity extends ListActivity {
     private Menu menu;
     private Thread my_games_thread;
     private Tracker mTracker = null;
+    private final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public MyGamesActivity() {
         // Empty constructor required for fragment subclasses
@@ -74,13 +77,6 @@ public class MyGamesActivity extends ListActivity {
 
         setTitle(getString(R.string.my_games));
         setContentView(R.layout.activity_my_games);
-
-        loginTool = new LoginTool(getApplicationContext(), MyGamesActivity.this);
-        loginTool.handleSessionExpiration(activity);
-
-        if(LoginTool.username == null || LoginTool.username.isEmpty()){
-            showEnterUserNameDialog();
-        }
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
@@ -146,24 +142,45 @@ public class MyGamesActivity extends ListActivity {
     public void onResume(){
         super.onResume();
 
-        games_list = new ArrayList<HashMap<String, String>>();
-        games_attending_list = new ArrayList<HashMap<String, String>>();
+        loginTool = new LoginTool(getApplicationContext(), MyGamesActivity.this);
+        compositeSubscription.add(loginTool.handleSessionExpiration(activity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        if(loginTool.isLoggedIn() && (LoginTool.username == null || LoginTool.username.isEmpty())){
+                            showEnterUserNameDialog();
+                        }
+                        games_list = new ArrayList<HashMap<String, String>>();
+                        games_attending_list = new ArrayList<HashMap<String, String>>();
 
-        dialog = ProgressDialog.show(MyGamesActivity.this, "", getString(R.string.game_are_loading), true);
+                        dialog = ProgressDialog.show(MyGamesActivity.this, "", getString(R.string.game_are_loading), true);
 
-        if(my_games_thread == null || !my_games_thread.isAlive()) {
-            my_games_thread = new GamesThread();
-            my_games_thread.start();
-        }
+                        if(my_games_thread == null || !my_games_thread.isAlive()) {
+                            my_games_thread = new GamesThread();
+                            my_games_thread.start();
+                        }
 
-        if (PolyshiftActivity.dialog != null) {
-            try {
-                PolyshiftActivity.dialog.dismiss();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-        }
+                        if (PolyshiftActivity.dialog != null) {
+                            try {
+                                PolyshiftActivity.dialog.dismiss();
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+
+                    }
+                }));
     }
 
     // Action Bar Button
@@ -210,6 +227,17 @@ public class MyGamesActivity extends ListActivity {
                 }
             };
         }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        compositeSubscription.clear();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
     }
 
     static abstract class MyMenuItemStuffListener implements View.OnClickListener, View.OnLongClickListener {
@@ -287,9 +315,7 @@ public class MyGamesActivity extends ListActivity {
                         games_list.add(data_map);
                     }
                 } else if(stringResponse.equals("not logged in.")) {
-                    context = getApplicationContext();
-                    loginTool = new LoginTool(context, MyGamesActivity.this);
-                    loginTool.userLoginStoredCredentials();
+                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe());
 
                 }else if(stringResponse.equals("no games found")) {
 
@@ -330,7 +356,7 @@ public class MyGamesActivity extends ListActivity {
                 } else if(stringResponse.equals("not logged in.")){
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, MyGamesActivity.this);
-                    loginTool.userLoginStoredCredentials();
+                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe());
 
                 }else if(stringResponse.equals("no games found")) {
 

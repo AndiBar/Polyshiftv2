@@ -28,6 +28,11 @@ import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.Game.Sync.GameSync;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Menü zum Suchen und Hinzufügen eines neuen Gegners.
@@ -45,14 +50,14 @@ public class NewOpponentActivity extends Activity {
 	private ArrayList users_list;
 	private boolean sending_success;
 	private Tracker mTracker = null;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-	/** Called when the activity is first created. */
+    /** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
         context = getApplicationContext();
-		loginTool = new LoginTool(context, NewOpponentActivity.this);
-        loginTool.handleSessionExpiration(this);
+
 		sending_success = false;
         setContentView(R.layout.activity_new_opponent);
         setTitle(R.string.new_opponent);
@@ -62,8 +67,27 @@ public class NewOpponentActivity extends Activity {
 		mTracker.setScreenName(getClass().getName());
 		mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
-		Thread users_thread = new UsersThread();
-		users_thread.start();
+		loginTool = new LoginTool(context, NewOpponentActivity.this);
+		compositeSubscription.add(loginTool.handleSessionExpiration(this)
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribeOn(Schedulers.io())
+				.subscribe(new Subscriber<String>() {
+					@Override
+					public void onCompleted() {
+						Thread users_thread = new UsersThread();
+						users_thread.start();
+					}
+
+					@Override
+					public void onError(Throwable e) {
+
+					}
+
+					@Override
+					public void onNext(String s) {
+
+					}
+				}));
 	}
 
 	@Override
@@ -132,6 +156,12 @@ public class NewOpponentActivity extends Activity {
         final Intent intent = new Intent(this, ChooseOpponentActivity.class);
         startActivity(intent);
         this.finish();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        compositeSubscription.clear();
     }
 
 	public class UsersThread extends Thread {

@@ -173,24 +173,11 @@ public class MainMenuActivity extends Activity {
                 AlertDialogs.showAlert(MainMenuActivity.this,getString(R.string.about_polyshift), getString(R.string.version) +  BuildConfig.VERSION_NAME
                 + getString(R.string.contact)
                 + MainMenuActivity.this.getString(R.string.privacypolicy) +
-                        MainMenuActivity.this.getString(R.string.general_disclaimer) +
                         MainMenuActivity.this.getString(R.string.analytics_disclaimer) +
                         MainMenuActivity.this.getString(R.string.adsense_disclaimer) +
                         MainMenuActivity.this.getString(R.string.end_disclaimer));
                 return false;
 
-            }
-        });
-        MenuItem logout = menu.findItem(R.id.logout);
-        logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                HandleSharedPreferences.setUserCredentials(MainMenuActivity.this, "", "");
-                Intent intent = new Intent(MainMenuActivity.this, WelcomeActivity.class);
-                startActivity(intent);
-                MainMenuActivity.this.finish();
-                WelcomeActivity.userLogout();
-                return false;
             }
         });
         return super.onCreateOptionsMenu(menu);

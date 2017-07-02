@@ -68,7 +68,7 @@
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:text="Meine Spiele"
+                        android:text="Multiplayer"
                         android:id="@+id/my_games_button"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FFFFFF"

@@ -1,5 +1,8 @@
 package de.polyshift.polyshift.Game.Logic;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 
@@ -41,8 +44,14 @@ public class AiGameLoop {
     private int winningPolyX;
     private int winningPolyY;
     private String winningPolyDir;
+    private Handler aiHandler;
+    private boolean logging;
 
     public AiGameLoop(String PlayerOnesGame){
+        HandlerThread handlerThread = new HandlerThread("AiHandlerThread");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        aiHandler = new Handler(looper);
         RoundFinished = true;
         aiRunning = false;
         roundCount = 0;
@@ -60,6 +69,7 @@ public class AiGameLoop {
 
     public void update(Simulation simulation){
         if(PlayerOnesTurn){
+            aiRunning = false;
             simulation.player2.isLocked = true;
             simulation.allLocked = false;
             if(simulation.player.isMovingRight || simulation.player.isMovingLeft || simulation.player.isMovingUp || simulation.player.isMovingDown){
@@ -90,15 +100,14 @@ public class AiGameLoop {
             if(!aiRunning && !simulation.hasWinner && RoundFinished && (!simulation.player2.isMovingRight || !simulation.player2.isMovingLeft || !simulation.player2.isMovingUp || !simulation.player2.isMovingDown)) {
                 aiRunning = true;
                 final Simulation threadSim = simulation;
-                Thread thread = new Thread(() -> {
+
+                aiHandler.post(() -> {
                     if(checkIfPlayerWins(threadSim)) {
                         if(!doPolinominoMovement(threadSim)){
                             doPolynominoAndPlayerMovement(threadSim);
                         }
                     }
                 });
-                thread.setPriority(Thread.MAX_PRIORITY);
-                thread.start();
             }
             if(simulation.bump_detected) {
                 simulation.bump_detected = false;
@@ -117,6 +126,14 @@ public class AiGameLoop {
                     roundCount++;
                 }
             }
+        }
+    }
+
+    class AiRunnable implements Runnable{
+
+        @Override
+        public void run() {
+
         }
     }
 
@@ -273,24 +290,28 @@ public class AiGameLoop {
                                 ai_simulation = deserializeSimulation(serializedSimulation);
                                 int x = (int) ai_simulation.player2.block_position.x;
                                 int y = (int) ai_simulation.player2.block_position.y;
-                                Log.d("poly_x", "player_x: " + x);
-                                Log.d("poly_x", "player_y: " + y);
+                                if(logging) {
+                                    Log.d("poly_x", "player_x: " + x);
+                                    Log.d("poly_x", "player_y: " + y);
+                                }
                                 if(direction != null) {
                                     ai_simulation.movePolynomio(i, j, direction);
                                 }
                                 ai_simulation.objects[x][y].lastState = playerDirection;
                                 ai_simulation.movePlayer(x, y, playerDirection);
-                                Log.d("test","checkplayerpos");
                                 for(int z = 0; z < 10; z++){
                                     checkPlayerPosition(ai_simulation);
                                 }
 
                                 int diff = (int) ai_simulation.player2.block_position.x;
-                                Log.d("diff:", "diff:" + diff);
-                                Log.d("dir:", "player_dir:" + playerDirection);
-                                Log.d("dir:", "poly_dir:" + direction);
-                                Log.d("poly_x", "poly_x: " + i);
-                                Log.d("poly_x", "poly_y: " + j);
+
+                                if(logging) {
+                                    Log.d("diff:", "diff:" + diff);
+                                    Log.d("dir:", "player_dir:" + playerDirection);
+                                    Log.d("dir:", "poly_dir:" + direction);
+                                    Log.d("poly_x", "poly_x: " + i);
+                                    Log.d("poly_x", "poly_y: " + j);
+                                }
                                 if (diff < temp_diff) {
                                     temp_diff = diff;
                                     polynomino_x = i;
@@ -307,10 +328,12 @@ public class AiGameLoop {
                 }
             }
         }
-        Log.d("dir:", "player_dir:" + player_dir);
-        Log.d("dir:", "poly_dir:" + polynomino_dir);
-        Log.d("poly_x", "poly_x: " + polynomino_x);
-        Log.d("poly_x", "poly_y: " + polynomino_y);
+        if(logging) {
+            Log.d("dir:", "player_dir:" + player_dir);
+            Log.d("dir:", "poly_dir:" + polynomino_dir);
+            Log.d("poly_x", "poly_x: " + polynomino_x);
+            Log.d("poly_x", "poly_y: " + polynomino_y);
+        }
         if(checkPolynominoCollision(simulation, polynomino_x, polynomino_y, polynomino_dir)){
             doRandomPolynominoMovement(simulation);
         }else{
@@ -318,9 +341,7 @@ public class AiGameLoop {
         }
         if(simulation.predictCollision(player_x,player_y,player_dir)){
             doRandomPlayerMovement(simulation);
-            Log.d("test","test123random " + player_dir);
         }else {
-            Log.d("test","test123");
             simulation.objects[player_x][player_y].lastState = player_dir;
             simulation.movePlayer(player_x,player_y,player_dir);
         }
@@ -328,7 +349,6 @@ public class AiGameLoop {
     }
 
     public void checkPlayerPosition(Simulation simulation){
-        Log.d("test","checkplayerposmethod");
             checkPlayerPosition(simulation, null);
     }
 
@@ -422,11 +442,13 @@ public class AiGameLoop {
                                         }
 
                                         int diff = (int) ai_simulation.player.block_position.x;
-                                        Log.d("diff:", "diff:" + diff);
-                                        Log.d("dir:", "player_dir:" + playerDirection);
-                                        Log.d("dir:", "poly_dir:" + direction);
-                                        Log.d("poly_x", "poly_x: " + i);
-                                        Log.d("poly_x", "poly_y: " + j);
+                                        if(logging) {
+                                            Log.d("diff:", "diff:" + diff);
+                                            Log.d("dir:", "player_dir:" + playerDirection);
+                                            Log.d("dir:", "poly_dir:" + direction);
+                                            Log.d("poly_x", "poly_x: " + i);
+                                            Log.d("poly_x", "poly_y: " + j);
+                                        }
                                         if (diff < temp_diff) {
                                             temp_diff = diff;
                                         }
@@ -445,11 +467,13 @@ public class AiGameLoop {
                                         }
 
                                         diff2 = (int) ai_simulation2.player2.block_position.x;
-                                        Log.d("diff:", "diff2:" + diff2);
-                                        Log.d("dir:", "player_dir2:" + playerDirection);
-                                        Log.d("dir:", "poly_dir2:" + direction);
-                                        Log.d("poly_x", "poly_x2: " + i);
-                                        Log.d("poly_x", "poly_y2: " + j);
+                                        if(logging) {
+                                            Log.d("diff:", "diff2:" + diff2);
+                                            Log.d("dir:", "player_dir2:" + playerDirection);
+                                            Log.d("dir:", "poly_dir2:" + direction);
+                                            Log.d("poly_x", "poly_x2: " + i);
+                                            Log.d("poly_x", "poly_y2: " + j);
+                                        }
                                         if (diff2 < temp_diff2) {
                                             temp_diff2 = diff2;
                                             polynomino_x2 = i;
@@ -484,11 +508,13 @@ public class AiGameLoop {
             return true;
         }
         if(temp_diff <= temp_diff2 || diff2 == 0){
-            Log.d("diff:", "diff:" + temp_diff2);
-            Log.d("dir:", "player_dir:" + player_dir2);
-            Log.d("dir:", "poly_dir:" + polynomino_dir2);
-            Log.d("poly_x", "poly_x: " + polynomino_x2);
-            Log.d("poly_x", "poly_y: " + polynomino_y2);
+            if(logging) {
+                Log.d("diff:", "diff:" + temp_diff2);
+                Log.d("dir:", "player_dir:" + player_dir2);
+                Log.d("dir:", "poly_dir:" + polynomino_dir2);
+                Log.d("poly_x", "poly_x: " + polynomino_x2);
+                Log.d("poly_x", "poly_y: " + polynomino_y2);
+            }
             int x = (int) simulation.player2.block_position.x;
             int y = (int) simulation.player2.block_position.y;
             ai_simulation = deserializeSimulation(serializedSimulation);
@@ -604,12 +630,14 @@ public class AiGameLoop {
     }
 
     public boolean checkIfPlayerStillWins(Simulation simulation) {
-        Log.d("dir:", "winning_player_dir:" + winningPlayerDir);
-        Log.d("poly_x", "winning_player_x: " + winningPlayerX);
-        Log.d("poly_x", "winning_player_y: " + winningPlayerY);
-        Log.d("dir:", "winning_poly_dir:" + winningPolyDir);
-        Log.d("poly_x", "winning_poly_x: " + winningPolyX);
-        Log.d("poly_x", "winning_poly_y: " + winningPolyY);
+        if(logging) {
+            Log.d("dir:", "winning_player_dir:" + winningPlayerDir);
+            Log.d("poly_x", "winning_player_x: " + winningPlayerX);
+            Log.d("poly_x", "winning_player_y: " + winningPlayerY);
+            Log.d("dir:", "winning_poly_dir:" + winningPolyDir);
+            Log.d("poly_x", "winning_poly_x: " + winningPolyX);
+            Log.d("poly_x", "winning_poly_y: " + winningPolyY);
+        }
 
         if(winningPlayerDir == null){
             return true;
@@ -701,10 +729,10 @@ public class AiGameLoop {
                                         ai_simulation.objects[x][y].lastState = playerDirection;
                                         ai_simulation.movePlayer(x, y, playerDirection);
 
-                                        Log.d("test","checkplayerpos");
-
-                                        Log.d("ai","polynomino x: " + i + " y: " + j + " " + direction);
-                                        Log.d("ai","player x: " + x + " y: " + y + " " + playerDirection);
+                                        if(logging) {
+                                            Log.d("ai", "polynomino x: " + i + " y: " + j + " " + direction);
+                                            Log.d("ai", "player x: " + x + " y: " + y + " " + playerDirection);
+                                        }
                                         for (int z = 0; z < 10; z++) {
                                             checkPlayerPosition(ai_simulation);
                                         }

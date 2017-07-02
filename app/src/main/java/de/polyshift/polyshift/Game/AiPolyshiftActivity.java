@@ -46,7 +46,9 @@ import de.polyshift.polyshift.Tools.MapUtil;
 import de.polyshift.polyshift.Tools.PHPConnector;
 import rx.SingleSubscriber;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Diese Klasse ist für die Umsetzung des Tutorial-Spiels zuständig. Sie verbindet die
@@ -59,7 +61,7 @@ import rx.schedulers.Schedulers;
 
 public class AiPolyshiftActivity extends GameActivity implements GameListener {
 
-    public static boolean statusUpdated = true;
+    public static boolean statusUpdated = false;
     public boolean gameUpdated = false;
     public static ProgressDialog dialog = null;
     Renderer renderer;
@@ -67,7 +69,6 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     AiGameLoop gameLoop;
     private Menu menu;
     private HashMap<String,String> game_status;
-    private Activity activity = this;
     private boolean downloaded = false;
     private boolean statusDownloaded = false;
     private boolean winnerIsAnnounced = false;
@@ -79,12 +80,13 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     private boolean tutorial = true;
     private AlertDialog alertDialog;
     private SharedPreferences sharedPreferences;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginTool = new LoginTool(context,AiPolyshiftActivity.this);
-        loginTool.handleSessionExpiration(this);
+        compositeSubscription.add(loginTool.handleSessionExpiration(this).subscribe());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
@@ -147,19 +149,14 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     public void onDestroy( )
     {
         super.onDestroy();
+        dialog.cancel();
+        compositeSubscription.clear();
         Log.d( "Polyshift", "Polyshift beendet" );
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.game_status, menu);
         this.menu = menu;
-        menu.findItem(R.id.action_game_status).setTitle(getString(R.string.please_wait));
-
-        MenuItem item = menu.findItem(R.id.action_game_status);
-        item.setOnMenuItemClickListener(menuItem -> {
-            sharedPreferences.edit().remove("simulation").apply();
-            return false;
-        });
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -208,7 +205,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
             renderer = new Renderer3D(activity, gl, simulation.objects);
             renderer.enableCoordinates(gl, simulation.objects);
 
-            updateGame(activity, gl);
+            updateGame();
 
             dialog.dismiss();
         }
@@ -235,7 +232,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                 }else{
                     game_status.put("opponents_turn", "0");
                 }
-                updateGame(activity, gl);
+                updateGame();
             }
 
             if (simulation.hasWinner && !winnerIsAnnounced && !alertDialog.isShowing()) {
@@ -244,7 +241,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                     public void run() {
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AiPolyshiftActivity.this);
                         if (simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
-                            if(tutorial || (LoginTool.username != null && !LoginTool.username.isEmpty())) {
+                            if(tutorial || !loginTool.isLoggedIn() || (LoginTool.username != null && !LoginTool.username.isEmpty())) {
                                 builder.setMessage(getString(R.string.you_won));
 
                                 builder.setPositiveButton("OK",
@@ -411,6 +408,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("winner", winner ? "true" : "false"));
         PHPConnector.doSingleRequest(nameValuePairs ,"update_ai_scores.php")
+                .retry(5)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new SingleSubscriber<String>() {
                     @Override
@@ -425,9 +423,9 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                 });
     }
 
-    public void updateGame(final GameActivity game_activity, final GL10 game_gl){
+    public void updateGame(){
 
-        if(game_status != null && game_status.get("opponents_turn") != null && game_status.get("my_game") != null) {
+        if(menu != null && game_status != null && game_status.get("opponents_turn") != null && game_status.get("my_game") != null) {
             if(gameLoop.aiRunning){
                 runOnUiThread(new Runnable() {
                   @Override

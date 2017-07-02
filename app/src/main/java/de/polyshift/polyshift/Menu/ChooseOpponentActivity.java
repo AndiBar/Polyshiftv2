@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +32,7 @@ import de.polyshift.polyshift.Tools.LoginTool;
 import de.polyshift.polyshift.Tools.Analytics.AnalyticsApplication;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.PHPConnector;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Menü zum Auswählen eines Spielers aus der Gegner-Liste und zum Starten eines
@@ -54,6 +56,7 @@ public class ChooseOpponentActivity extends ListActivity {
     private Menu menu;
     private Tracker mTracker = null;
     private Thread friends_thread;
+    final CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public ChooseOpponentActivity() {
         // Empty constructor required for fragment subclasses
@@ -83,6 +86,12 @@ public class ChooseOpponentActivity extends ListActivity {
     public void onResume(){
         super.onResume();
 
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        compositeSubscription.clear();
     }
 
     // Action Bar Button
@@ -180,11 +189,12 @@ public class ChooseOpponentActivity extends ListActivity {
         public void run(){
             String stringResponse = PHPConnector.doRequest("get_opponents.php");
             if(!stringResponse.equals("no opponents found")) {
-                if(stringResponse.equals("not logged in.") || stringResponse == null) {
+                Log.d("test", "response: " + stringResponse);
+                if(stringResponse.equals("not logged in.") || stringResponse.isEmpty()) {
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, ChooseOpponentActivity.this);
-                    loginTool.userLoginStoredCredentials();
-                } else {
+                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe());
+                } else if(!stringResponse.equals("error")){
                     String[] data_unformatted = stringResponse.split(",");
                     friends_list = new ArrayList<HashMap<String, String>>();
                     for (String item : data_unformatted) {
@@ -201,22 +211,11 @@ public class ChooseOpponentActivity extends ListActivity {
                         }else if(stringResponse.equals("no opponents found")) {
 
                         } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                    builder.setMessage(R.string.error_loading_opponents);
-                                    builder.setPositiveButton("OK",
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                    builder.show();
-                                }
-                            });
+                            showErrorDialog();
                         }
                     }
+                }else{
+                    showErrorDialog();
                 }
             }
             stringResponse = PHPConnector.doRequest("get_opponents_attending.php");
@@ -224,7 +223,7 @@ public class ChooseOpponentActivity extends ListActivity {
                 if(stringResponse.equals("not logged in.") || stringResponse == null){
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, ChooseOpponentActivity.this);
-                    loginTool.userLoginStoredCredentials();
+                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe());
                 } else {
                     String[] data_unformatted = stringResponse.split(",");
                     data_unformatted = stringResponse.split(",");
@@ -271,5 +270,22 @@ public class ChooseOpponentActivity extends ListActivity {
             });
 
         }
+    }
+
+    private void showErrorDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage(R.string.error_loading_opponents);
+                builder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.show();
+            }
+        });
     }
 }
