@@ -152,6 +152,7 @@ public class MyGamesActivity extends ListActivity {
                         if(loginTool.isLoggedIn() && (LoginTool.username == null || LoginTool.username.isEmpty())){
                             showEnterUserNameDialog();
                         }
+                        Log.d("test", "spiele geladen");
                         games_list = new ArrayList<HashMap<String, String>>();
                         games_attending_list = new ArrayList<HashMap<String, String>>();
 
@@ -173,7 +174,7 @@ public class MyGamesActivity extends ListActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.d("test", "error");
                     }
 
                     @Override
@@ -285,8 +286,6 @@ public class MyGamesActivity extends ListActivity {
     }
 
     public void onBackPressed() {
-        my_games_thread.interrupt();
-        dialog.dismiss();
         final Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         this.finish();
@@ -298,6 +297,7 @@ public class MyGamesActivity extends ListActivity {
             String stringResponse = PHPConnector.doRequest("get_games.php");
             String[] data_unformatted = stringResponse.split(",");
             MyGamesActivity.games_list = new ArrayList<HashMap<String, String>>();
+            Log.d("test", "response: " + stringResponse);
             if (!stringResponse.equals("no games found")) {
                 if (!(stringResponse.split(";").length == 1)) {
                     for (String item : data_unformatted) {
@@ -315,7 +315,10 @@ public class MyGamesActivity extends ListActivity {
                         games_list.add(data_map);
                     }
                 } else if(stringResponse.equals("not logged in.")) {
-                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe());
+                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe(
+                            s -> {},
+                            e -> {}
+                    ));
 
                 }else if(stringResponse.equals("no games found")) {
 
@@ -356,7 +359,10 @@ public class MyGamesActivity extends ListActivity {
                 } else if(stringResponse.equals("not logged in.")){
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, MyGamesActivity.this);
-                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe());
+                    compositeSubscription.add(loginTool.handleSessionExpiration(MyGamesActivity.this).subscribe(
+                            s -> {},
+                            e -> {}
+                    ));
 
                 }else if(stringResponse.equals("no games found")) {
 

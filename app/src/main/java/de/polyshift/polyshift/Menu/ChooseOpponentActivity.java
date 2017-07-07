@@ -180,7 +180,7 @@ public class ChooseOpponentActivity extends ListActivity {
     public void onBackPressed() {
         friends_thread.interrupt();
         dialog.dismiss();
-        final Intent intent = new Intent(this, MainMenuActivity.class);
+        final Intent intent = new Intent(this, MyGamesActivity.class);
         startActivity(intent);
         ChooseOpponentActivity.this.finish();
     }
@@ -193,7 +193,10 @@ public class ChooseOpponentActivity extends ListActivity {
                 if(stringResponse.equals("not logged in.") || stringResponse.isEmpty()) {
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, ChooseOpponentActivity.this);
-                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe());
+                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe(
+                            s -> {},
+                            e -> {}
+                    ));
                 } else if(!stringResponse.equals("error")){
                     String[] data_unformatted = stringResponse.split(",");
                     friends_list = new ArrayList<HashMap<String, String>>();
@@ -223,7 +226,10 @@ public class ChooseOpponentActivity extends ListActivity {
                 if(stringResponse.equals("not logged in.") || stringResponse == null){
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, ChooseOpponentActivity.this);
-                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe());
+                    compositeSubscription.add(loginTool.handleSessionExpiration(ChooseOpponentActivity.this).subscribe(
+                            s -> {},
+                            e -> {}
+                    ));
                 } else {
                     String[] data_unformatted = stringResponse.split(",");
                     data_unformatted = stringResponse.split(",");

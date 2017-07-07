@@ -249,7 +249,10 @@ public class GamesAttendingActivity extends ListActivity {
                 } else if (stringResponse.equals("not logged in.")) {
                     context = getApplicationContext();
                     loginTool = new LoginTool(context, GamesAttendingActivity.this);
-                    compositeSubscription.add(loginTool.handleSessionExpiration(GamesAttendingActivity.this).subscribe());
+                    compositeSubscription.add(loginTool.handleSessionExpiration(GamesAttendingActivity.this).subscribe(
+                            s -> {},
+                            e -> {}
+                    ));
 
                 } else if (stringResponse.equals("no games found")) {
 

@@ -1,23 +1,33 @@
 package de.polyshift.polyshift.Game.Logic;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 import de.polyshift.polyshift.Game.GameActivity;
 import de.polyshift.polyshift.Game.Objects.GameObject;
 import de.polyshift.polyshift.Game.Objects.Player;
 import de.polyshift.polyshift.Game.Objects.Polynomino;
+import de.polyshift.polyshift.Game.PolyshiftActivity;
 import de.polyshift.polyshift.Game.Renderer.Vector;
 import de.polyshift.polyshift.Game.AiPolyshiftActivity;
+import de.polyshift.polyshift.Game.Sync.GameSync;
+import de.polyshift.polyshift.R;
+import de.polyshift.polyshift.Tools.PHPConnector;
 
 /**
  * Aktualisiert und speichert den aktuellen Status des Spiels bei Spieler-Aktionen.
@@ -46,8 +56,10 @@ public class AiGameLoop {
     private String winningPolyDir;
     private Handler aiHandler;
     private boolean logging;
+    private boolean move_again = false;
+    private SharedPreferences sharedPreferences;
 
-    public AiGameLoop(String PlayerOnesGame){
+    public AiGameLoop(String PlayerOnesGame, SharedPreferences sharedPrefs){
         HandlerThread handlerThread = new HandlerThread("AiHandlerThread");
         handlerThread.start();
         Looper looper = handlerThread.getLooper();
@@ -60,6 +72,7 @@ public class AiGameLoop {
         }else{
             this.PlayerOnesGame = false;
         }
+        sharedPreferences = sharedPrefs;
     }
 
     public void setRandomPlayer(){
@@ -77,6 +90,7 @@ public class AiGameLoop {
             }
             if(simulation.bump_detected) {
                 simulation.bump_detected = false;
+                move_again = true;
                 PlayerOnesTurn = false;
 
             }else if(!RoundFinished || simulation.player.isLockedIn){
@@ -87,6 +101,19 @@ public class AiGameLoop {
                     simulation.player2.isLocked = false;
                     simulation.player.isLockedIn = false;
                     AiPolyshiftActivity.statusUpdated = false;
+                    if(!AiPolyshiftActivity.tutorial) {
+                        if (!move_again || simulation.hasWinner) {
+                            simulation.allLocked = true;
+                            String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
+                            sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+                            sharedPreferences.edit().putInt("playerOnesTurn", (PlayerOnesTurn) ? 1 : 0).apply();
+                        } else {
+                            //Es werden keine Obkjekte blockiert, da Spieler 2 noch einmal dran ist.
+                            //Als letztbewegtes Objekt wird ein Polynomino gesetzt, da Spieler 2 nur seinen Spieler noch einmal bewegen darf
+                            move_again = false;
+                            simulation.lastMovedObject = simulation.lastMovedPolynomino;
+                        }
+                    }
                 }
             }
         }
@@ -124,6 +151,19 @@ public class AiGameLoop {
                     simulation.player2.isLockedIn = false;
                     AiPolyshiftActivity.statusUpdated = false;
                     roundCount++;
+                    if(!AiPolyshiftActivity.tutorial) {
+                        if (!move_again || simulation.hasWinner) {
+                            simulation.allLocked = true;
+                            String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
+                            sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+                            sharedPreferences.edit().putInt("playerOnesTurn", (PlayerOnesTurn) ? 1 : 0).apply();
+                        } else {
+                            //Es werden keine Obkjekte blockiert, da Spieler 2 noch einmal dran ist.
+                            //Als letztbewegtes Objekt wird ein Polynomino gesetzt, da Spieler 2 nur seinen Spieler noch einmal bewegen darf
+                            move_again = false;
+                            simulation.lastMovedObject = simulation.lastMovedPolynomino;
+                        }
+                    }
                 }
             }
         }

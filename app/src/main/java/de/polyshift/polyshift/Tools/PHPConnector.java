@@ -138,8 +138,6 @@ public class PHPConnector {
 					entity.consumeContent();
 					Log.d(tag+url, stringResponse);
 					subscriber.onNext(stringResponse);
-				} catch (ParseException e) {
-					subscriber.onError(e);
 				} catch (IOException e) {
 					subscriber.onError(e);
 				} finally {

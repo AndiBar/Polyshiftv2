@@ -77,7 +77,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     private LoginTool loginTool;
     private boolean onBackPressed = false;
     private Tracker mTracker = null;
-    private boolean tutorial = true;
+    public static boolean tutorial = true;
     private AlertDialog alertDialog;
     private SharedPreferences sharedPreferences;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -86,7 +86,10 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     protected void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         loginTool = new LoginTool(context,AiPolyshiftActivity.this);
-        compositeSubscription.add(loginTool.handleSessionExpiration(this).subscribe());
+        compositeSubscription.add(loginTool.handleSessionExpiration(this).subscribe(
+                s -> {},
+                e -> {}
+        ));
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
@@ -118,14 +121,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     }
 
     @Override
-    public void onPause( )
-    {
-        /*String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
-        sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
-        if(game_status != null){
-            sharedPreferences.edit().putString("game_status", MapUtil.mapToString(game_status)).apply();
-        }*/
-
+    public void onPause( ) {
         super.onPause();
         Log.d( "Polyshift", "Polyshift pausiert" );
     }
@@ -134,14 +130,7 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
     public void onResume( )
     {
         super.onResume();
-        /*if(!sharedPreferences.getString("simulation", "").isEmpty()) {
-            simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
-        }
-        String gamestatus = sharedPreferences.getString("game_status", "");
-        if(!gamestatus.isEmpty() && gamestatus.length() > 1) {
-            Log.d("test", "map: " + sharedPreferences.getString("game_status", ""));
-            game_status = MapUtil.stringToMap(sharedPreferences.getString("game_status", ""));
-        }*/
+
         Log.d( "Polyshift", "Polyshift wiederhergestellt" );
     }
 
@@ -181,17 +170,22 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
             game_status.put("my_game", "yes");
             game_status.put("my_user_name", getString(R.string.blue));
 
-            simulation = new Simulation(activity);
+            gameLoop = new AiGameLoop("yes", sharedPreferences);
 
-
-            /*if(sharedPreferences.getString("simulation", "").isEmpty()){
-                String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
-                sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+            if (!sharedPreferences.contains("simulation") || tutorial) {
+                simulation = new Simulation(activity);
+                if(!tutorial) {
+                    gameLoop.setRandomPlayer();
+                    String serializedSimulation = AiGameLoop.serializeSimulation(simulation);
+                    sharedPreferences.edit().putString("simulation", serializedSimulation).apply();
+                    sharedPreferences.edit().putInt("playerOnesTurn", gameLoop.PlayerOnesTurn ? 1 : 0).apply();
+                }else{
+                    gameLoop.PlayerOnesTurn = true;
+                }
             }else{
                 simulation = AiGameLoop.deserializeSimulation(sharedPreferences.getString("simulation", ""));
-            }*/
-
-            gameLoop = new AiGameLoop("yes");
+                gameLoop.PlayerOnesTurn = sharedPreferences.getInt("playerOnesTurn", 1) == 1;
+            }
 
             for(int i = 0; i < simulation.objects.length; i++) {
                 for (int j = 0; j < simulation.objects[0].length; j++) {
@@ -201,7 +195,6 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                 }
             }
 
-            gameLoop.setRandomPlayer();
             renderer = new Renderer3D(activity, gl, simulation.objects);
             renderer.enableCoordinates(gl, simulation.objects);
 
@@ -301,6 +294,8 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                                 });
                             }
                             if(!tutorial){
+                                sharedPreferences.edit().remove("simulation").apply();
+                                sharedPreferences.edit().remove("playerOnesTurn").apply();
                                 updateScores(true);
                             }
                         } else if (!simulation.winner.isPlayerOne && game_status.get("my_game").equals("yes")) {
@@ -315,6 +310,8 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
                                         }
                                     });
                             if(!tutorial){
+                                sharedPreferences.edit().remove("simulation").apply();
+                                sharedPreferences.edit().remove("playerOnesTurn").apply();
                                 updateScores(false);
                             }
                         }
@@ -408,7 +405,6 @@ public class AiPolyshiftActivity extends GameActivity implements GameListener {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("winner", winner ? "true" : "false"));
         PHPConnector.doSingleRequest(nameValuePairs ,"update_ai_scores.php")
-                .retry(5)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new SingleSubscriber<String>() {
                     @Override

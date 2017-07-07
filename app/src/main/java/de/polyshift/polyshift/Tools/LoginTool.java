@@ -40,7 +40,6 @@ public class LoginTool {
 
     public Observable<String> handleSessionExpiration(final Activity calling_activity) {
         return PHPConnector.doObservableRequest("test_session.php")
-                .retry(5)
                 .subscribeOn(Schedulers.io())
                 .doOnError(error -> loggedIn = false)
                 .map((Func1<String, String>) response -> {

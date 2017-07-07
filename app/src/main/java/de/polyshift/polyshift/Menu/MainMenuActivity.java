@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -92,6 +93,10 @@ public class MainMenuActivity extends Activity {
         scoresButton = (Button) findViewById(R.id.scores_button);
         tutorialButton = (Button) findViewById(R.id.tutorial_button);
         backgroundLogo = (ImageView) findViewById(R.id.background_logo);
+
+        if(PreferenceManager.getDefaultSharedPreferences(this).contains("simulation")){
+            newGameButton.setText(R.string.continue_game);
+        }
 
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override

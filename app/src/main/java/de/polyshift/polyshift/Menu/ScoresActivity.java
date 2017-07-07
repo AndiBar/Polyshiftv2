@@ -174,7 +174,10 @@ public class ScoresActivity extends ListActivity {
             }else{
                 Context context = getApplicationContext();
                 LoginTool loginTool = new LoginTool(context, ScoresActivity.this);
-                compositeSubscription.add(loginTool.handleSessionExpiration(ScoresActivity.this).subscribe());
+                compositeSubscription.add(loginTool.handleSessionExpiration(ScoresActivity.this).subscribe(
+                        s -> {},
+                        e -> {}
+                ));
             }
         }
     }
