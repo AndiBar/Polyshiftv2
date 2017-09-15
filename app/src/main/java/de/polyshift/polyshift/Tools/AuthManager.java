@@ -1,5 +1,6 @@
 package de.polyshift.polyshift.Tools;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import de.polyshift.polyshift.R;
 import de.polyshift.polyshift.Tools.GCM.HandleSharedPreferences;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -46,6 +48,7 @@ public class AuthManager {
         nameValuePairs.add(new BasicNameValuePair("device_name", device));
         nameValuePairs.add(new BasicNameValuePair("reg_id", gcmId));
         PHPConnector.doObservableRequest(nameValuePairs, "check_device.php")
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<String>() {
                     @Override
@@ -60,7 +63,13 @@ public class AuthManager {
 
                     @Override
                     public void onNext(String s) {
-
+                        if("logged in but expired".equals(s)){
+                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                            alertDialog.setPositiveButton("OK",null);
+                            alertDialog.setTitle("Testzeitaum abgelaufen");
+                            alertDialog.setMessage("Die Online-Funktionen von Polyshift wurden deaktiviert.");
+                            alertDialog.create().show();
+                        }
                     }
                 });
     }
